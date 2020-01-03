@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+
+<meta name="generator" content="Hexo 3.9.0">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<title>Node.js 이벤트루프 제대로 이해하기 - 기술블로그</title>
+
+
+    <meta name="description" content="이 글은 Daniel Khan의 What you should know to really understand the Node.js Event Loop 글을 번역 한 글입니다. 모든 저작권과 권리는 Daniel Khan에게 있습니다.   곳곳에 의역이 들어가있는 점 양해부탁 드립니다 :)    Node.js 는 이벤트 기반의 플랫폼입니다. 이 말은 즉슨,">
+<meta name="keywords" content="nodejs,event-loop">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js 이벤트루프 제대로 이해하기">
+<meta property="og:url" content="https://tk-one.github.io/2019/02/07/nodejs-event-loop/index.html">
+<meta property="og:site_name" content="기술블로그">
+<meta property="og:description" content="이 글은 Daniel Khan의 What you should know to really understand the Node.js Event Loop 글을 번역 한 글입니다. 모든 저작권과 권리는 Daniel Khan에게 있습니다.   곳곳에 의역이 들어가있는 점 양해부탁 드립니다 :)    Node.js 는 이벤트 기반의 플랫폼입니다. 이 말은 즉슨,">
+<meta property="og:locale" content="ko">
+<meta property="og:image" content="https://tk-one.github.io/images/og_image.png">
+<meta property="og:updated_time" content="2020-01-03T08:13:32.940Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js 이벤트루프 제대로 이해하기">
+<meta name="twitter:description" content="이 글은 Daniel Khan의 What you should know to really understand the Node.js Event Loop 글을 번역 한 글입니다. 모든 저작권과 권리는 Daniel Khan에게 있습니다.   곳곳에 의역이 들어가있는 점 양해부탁 드립니다 :)    Node.js 는 이벤트 기반의 플랫폼입니다. 이 말은 즉슨,">
+<meta name="twitter:image" content="https://tk-one.github.io/images/og_image.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.svg">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-124797892-1');
+</script>
+
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.svg" alt="Node.js 이벤트루프 제대로 이해하기" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">Home</a>
+                
+                <a class="navbar-item" href="/archives">Archives</a>
+                
+                <a class="navbar-item" href="/categories">Categories</a>
+                
+                <a class="navbar-item" href="/tags">Tags</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                
+                
+                <a class="navbar-item search" title="검색" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
+                </div>
+                
+                
+                
+                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
+                    <i class="far fa-eye"></i>
+                    <span id="busuanzi_value_page_pv">0</span> Besuche
+                </span>
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Node.js 이벤트루프 제대로 이해하기
+            
+        </h1>
+        <div class="content">
+            <p><br></p>
+<blockquote>
+<ul>
+<li><p>이 글은 <a href="https://medium.com/@dkhan" rel="external nofollow noopener noreferrer" target="_blank">Daniel Khan</a>의 <a href="https://medium.com/the-node-js-collection/what-you-should-know-to-really-understand-the-node-js-event-loop-and-its-metrics-c4907b19da4c" rel="external nofollow noopener noreferrer" target="_blank">What you should know to really understand the Node.js Event Loop</a> 글을 번역 한 글입니다. 모든 저작권과 권리는 <a href="https://medium.com/@dkhan" rel="external nofollow noopener noreferrer" target="_blank">Daniel Khan</a>에게 있습니다. </p>
+</li>
+<li><p>곳곳에 의역이 들어가있는 점 양해부탁 드립니다 :)</p>
+</li>
+</ul>
+</blockquote>
+<p>Node.js 는 이벤트 기반의 플랫폼입니다. 이 말은 즉슨, 노드에서 일어나는 모든 일은 어떤 이벤트에 대한 반응이라는 말과 같습니다. Node에서 일어나는 모든 처리는 전부 일련의 콜백내용들입니다.</p>
+<p><strong><a href="https://github.com/libuv/libuv" rel="external nofollow noopener noreferrer" target="_blank">libuv</a></strong> 라는 추상화된 라이브러리가 이벤트루프라는 기능을 제공합니다.</p>
+<p>이 이벤트루프는 아마 오해하기 가장 쉬운 개념일 것입니다.</p>
+<p>저는 성능 모니터링 제작업체인 <a href="https://dynatrace.com/" rel="external nofollow noopener noreferrer" target="_blank">Dynatrace</a>에서 일하며, 이곳에서 이벤트루프 모니터링에 대한 작업을 할때, 실제로 우리가 무엇을 측정하고 있는지 제대로 이해하기 위해서 많은 노력을 기울였습니다.</p>
+<p>이 글에서는, 이벤트루프가 실제로 동작하는 방식과 어떻게 이를 올바르게 모니터링 하는 방법에 대해 다룰 예정입니다.</p>
+<h2 id="이벤트루프에-대한-오해"><a href="#이벤트루프에-대한-오해" class="headerlink" title="이벤트루프에 대한 오해"></a>이벤트루프에 대한 오해</h2><p>Libuv는 Node.js에 이벤트루프를 제공하는 라이브러리 입니다. libuv의 코어 개발자였던 Bert Belder가 발표했던 Node 동작방식에 대한 강연에서, 우리가 이벤트루프를 구글에 검색했을때 나오는 이미지들과 그 이미지에서 설명하는 이벤트루프 동작방식들에 대해 이는 대부분이 틀렸으며 실제로 이렇게 동작하지 않는다고 설명합니다.</p>
+<p>이제 우리가 할 수 있는 가장 흔한 오해들 부터 설명해보겠습니다.</p>
+<h2 id="오해-1-이벤트루프는-우리가-실제로-작성한-코드와는-별개로-별도의-스레드에서-실행됩니다"><a href="#오해-1-이벤트루프는-우리가-실제로-작성한-코드와는-별개로-별도의-스레드에서-실행됩니다" class="headerlink" title="오해 1: 이벤트루프는 우리가 실제로 작성한 코드와는 별개로 별도의 스레드에서 실행됩니다."></a>오해 1: 이벤트루프는 우리가 실제로 작성한 코드와는 별개로 별도의 스레드에서 실행됩니다.</h2><h3 id="오해"><a href="#오해" class="headerlink" title="오해"></a>오해</h3><p>우리가 작성한 자바스크립트를 코드를 실행시켜주는 main 스레드가 존재하고, 이벤트루프를 실행하는 또다른 쓰레드가 존재합니다. 비동기 작업이 실행 될 때마다, main 스레드는 이벤트루프 스레드에게 작업을 넘겨주고, 작업이 완료되면 이벤트루프 스레드가 main 스레드에게 신호를 보내 콜백을 실행합니다.</p>
+<h3 id="실제"><a href="#실제" class="headerlink" title="실제"></a>실제</h3><p>자바스크립트를 실행시키는 스레드는 단 하나뿐이며, 이 스레드가 바로 이벤트루프가 실행되는 스레드입니다. Node.js 어플리케이션에서 실행되는 사용자의 코드는 전부 콜백이라고 볼 수 있습니다. 이 콜백함수의 실행은, 이벤트루프에 의해 수행됩니다. 이 내용은 조금 뒤에서 깊이 다룰 예정입니다.</p>
+<h2 id="오해-2-모든-비동기-작업은-스레드-풀에서-처리합니다"><a href="#오해-2-모든-비동기-작업은-스레드-풀에서-처리합니다" class="headerlink" title="오해 2: 모든 비동기 작업은 스레드 풀에서 처리합니다."></a>오해 2: 모든 비동기 작업은 스레드 풀에서 처리합니다.</h2><h3 id="오해-1"><a href="#오해-1" class="headerlink" title="오해"></a>오해</h3><p>파일I/O나 외부와 통신하는 HTTP통신이나 데이터베이스통신같은 비동기 작업들은 항상 libuv가 제공하는 스레드 풀에서 수행됩니다.</p>
+<h3 id="실제-1"><a href="#실제-1" class="headerlink" title="실제"></a>실제</h3><p>Libuv는 기본적으로 비동기작업을 수행하기 위해 4개의 스레드를 스레드 풀에 할당하여 놓습니다. 현대의 OS들은 많은 I/O 작업들을 위해 비동기 Interface들을 제공합니다. 이 예로는 Linux의 AIO가 있습니다.<br>Libuv는 가능하다면, 직접 OS의 비동기 Interface를 사용하며, 스레드풀에 작업을 넘겨주지 않습니다.<br>데이터베이스 같은 서드파티시스템에도 동일합니다. DB 드라이버를 이용해 스레드풀을 활용하지 않고, 비동기 인터페이스를 직접 사용합니다.<br>즉, 다른 방법이 없는 경우에만, libuv는 비동기 작업들을 스레드 풀에 할당합니다.</p>
+<h2 id="오해-3-이벤트-루프는-스택-or-큐-같은-것입니다"><a href="#오해-3-이벤트-루프는-스택-or-큐-같은-것입니다" class="headerlink" title="오해 3: 이벤트 루프는 스택 or 큐 같은 것입니다."></a>오해 3: 이벤트 루프는 스택 or 큐 같은 것입니다.</h2><h3 id="오해-2"><a href="#오해-2" class="headerlink" title="오해"></a>오해</h3><p>비동기 작업들은 FIFO(선입선출 큐)에 쌓이고, 이벤트루프는 이 큐를 계속 돌면서, 태스크가 완료되었을 때 콜백을 실행합니다.</p>
+<h3 id="실제-2"><a href="#실제-2" class="headerlink" title="실제"></a>실제</h3><p>이벤트루프에 큐 형식의 자료구조가 포함되있는건 맞습니다. 하지만 이벤트루프는 이 큐를 돌면서 실행하지 않고, 스택을 처리합니다. 이벤트루프는 round-robin 방식으로 차례차례 돌면서 처리되는 특정 작업들의 단계들로 이루어져 있습니다.<br>약간 말이 어려운데요. 밑에서 자세히 다뤄보겠습니다.</p>
+<h2 id="이벤트루프-작업-이해하기"><a href="#이벤트루프-작업-이해하기" class="headerlink" title="이벤트루프 작업 이해하기"></a>이벤트루프 작업 이해하기</h2><p>이벤트루프를 이해하기 위해서는, 각 단계에 어떤 작업들이 수행되는지를 알아야 합니다.<br>이벤트루프가 어떻게 실행되는 지는 다음과 같습니다.  </p>
+<p><img src="https://user-images.githubusercontent.com/13212502/52569657-0c00fd00-2e55-11e9-8488-0c7b723cb922.png" alt="eventloop"></p>
+<p>여기서 초록색 박스는 이벤트루프의 각 단계들을 의미합니다.<br>이 단계들을 하나씩 살펴보겠습니다. 자세한 설명은 <a href="https://nodejs.org/ko/docs/guides/event-loop-timers-and-nexttick/" rel="external nofollow noopener noreferrer" target="_blank">Node.js 공식문서</a>에 한국어로 아주 잘 설명되어있으니, 읽어보시면 도움이 될 것입니다.</p>
+<h2 id="Timers"><a href="#Timers" class="headerlink" title="Timers"></a>Timers</h2><p>setTimeout() 또는 setInterval()에서 스케줄링된 모든 것은 여기서 처리됩니다. 하지만 그 타이머 안에 등록한 콜백함수의 실행은 Polling 단계의 가장 앞부분에서 이루어집니다.</p>
+<h2 id="IO-Callbacks"><a href="#IO-Callbacks" class="headerlink" title="IO Callbacks"></a>IO Callbacks</h2><p><del>대부분의 콜백들이 여기서 처리됩니다. 사용자가 작성한 Node.js의 모든 코드는 기본적으로 콜백입니다.(예: HTTP 요청에 의한 콜백함수는 다시 여러개의 콜백함수를 실행시킵니다.)</del><br><a href="https://nodejs.org/ko/docs/guides/event-loop-timers-and-nexttick/" rel="external nofollow noopener noreferrer" target="_blank">Node.js 공식문서</a>에서 설명하는 이벤트루프의 각 단계별 역할에 대한 내용이 이 글의 원본에 적혀있는 내용과 달라 정정합니다.<br>Timers단계의 다음 단계인 Pending Callbacks 라고 불리는 단계에서는, TCP오류 같은 시스템 작업의 콜백을 반환합니다. 예를들어, TCP 소켓이 연결을 시도하다가 <code>ECONNREFUSED</code> 같은 메시지를 받으면, 이에 대한 오류보고를 위해 이에 대한 콜백함수가 IO Callbacks (pending callbacks) 단계의 큐에 추가됩니다.</p>
+<h2 id="IO-Polling"><a href="#IO-Polling" class="headerlink" title="IO Polling"></a>IO Polling</h2><p>이벤트루프가 Poll 단계에 진입하면,<br>먼저 Timers 단계에 스케줄링 되었던 콜백들 중에, 시간이 지난 타이머의 콜백을 실행합니다.<br>그 다음, Poll 단계의 큐에 있는 이벤트들을 처리합니다. 대부분의 콜백들은 이 Poll 단계에서 처리됩니다.</p>
+<h2 id="Set-Immediate-Check"><a href="#Set-Immediate-Check" class="headerlink" title="Set Immediate (=Check)"></a>Set Immediate (=Check)</h2><p>setImmediate()를 통해 등록된 모든 콜백을 실행됩니다.</p>
+<h2 id="Close"><a href="#Close" class="headerlink" title="Close"></a>Close</h2><p>‘close’ 이벤트에 대한 모든 콜백이 실행됩니다.</p>
+<h2 id="이벤트루프-모니터링"><a href="#이벤트루프-모니터링" class="headerlink" title="이벤트루프 모니터링"></a>이벤트루프 모니터링</h2><p>Node.js 어플리케이션에서 진행되는 모든 작업은 이벤트루프를 통해 실행됩니다. 이 말은 즉슨, 이 이벤트루프에 대한 메트릭을 측정할 수만 있다면, 이 정보들을 이용해 Node.js 어플리케이션에 대한 전반적인 상태나 성능에 대한 중요한 정보들을 알아낼 수 있습니다.<br>이벤트루프에서 런타임때 메트릭 정보들을 가져올 수 있는 API가 없기때문에, 각 모니터링 툴들이 직접 자기들만의 메트릭을 구축하여 이벤트루프에 대한 모니터링을 제공합니다. 여기서 우리가 이를 어떻게 해결했는지 한번 보겠습니다.</p>
+<h2 id="Tick-Frequency"><a href="#Tick-Frequency" class="headerlink" title="Tick Frequency"></a>Tick Frequency</h2><p>시간마다 tick 수입니다.</p>
+<h2 id="Tick-Duration"><a href="#Tick-Duration" class="headerlink" title="Tick Duration"></a>Tick Duration</h2><p>1번의 tick에 걸리는 시간을 의미합니다.</p>
+<h2 id="실상황에서-Tick-빈도수와-Tick-소요시간-지표"><a href="#실상황에서-Tick-빈도수와-Tick-소요시간-지표" class="headerlink" title="실상황에서 Tick 빈도수와 Tick 소요시간 지표"></a>실상황에서 Tick 빈도수와 Tick 소요시간 지표</h2><p>우리가 서로 다른레벨의 부하테스트를 줘봤을 때, 결과는 놀라웠습니다. 예제를 보여드리겠습니다.</p>
+<p>다음 시나리오에서는 다른 HTTP 서버로 외부요청을 보내는 express.js 노드 프로그램을 호출합니다.</p>
+<p>네가지 시나리오가 있습니다.</p>
+<ol>
+<li><p>Idle<br>들어오는 요청이 없습니다.</p>
+</li>
+<li><p>ab -c 5<br><a href="https://httpd.apache.org/docs/2.4/ko/programs/ab.html" rel="external nofollow noopener noreferrer" target="_blank">Apache bench</a>를 이용하여 한번에 5개의 요청을 생성합니다.</p>
+</li>
+<li><p>ab -c 10<br>한번에 10개의 요청을 생성합니다.</p>
+</li>
+<li><p>ab -c 10 (느린 백엔드)<br>서버가 요청보내는 외부 HTTP 서버는 요청을 받으면 1초 후에 응답을 반환하도록 하여, 느린 백엔드를 만들었습니다. 이렇게 하면, 노드서버가 HTTP 서버로부터 응답을 기다리면서 흔히 말하는 back pressure가 발생합니다.</p>
+</li>
+</ol>
+<p><img src="https://user-images.githubusercontent.com/13212502/52789733-08b17f80-30a8-11e9-9806-2f65964d0207.png" alt="eventloop_f"></p>
+<p>이 결과 차트를 보면, 재밌는 내용을 발견 할 수 있습니다.</p>
+<p>이벤트루프 tick 수행시간과 빈도는 동적으로 조정됩니다.</p>
+<p>노드 어플리케이션에 아무런 요청도 없는 상태인 경우, (타이머, 콜백 등) 대기중인 작업이 없는 상태로서, 위에서 설명했던 모든 단계들(timers, I/O callbacks, polling 등)을 미친듯이 계속 도는게 아니라 이벤트루프가 이에 적응하고 polling 단계에서 새로운 콜백이 등록되기를 잠시 기다립니다.</p>
+<p>즉, 요청이 없을때에는 이벤트루프의 tick 빈도는 적고 tick의 duration은 긴 상황입니다.</p>
+<p>이 상황에서의 지표는 이후에 진행한 느린 백엔드에서 진행했던 지표와 유사합니다.</p>
+<p>이 노드 어플리케이션은 5개의 요청을 한번에 요청했던 시나리오에서 최고로 좋은 성능을 냅니다.</p>
+<p>결과적으로, tick 빈도나 tick duration을 보고 분석할 때에는 노드 서버의 초당요청 수를 기준삼아 보아야합니다.</p>
+<p>이 지표들은 우리에게 의미있는 내용들을 제공해주긴 했지만, 아직까지는 실제로 어느 단계(phase)에서 시간이 소비되었는지 알지 못하기 때문에 두가지 측정항목이 더 필요합니다.</p>
+<h2 id="작업-처리-지연시간"><a href="#작업-처리-지연시간" class="headerlink" title="작업 처리 지연시간"></a>작업 처리 지연시간</h2><p>작업처리 지연시간은 비동기 작업이 스레드 풀에서 처리 될 때까지 걸리는 시간을 의미합니다.</p>
+<p>여기서 지연시간이 길다면, 이는 libuv 스레드 풀의 사용량이 많고 굉장히 바쁘다는 것과 같습니다.</p>
+<p>이 지연되는 시간을 측정하기 위해, express.js 노드 어플리케이션에 <a href="https://github.com/lovell/sharp" rel="external nofollow noopener noreferrer" target="_blank">Sharp</a> 라이브러리를 이용하여 이미지를 가공하거나 처리해주는 API를 추가했습니다. 이미지처리는 부하가 있는 작업이기에, Sharp 라이브러리는 스레드 풀을 사용합니다.</p>
+<p><img src="https://user-images.githubusercontent.com/13212502/52790882-fe44b500-30aa-11e9-906c-a4485f15e916.png" alt="sharp"></p>
+<p>그래프를 보면, Apache bench를 이용하여 5개의 요청을 동시에 보냈을때 이미지처리가 있는 요청과 그 전에서 진행했던 일반적인 HTTP서버 처리가 있는 요청은 확실하게 구별됩니다.</p>
+<h2 id="이벤트루프-지연시간"><a href="#이벤트루프-지연시간" class="headerlink" title="이벤트루프 지연시간"></a>이벤트루프 지연시간</h2><p>이벤트루프 지연시간은 setTimeout(X)로 스케줄링 된 작업이 실제로 처리될 때 까지 추가로 소요되는 시간을 의미합니다.</p>
+<p>이벤트루프 지연시간이 높다는 것은, 이벤트루프가 콜백을 처리하기 엄청 바쁜 상태라는 것과 같습니다.</p>
+<p>이 이벤트루프 지연시간 측정을 위해, 이번에는 굉장히 비효율적인 알고리즘으로 피보나치를 계산하는 API를 추가했습니다.</p>
+<p><img src="https://user-images.githubusercontent.com/13212502/52791701-ec641180-30ac-11e9-9859-50fc3bb302bd.png" alt="fibonacci"></p>
+<p>Apache bench를 이용해 피보나치를 계산하는 API로 부하를 주면 콜백 큐가 바쁘다는 걸 알 수 있습니다.</p>
+<p>우리는 이러한 4가지 주요 메트릭(Tick Frequency, Tick duration, 작업처리 지연시간, 이벤트루프 지연시간)으로 Node.js 내부동작을 더 잘 이해할 수 있게 되었고, 꽤 중요한 내용들도 알게되었습니다.</p>
+<h2 id="이벤트루프-튜닝"><a href="#이벤트루프-튜닝" class="headerlink" title="이벤트루프 튜닝"></a>이벤트루프 튜닝</h2><p>물론, 이 메트릭 정보들만으로 문제를 해결 할 수는 없습니다. 실제 이벤트루프가 고갈되었을때, 어떻게 대응 해야하는지 알아봅시다.</p>
+<p><img src="https://user-images.githubusercontent.com/13212502/52792299-5e892600-30ae-11e9-8124-e96d83f3c4f3.png" alt="exhausted"></p>
+<h2 id="모든-CPU-활용"><a href="#모든-CPU-활용" class="headerlink" title="모든 CPU 활용"></a>모든 CPU 활용</h2><p>Node.js 어플리케이션은 싱글 스레드로 작동합니다. 멀티코어 환경에서 1개의 Node.js 어플리케이션은 효율적으로 작동하지 않습니다. 낭비되는 CPU가 있기 때문입니다. <a href="https://nodejs.org/api/cluster.html" rel="external nofollow noopener noreferrer" target="_blank">Cluster Module</a>을 사용하면, CPU 마다 child 프로세스를 쉽게 만들 수 있습니다. 각각의 child 프로세스는 각자 자신만의 이벤트루프가 존재하고 master 프로세스는 모든 자식들에게 요청을 분산시켜 줍니다.</p>
+<h2 id="스레드-풀-조정"><a href="#스레드-풀-조정" class="headerlink" title="스레드 풀 조정"></a>스레드 풀 조정</h2><p>앞서 언급했듯이, libuv는 스레드 4개로 스레드 풀을 생성합니다. 스레드 풀의 기본 크기는 <code>UV_THREADPOOL_SIZE</code> 환경변수를 설정해서 수정할 수 있습니다. 이 방법은 I/O 작업이 많은 어플리케이션에서 도움이 될 수 있겠지만, 큰 스레드 풀은 메모리나 CPU를 고갈시킬 수 있음을 기억해야 합니다.</p>
+<h2 id="작업을-다른서비스에-맡기기"><a href="#작업을-다른서비스에-맡기기" class="headerlink" title="작업을 다른서비스에 맡기기"></a>작업을 다른서비스에 맡기기</h2><p>만약 Node.js가 CPU사용이 과도하게 필요한 작업에서 사용된다면, 이 특정 작업에 더 잘맞는 다른 언어를 선택해서 그 쪽으로 처리를 옮겨 작업량을 줄이는 것이 가능한 방법일 수 있습니다.</p>
+<h2 id="요약"><a href="#요약" class="headerlink" title="요약"></a>요약</h2><ul>
+<li>이벤트루프는 Node.js를 실행시켜주는 것이다.</li>
+<li>이벤트루프의 기능을 잘못 알고 있는 경우가 많습니다 - 몇가지 단계들을 차례대로 반복하면서 순서대로 각 단계들의 작업들을 처리해나갑니다.</li>
+<li>이벤트루프 자체에서 제공해주는 메트릭이 없으므로, 수집된 메트릭들은 APM 제품들마다 다릅니다.</li>
+<li>이벤트루프 메트릭들은 병목현상에 대해 중요한 정보들을 제공해주지만, 이벤트루프와 실행중인 코드에 대한 깊은 이해가 가장 중요합니다.</li>
+</ul>
+<p>감사합니다.</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/event-loop/">event-loop</a>, <a class="has-link-grey -link" href="/tags/nodejs/">nodejs</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+<div class="sharethis-inline-share-buttons"></div>
+<script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5e0f08edf689ea0012c9e33e&amp;product=inline-share-buttons" async="async"></script>
+
+        
+    </div>
+</div>
+
+
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/08/28/nodejs-buffer/">
+                <span class="level-item">Node.js의 Buffer를 제대로 이해해보자</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">댓글</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://tk-one.github.io/2019/02/07/nodejs-event-loop/';
+        this.page.identifier = '2019/02/07/nodejs-event-loop/';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered" style="flex-shrink: 1">
+                <div>
+                    
+                    <figure class="image is-128x128 has-mb-6">
+                        <img class="" src="/images/profile.png" alt="TK-one">
+                    </figure>
+                    
+                    <p class="is-size-4 is-block">
+                        TK-one
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        항상 하던대로
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>Seoul, South Korea</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        포스트
+                    </p>
+                    <a href="/archives">
+                        <p class="title has-text-weight-normal">
+                            2
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        카테고리
+                    </p>
+                    <a href="/categories">
+                        <p class="title has-text-weight-normal">
+                            1
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        태그
+                    </p>
+                    <a href="/tags">
+                        <p class="title has-text-weight-normal">
+                            2
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/TK-one/" target="_blank" rel="external nofollow noopener noreferrer">
+                팔로우</a>
+        </div>
+        
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="external nofollow noopener noreferrer" title="Github" href="https://github.com/TK-one/">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook" href="https://www.facebook.com/MiraGeKJH">
+                
+                <i class="fab fa-facebook"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                카테고리
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/nodejs/">
+            <span class="level-start">
+                <span class="level-item">nodejs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            태그 클라우드
+        </h3>
+        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a>
+    </div>
+</div>
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            최근 글
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/02/07/nodejs-event-loop/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js 이벤트루프 제대로 이해하기">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time></div>
+                    <a href="/2019/02/07/nodejs-event-loop/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Node.js 이벤트루프 제대로 이해하기</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/28/nodejs-buffer/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js의 Buffer를 제대로 이해해보자">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-28T14:37:17.000Z">2018-08-28</time></div>
+                    <a href="/2018/08/28/nodejs-buffer/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Node.js의 Buffer를 제대로 이해해보자</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            아카이브
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">2월 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">8월 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                태그
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/event-loop/">
+                        <span class="tag">event-loop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/nodejs/">
+                        <span class="tag">nodejs</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            최근 글
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/02/07/nodejs-event-loop/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js 이벤트루프 제대로 이해하기">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time></div>
+                    <a href="/2019/02/07/nodejs-event-loop/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Node.js 이벤트루프 제대로 이해하기</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2018/08/28/nodejs-buffer/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js의 Buffer를 제대로 이해해보자">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2018-08-28T14:37:17.000Z">2018-08-28</time></div>
+                    <a href="/2018/08/28/nodejs-buffer/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Node.js의 Buffer를 제대로 이해해보자</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            아카이브
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">2월 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">8월 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                태그
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/event-loop/">
+                        <span class="tag">event-loop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/nodejs/">
+                        <span class="tag">nodejs</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.svg" alt="Node.js 이벤트루프 제대로 이해하기" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2020 TK-one&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank" rel="external nofollow noopener noreferrer">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="external nofollow noopener noreferrer">Icarus</a>
+                
+                <br>
+                <span id="busuanzi_container_site_uv">
+                Von <span id="busuanzi_value_site_uv">0</span> Nutzern besucht
+                </span>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("ko");</script>
+
+
+<script>
+var IcarusThemeSettings = {
+    site: {
+        url: 'https://tk-one.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
+    article: {
+        highlight: {
+            clipboard: true,
+            fold: 'unfolded'
+        }
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+
+
+
+
+
+<script src="/js/animation.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+<script src="/js/gallery.js" defer></script>
+
+
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" rel="external nofollow noopener noreferrer" target="_blank">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+
+<a id="back-to-top" title="Zurück nach oben" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="입력 하세요...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '포스트',
+                PAGES: '페이지',
+                CATEGORIES: '카테고리',
+                TAGS: '태그',
+                UNTITLED: '(제목없음)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>
