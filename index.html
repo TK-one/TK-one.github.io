@@ -126,6 +126,74 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/network/">network</a>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2020/01/03/smtp/">인터넷 메일시스템 (SMTP)</a>
+            
+        </h1>
+        <div class="content">
+            <p><br></p>
+<p>이 포스트에서는 Application Layer의 <strong>SMTP (Simple Mail Transfer Protocol)</strong> 에 대해 알아본다.<br>먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.  </p>
+<h2 id="Mail-System"><a href="#Mail-System" class="headerlink" title="Mail System"></a>Mail System</h2><p>인터넷 메일 시스템은 크게 <strong>user agent, 메일서버, SMTP</strong> 이 3가지 요소로 구성되어 있다.<br>아래의 그림을 보면서 이해하면 쉽다.</p>
+<p><img src="/images/mail_system_topology.png" alt="mail_system"></p>
+<ul>
+<li><p><strong>user agent</strong><br>MS의 Outlook을 생각하면 쉽다. user agent는 사용자가 메일을 읽고, 작성하고, 전송할 수 있도록 해준다.</p>
+</li>
+<li><p><strong>메일서버</strong><br>사용자가 메일 작성을 끝내면 user agent는 메시지를 메일서버로 보내게되고, 여기서 메시지는 메일서버의 output 메시지큐에 들어가게 된다.<br>여기서의 메일서버는 송신자의 메일서버를 의미한다.<br>송신자의 메일서버에서 수신자의 메일서버로 메시지가 전송되면, 메일들은 수신자의 메일서버안의 <strong>메일박스(mailbox)</strong>안에 저장되고 유지된다.<br>만약, 수신자의 메일서버가 다운된 상황에서 송신자가 메일을 보내면 어떻게 될까?<br>송신자가 메일을 전송하면, 먼저 메일이 송신자의 메일서버에 도착한다. 그리고 송신자의 메일서버는 메일을 수신자의 메일서버로 전송할 수 없을때, 메시지 큐(message queue)에 보관하고 있다가, 주기적으로 메일전송을 시도한다.</p>
+</li>
+<li><p><strong>SMTP</strong><br>SMTP는 Application layer에서 작동하는 메일전송 프로토콜이다. 위의 메일서버 설명에서, 한 메일서버에서 다른 메일서버로 메시지(메일)을 전송할때 사용하는 프로토콜이 SMTP이다.<br>이뿐만 아니라, 송신자의 user agent에서 본인의 메일서버로 메일을 전송할때도 SMTP가 사용된다.<br>SMTP는 TCP위에서 작동한다. 참고로 SMTP는 HTTP보다 훨씬 더 오래전부터 사용되었다.</p>
+</li>
+</ul>
+<p>이 설명을 기반으로 메일을 전송하는 간단한 시나리오를 보자.<br>A가 B에게 메일을 전송하는 상황이다.  </p>
+<ol>
+<li>A가 user agent를 통해 B에게 메일 내용을 작성하고 전송버튼을 누른다.</li>
+<li>A의 user agent는 메시지를 A의 메일서버에 보내게 되고, 메시지는 메일서버의 output message queue에 위치한다.</li>
+<li>A의 메일서버에서 동작하는 SMTP 클라이언트는 output message queue에 쌓여있는 메시지를 B의 메일서버로 전송하기 위해 먼저 TCP연결을 맺는다.</li>
+<li>TCP가 맺어진 후, SMTP 핸드쉐이킹을 하고 SMTP 프로토콜에 따라 B의 메일서버로 전송한다.</li>
+<li>B의 메일서버는 메시지를 수신한 후, 그 메시지를 B의 메일박스(mailbox)에 놓는다.</li>
+<li>B는 이후에 user agent를 실행하여 메일을 읽을 수 있다.</li>
+</ol>
+<p>인터넷 메일 시스템은 대충 이런식으로 작동한다.<br>(2번에서 A의 user agent가 메시지를 A의 메일서버로 보낸다고 되어있는데, 사실 여기서도 SMTP 프로토콜을 통해 전달된다.)<br>그러면 이제 SMTP를 좀 더 자세히 보도록 한다.</p>
+<h2 id="SMTP-Simple-Mail-Transfer-Protocol"><a href="#SMTP-Simple-Mail-Transfer-Protocol" class="headerlink" title="SMTP (Simple Mail Transfer Protocol)"></a>SMTP (Simple Mail Transfer Protocol)</h2><p>대부분의 Application layer protocol 처럼 SMTP는 송신자의 메일서버에서 수행하는 클라이언트와, 수신자의 메일서버에서 수행되는 서버를 가지고 있다. 메일서버가 상대 메일서버로 전송할때는 SMTP의 클라이언트로 동작하는 것이고, 메일서버가 상대 메일서버로 부터 메일을 받을때는 SMTP 서버로 동작하는 것이다. HTTP를 떠올리면 쉽다.  </p>
+<p>메일서버에서 상대 메일서버로 메일을 보내는 상황에서, 먼저 클라이언트 SMTP는 서버 SMTP의 25번 포트로 TCP연결을 맺는다. 만약 서버가 죽어있으면 클라이언트는 나중에 다시 시도한다.<br>TCP 연결이 맺어지면, 클라이언트와 서버는 SMTP 핸드쉐이킹을 수행한다. 이 SMTP 핸드쉐이킹 과정에서 클라이언트는 송신자와 수신자의 email 주소를 제공한다.  </p>
+<p>핸드쉐이킹 과정을 마치면, 클라이언트는 메시지를 보낸다.  </p>
+<p>SMTP 클라이언트와 SMTP 서버 사이의 메시지 전달과정을 예를들어 살펴보자.<br>클라이언트 호스트네임은 github.io 이고, 서버 호스트네임은 korea.ac.kr 이라고 하자.<br>C는 클라, S는 서버를 나타내고 TCP 연결 직후의 상황을 가정한다.<br>메일 내용은 “Hello, this is TK-one. Can I know the result of the interview?” 이다.</p>
+<p><code><br>S: 220 korea.ac.kr<br>C: HELO github.io<br>S: 250 Hello github.io, pleased to meet you<br>C: MAIL FROM: <a href="mailto:&#116;&#x6b;&#x2d;&#x6f;&#110;&#x65;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x69;&#x6f;">&#116;&#x6b;&#x2d;&#x6f;&#110;&#x65;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x69;&#x6f;</a><br>S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok<br>C: RCPT TO: <a href="mailto:&#107;&#105;&#109;&#x40;&#107;&#x6f;&#114;&#101;&#x61;&#46;&#x61;&#x63;&#46;&#107;&#x72;">&#107;&#105;&#109;&#x40;&#107;&#x6f;&#114;&#101;&#x61;&#46;&#x61;&#x63;&#46;&#107;&#x72;</a><br>S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok<br>C: DATA<br>S: 354 Enter mail, end with “.” on a line by itself<br>C: Hello, this is TK-one. (메일내용)<br>C: Can I know the result of the interview? (메일내용)<br>C: .<br>S: 250 Message accepted for delivery<br>C: QUIT<br>S: 221 korea.ac.kr closing connection<br></code></p>
+<p>클라이언트는 5개의 명령(<strong>HELO, MAIL FROM, RCPT TO, DATA, QUIT</strong>)을 내리며 하나의 점(.)으로 된 라인을 송신하면 이는 메시지의 끝을 의미한다.<br>서버는 각 명령에 대해 답하며, 각 응답은 응답코드와 옵션 설명을 갖고 있다.<br>그리고 주의할 점이 있는데, SMTP는 메시지의 body와 header를 포함하여 전부 7bit ASCII 코드로 작성되어야 한다.<br>HTTP는 이런 제한이 없는 반면, SMTP는 한글이나 binary 데이터 처럼 ASCII가 아닌 문자를 포함한다면 반드시 이 메시지는 전송되기 전에 7bit ASCII로 인코딩이 되어야한다.  </p>
+<p>이렇게 SMTP를 통해 한 메일서버에서 다른 메일서버로 메시지가 전달된다.<br>그렇다면 수신자는 자신의 PC에서 user agent를 통해 자신의 메일서버에 있는 메시지들을 어떻게 얻을 수 있을까?<br>수신자의 user agent는 메일을 가져오기위해 SMTP를 사용할 수는 없다. 왜냐하면 SMTP는 푸시(push)용 프로토콜인 반면, 메시지를 가져오는 것은 풀(pull) 동작이기 때문이다.<br>여기서는 메일서버로부터 자신의 user agent로 메시지를 가져오기 위해 특별한 메일 접속 프로토콜을 사용한다. 이들중엔 <strong>POP3(Post Office Protocol - Version 3), IMAP(Internet Mail Access Protocol), HTTP</strong> 등이 있다.<br><br><br><br><br>참고: <a href="https://www.amazon.com/Computer-Networking-Top-Down-Approach-7th/dp/0133594149" rel="external nofollow noopener noreferrer" target="_blank">Computer Networking - A Top-Down approach</a></p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time>
                 
                 <div class="level-item">
@@ -378,7 +446,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            2
+                            3
                         </p>
                     </a>
                 </div>
@@ -390,7 +458,7 @@
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
-                            1
+                            2
                         </p>
                     </a>
                 </div>
@@ -402,7 +470,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            2
+                            3
                         </p>
                     </a>
                 </div>
@@ -446,6 +514,14 @@
             </h3>
             <ul class="menu-list">
             <li>
+        <a class="level is-marginless" href="/categories/network/">
+            <span class="level-start">
+                <span class="level-item">network</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
         <a class="level is-marginless" href="/categories/nodejs/">
             <span class="level-start">
                 <span class="level-item">nodejs</span>
@@ -464,7 +540,7 @@
         <h3 class="menu-label">
             태그 클라우드
         </h3>
-        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a>
+        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/smtp/" style="font-size: 10px;">smtp</a>
     </div>
 </div>
     
@@ -476,6 +552,25 @@
         <h3 class="menu-label">
             최근 글
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/01/03/smtp/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="인터넷 메일시스템 (SMTP)">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time></div>
+                    <a href="/2020/01/03/smtp/" class="title has-link-black-ter is-size-6 has-text-weight-normal">인터넷 메일시스템 (SMTP)</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/network/">network</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -527,6 +622,17 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2020/01/">
+                <span class="level-start">
+                    <span class="level-item">1월 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2019/02/">
                 <span class="level-start">
                     <span class="level-item">2월 2019</span>
@@ -572,6 +678,13 @@
                     <a class="tags has-addons" href="/tags/nodejs/">
                         <span class="tag">nodejs</span>
                         <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/smtp/">
+                        <span class="tag">smtp</span>
+                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
@@ -599,6 +712,25 @@
         
         <article class="media">
             
+            <a href="/2020/01/03/smtp/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="인터넷 메일시스템 (SMTP)">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time></div>
+                    <a href="/2020/01/03/smtp/" class="title has-link-black-ter is-size-6 has-text-weight-normal">인터넷 메일시스템 (SMTP)</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/network/">network</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/02/07/nodejs-event-loop/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js 이벤트루프 제대로 이해하기">
@@ -647,6 +779,17 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2020/01/">
+                <span class="level-start">
+                    <span class="level-item">1월 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2019/02/">
                 <span class="level-start">
                     <span class="level-item">2월 2019</span>
@@ -692,6 +835,13 @@
                     <a class="tags has-addons" href="/tags/nodejs/">
                         <span class="tag">nodejs</span>
                         <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/smtp/">
+                        <span class="tag">smtp</span>
+                        <span class="tag is-grey">1</span>
                     </a>
                 </div>
                 
