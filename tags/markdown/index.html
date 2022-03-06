@@ -7,12 +7,12 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<title>태그: event-loop - 기술블로그</title>
+<title>태그: markdown - 기술블로그</title>
 
 
     <meta property="og:type" content="website">
 <meta property="og:title" content="기술블로그">
-<meta property="og:url" content="https://tk-one.github.io/tags/event-loop/index.html">
+<meta property="og:url" content="https://tk-one.github.io/tags/markdown/index.html">
 <meta property="og:site_name" content="기술블로그">
 <meta property="og:locale" content="ko">
 <meta property="og:image" content="https://tk-one.github.io/images/og_image.png">
@@ -123,7 +123,7 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li><a href="/tags">태그</a></li>
-            <li class="is-active"><a href="#" aria-current="page">event-loop</a></li>
+            <li class="is-active"><a href="#" aria-current="page">markdown</a></li>
         </ul>
         </nav>
     </div>
@@ -136,10 +136,10 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time>
+                <time class="level-item has-text-grey" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time>
                 
                 <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
+                <a class="has-link-grey -link" href="/categories/tool/">tool</a>
                 </div>
                 
                 
@@ -149,88 +149,141 @@
         
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2019/02/07/nodejs-event-loop/">Node.js 이벤트루프 제대로 이해하기</a>
+                <a class="has-link-black-ter" href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a>
             
         </h1>
         <div class="content">
-            <p><br></p>
-<blockquote>
-<ul>
-<li><p>이 글은 <a href="https://medium.com/@dkhan" rel="external nofollow noopener noreferrer" target="_blank">Daniel Khan</a>의 <a href="https://medium.com/the-node-js-collection/what-you-should-know-to-really-understand-the-node-js-event-loop-and-its-metrics-c4907b19da4c" rel="external nofollow noopener noreferrer" target="_blank">What you should know to really understand the Node.js Event Loop</a> 글을 번역 한 글입니다. 모든 저작권과 권리는 <a href="https://medium.com/@dkhan" rel="external nofollow noopener noreferrer" target="_blank">Daniel Khan</a>에게 있습니다. </p>
+            <p>이번 포스트는 markdown에 대해 알아보는 포스트입니다.<br>자주 사용하는 markdown 키워드들 위주로 정리하였습니다.  </p>
+<h2 id="Italics-and-Bolds"><a href="#Italics-and-Bolds" class="headerlink" title="Italics and Bolds"></a>Italics and Bolds</h2><ul>
+<li>Italics<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is _italic_</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>곳곳에 의역이 들어가있는 점 양해부탁 드립니다 :)</p>
+</ul>
+<p>this is <em>italic</em></p>
+<ul>
+<li>Bolds<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is **bold**</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>this is <strong>bold</strong></p>
+<ul>
+<li>Italics and Bolds<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is **_italics and bolds_**</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>this is <strong><em>italics and bolds</em></strong></p>
+<h2 id="Headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h2><ul>
+<li>Header 1부터 6까지 지원한다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># header 1</span><br><span class="line">## header 2</span><br><span class="line">### header 3</span><br><span class="line">#### header 4</span><br><span class="line">##### header 5</span><br><span class="line">###### header 6</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="header-1"><a href="#header-1" class="headerlink" title="header 1"></a>header 1</h1><h2 id="header-2"><a href="#header-2" class="headerlink" title="header 2"></a>header 2</h2><h3 id="header-3"><a href="#header-3" class="headerlink" title="header 3"></a>header 3</h3><h4 id="header-4"><a href="#header-4" class="headerlink" title="header 4"></a>header 4</h4><h5 id="header-5"><a href="#header-5" class="headerlink" title="header 5"></a>header 5</h5><h6 id="header-6"><a href="#header-6" class="headerlink" title="header 6"></a>header 6</h6><h2 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h2><h4 id="inline-링크와-reference-링크가-있다"><a href="#inline-링크와-reference-링크가-있다" class="headerlink" title="inline 링크와 reference 링크가 있다."></a>inline 링크와 reference 링크가 있다.</h4><ul>
+<li>inline link<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[블로그 바로가기](https://tk-one.github.io)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><a href="https://tk-one.github.io">블로그 바로가기</a></p>
+<ul>
+<li>reference link<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Here&apos;s [블로그 바로가기][my github].</span><br><span class="line"></span><br><span class="line">[my github]: https://tk-one.github.io</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>Here’s <a href="https://tk-one.github.io">블로그 바로가기</a>.  </p>
+<h2 id="Image"><a href="#Image" class="headerlink" title="Image"></a>Image</h2><h4 id="이미지도-링크와-비슷하게-inline-이미지와-reference-이미지가-있다"><a href="#이미지도-링크와-비슷하게-inline-이미지와-reference-이미지가-있다" class="headerlink" title="이미지도 링크와 비슷하게 inline 이미지와 reference 이미지가 있다."></a>이미지도 링크와 비슷하게 inline 이미지와 reference 이미지가 있다.</h4><ul>
+<li>inline image<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![alt text](url)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="/images/markdown.png" alt="markdown"></p>
+<ul>
+<li>reference image<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">![alt text][markdown image]</span><br><span class="line"></span><br><span class="line">[markdown image]: /images/markdown.png</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="/images/markdown.png" alt="markdown"></p>
+<ul>
+<li>이미지의 width와 height를 직접 지정해야 하는 상황이면 HTML의 img tag를 직접 사용한다.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;/path&quot; width=&quot;500px&quot; height=&quot;300px&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/markdown.png" width="500px" height="300px"></p>
+<h2 id="BlockQuotes"><a href="#BlockQuotes" class="headerlink" title="BlockQuotes"></a>BlockQuotes</h2><ul>
+<li>BlockQuotes를 만들기 위해서는 앞에 caret(&gt;)을 넣어준다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; this is quotes.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>this is quotes.</p>
+<ul>
+<li>BlockQuotes안에서도 다른 markdown 문법을 사용할 수 있다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; this is _italic_.</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </blockquote>
-<p>Node.js 는 이벤트 기반의 플랫폼입니다. 이 말은 즉슨, 노드에서 일어나는 모든 일은 어떤 이벤트에 대한 반응이라는 말과 같습니다. Node에서 일어나는 모든 처리는 전부 일련의 콜백내용들입니다.</p>
-<p><strong><a href="https://github.com/libuv/libuv" rel="external nofollow noopener noreferrer" target="_blank">libuv</a></strong> 라는 추상화된 라이브러리가 이벤트루프라는 기능을 제공합니다.</p>
-<p>이 이벤트루프는 아마 오해하기 가장 쉬운 개념일 것입니다.</p>
-<p>저는 성능 모니터링 제작업체인 <a href="https://dynatrace.com/" rel="external nofollow noopener noreferrer" target="_blank">Dynatrace</a>에서 일하며, 이곳에서 이벤트루프 모니터링에 대한 작업을 할때, 실제로 우리가 무엇을 측정하고 있는지 제대로 이해하기 위해서 많은 노력을 기울였습니다.</p>
-<p>이 글에서는, 이벤트루프가 실제로 동작하는 방식과 어떻게 이를 올바르게 모니터링 하는 방법에 대해 다룰 예정입니다.</p>
-<h2 id="이벤트루프에-대한-오해"><a href="#이벤트루프에-대한-오해" class="headerlink" title="이벤트루프에 대한 오해"></a>이벤트루프에 대한 오해</h2><p>Libuv는 Node.js에 이벤트루프를 제공하는 라이브러리 입니다. libuv의 코어 개발자였던 Bert Belder가 발표했던 Node 동작방식에 대한 강연에서, 우리가 이벤트루프를 구글에 검색했을때 나오는 이미지들과 그 이미지에서 설명하는 이벤트루프 동작방식들에 대해 이는 대부분이 틀렸으며 실제로 이렇게 동작하지 않는다고 설명합니다.</p>
-<p>이제 우리가 할 수 있는 가장 흔한 오해들 부터 설명해보겠습니다.</p>
-<h2 id="오해-1-이벤트루프는-우리가-실제로-작성한-코드와는-별개로-별도의-스레드에서-실행됩니다"><a href="#오해-1-이벤트루프는-우리가-실제로-작성한-코드와는-별개로-별도의-스레드에서-실행됩니다" class="headerlink" title="오해 1: 이벤트루프는 우리가 실제로 작성한 코드와는 별개로 별도의 스레드에서 실행됩니다."></a>오해 1: 이벤트루프는 우리가 실제로 작성한 코드와는 별개로 별도의 스레드에서 실행됩니다.</h2><h3 id="오해"><a href="#오해" class="headerlink" title="오해"></a>오해</h3><p>우리가 작성한 자바스크립트를 코드를 실행시켜주는 main 스레드가 존재하고, 이벤트루프를 실행하는 또다른 쓰레드가 존재합니다. 비동기 작업이 실행 될 때마다, main 스레드는 이벤트루프 스레드에게 작업을 넘겨주고, 작업이 완료되면 이벤트루프 스레드가 main 스레드에게 신호를 보내 콜백을 실행합니다.</p>
-<h3 id="실제"><a href="#실제" class="headerlink" title="실제"></a>실제</h3><p>자바스크립트를 실행시키는 스레드는 단 하나뿐이며, 이 스레드가 바로 이벤트루프가 실행되는 스레드입니다. Node.js 어플리케이션에서 실행되는 사용자의 코드는 전부 콜백이라고 볼 수 있습니다. 이 콜백함수의 실행은, 이벤트루프에 의해 수행됩니다. 이 내용은 조금 뒤에서 깊이 다룰 예정입니다.</p>
-<h2 id="오해-2-모든-비동기-작업은-스레드-풀에서-처리합니다"><a href="#오해-2-모든-비동기-작업은-스레드-풀에서-처리합니다" class="headerlink" title="오해 2: 모든 비동기 작업은 스레드 풀에서 처리합니다."></a>오해 2: 모든 비동기 작업은 스레드 풀에서 처리합니다.</h2><h3 id="오해-1"><a href="#오해-1" class="headerlink" title="오해"></a>오해</h3><p>파일I/O나 외부와 통신하는 HTTP통신이나 데이터베이스통신같은 비동기 작업들은 항상 libuv가 제공하는 스레드 풀에서 수행됩니다.</p>
-<h3 id="실제-1"><a href="#실제-1" class="headerlink" title="실제"></a>실제</h3><p>Libuv는 기본적으로 비동기작업을 수행하기 위해 4개의 스레드를 스레드 풀에 할당하여 놓습니다. 현대의 OS들은 많은 I/O 작업들을 위해 비동기 Interface들을 제공합니다. 이 예로는 Linux의 AIO가 있습니다.<br>Libuv는 가능하다면, 직접 OS의 비동기 Interface를 사용하며, 스레드풀에 작업을 넘겨주지 않습니다.<br>데이터베이스 같은 서드파티시스템에도 동일합니다. DB 드라이버를 이용해 스레드풀을 활용하지 않고, 비동기 인터페이스를 직접 사용합니다.<br>즉, 다른 방법이 없는 경우에만, libuv는 비동기 작업들을 스레드 풀에 할당합니다.</p>
-<h2 id="오해-3-이벤트-루프는-스택-or-큐-같은-것입니다"><a href="#오해-3-이벤트-루프는-스택-or-큐-같은-것입니다" class="headerlink" title="오해 3: 이벤트 루프는 스택 or 큐 같은 것입니다."></a>오해 3: 이벤트 루프는 스택 or 큐 같은 것입니다.</h2><h3 id="오해-2"><a href="#오해-2" class="headerlink" title="오해"></a>오해</h3><p>비동기 작업들은 FIFO(선입선출 큐)에 쌓이고, 이벤트루프는 이 큐를 계속 돌면서, 태스크가 완료되었을 때 콜백을 실행합니다.</p>
-<h3 id="실제-2"><a href="#실제-2" class="headerlink" title="실제"></a>실제</h3><p>이벤트루프에 큐 형식의 자료구조가 포함되있는건 맞습니다. 하지만 이벤트루프는 이 큐를 돌면서 실행하지 않고, 스택을 처리합니다. 이벤트루프는 round-robin 방식으로 차례차례 돌면서 처리되는 특정 작업들의 단계들로 이루어져 있습니다.<br>약간 말이 어려운데요. 밑에서 자세히 다뤄보겠습니다.</p>
-<h2 id="이벤트루프-작업-이해하기"><a href="#이벤트루프-작업-이해하기" class="headerlink" title="이벤트루프 작업 이해하기"></a>이벤트루프 작업 이해하기</h2><p>이벤트루프를 이해하기 위해서는, 각 단계에 어떤 작업들이 수행되는지를 알아야 합니다.<br>이벤트루프가 어떻게 실행되는 지는 다음과 같습니다.  </p>
-<p><img src="https://user-images.githubusercontent.com/13212502/52569657-0c00fd00-2e55-11e9-8488-0c7b723cb922.png" alt="eventloop"></p>
-<p>여기서 초록색 박스는 이벤트루프의 각 단계들을 의미합니다.<br>이 단계들을 하나씩 살펴보겠습니다. 자세한 설명은 <a href="https://nodejs.org/ko/docs/guides/event-loop-timers-and-nexttick/" rel="external nofollow noopener noreferrer" target="_blank">Node.js 공식문서</a>에 한국어로 아주 잘 설명되어있으니, 읽어보시면 도움이 될 것입니다.</p>
-<h2 id="Timers"><a href="#Timers" class="headerlink" title="Timers"></a>Timers</h2><p>setTimeout() 또는 setInterval()에서 스케줄링된 모든 것은 여기서 처리됩니다. 하지만 그 타이머 안에 등록한 콜백함수의 실행은 Polling 단계의 가장 앞부분에서 이루어집니다.</p>
-<h2 id="IO-Callbacks"><a href="#IO-Callbacks" class="headerlink" title="IO Callbacks"></a>IO Callbacks</h2><p><del>대부분의 콜백들이 여기서 처리됩니다. 사용자가 작성한 Node.js의 모든 코드는 기본적으로 콜백입니다.(예: HTTP 요청에 의한 콜백함수는 다시 여러개의 콜백함수를 실행시킵니다.)</del><br><a href="https://nodejs.org/ko/docs/guides/event-loop-timers-and-nexttick/" rel="external nofollow noopener noreferrer" target="_blank">Node.js 공식문서</a>에서 설명하는 이벤트루프의 각 단계별 역할에 대한 내용이 이 글의 원본에 적혀있는 내용과 달라 정정합니다.<br>Timers단계의 다음 단계인 Pending Callbacks 라고 불리는 단계에서는, TCP오류 같은 시스템 작업의 콜백을 반환합니다. 예를들어, TCP 소켓이 연결을 시도하다가 <code>ECONNREFUSED</code> 같은 메시지를 받으면, 이에 대한 오류보고를 위해 이에 대한 콜백함수가 IO Callbacks (pending callbacks) 단계의 큐에 추가됩니다.</p>
-<h2 id="IO-Polling"><a href="#IO-Polling" class="headerlink" title="IO Polling"></a>IO Polling</h2><p>이벤트루프가 Poll 단계에 진입하면,<br>먼저 Timers 단계에 스케줄링 되었던 콜백들 중에, 시간이 지난 타이머의 콜백을 실행합니다.<br>그 다음, Poll 단계의 큐에 있는 이벤트들을 처리합니다. 대부분의 콜백들은 이 Poll 단계에서 처리됩니다.</p>
-<h2 id="Set-Immediate-Check"><a href="#Set-Immediate-Check" class="headerlink" title="Set Immediate (=Check)"></a>Set Immediate (=Check)</h2><p>setImmediate()를 통해 등록된 모든 콜백을 실행됩니다.</p>
-<h2 id="Close"><a href="#Close" class="headerlink" title="Close"></a>Close</h2><p>‘close’ 이벤트에 대한 모든 콜백이 실행됩니다.</p>
-<h2 id="이벤트루프-모니터링"><a href="#이벤트루프-모니터링" class="headerlink" title="이벤트루프 모니터링"></a>이벤트루프 모니터링</h2><p>Node.js 어플리케이션에서 진행되는 모든 작업은 이벤트루프를 통해 실행됩니다. 이 말은 즉슨, 이 이벤트루프에 대한 메트릭을 측정할 수만 있다면, 이 정보들을 이용해 Node.js 어플리케이션에 대한 전반적인 상태나 성능에 대한 중요한 정보들을 알아낼 수 있습니다.<br>이벤트루프에서 런타임때 메트릭 정보들을 가져올 수 있는 API가 없기때문에, 각 모니터링 툴들이 직접 자기들만의 메트릭을 구축하여 이벤트루프에 대한 모니터링을 제공합니다. 여기서 우리가 이를 어떻게 해결했는지 한번 보겠습니다.</p>
-<h2 id="Tick-Frequency"><a href="#Tick-Frequency" class="headerlink" title="Tick Frequency"></a>Tick Frequency</h2><p>시간마다 tick 수입니다.</p>
-<h2 id="Tick-Duration"><a href="#Tick-Duration" class="headerlink" title="Tick Duration"></a>Tick Duration</h2><p>1번의 tick에 걸리는 시간을 의미합니다.</p>
-<h2 id="실상황에서-Tick-빈도수와-Tick-소요시간-지표"><a href="#실상황에서-Tick-빈도수와-Tick-소요시간-지표" class="headerlink" title="실상황에서 Tick 빈도수와 Tick 소요시간 지표"></a>실상황에서 Tick 빈도수와 Tick 소요시간 지표</h2><p>우리가 서로 다른레벨의 부하테스트를 줘봤을 때, 결과는 놀라웠습니다. 예제를 보여드리겠습니다.</p>
-<p>다음 시나리오에서는 다른 HTTP 서버로 외부요청을 보내는 express.js 노드 프로그램을 호출합니다.</p>
-<p>네가지 시나리오가 있습니다.</p>
+<blockquote>
+<p>this is <em>italic</em>.</p>
+</blockquote>
+<h2 id="Lists"><a href="#Lists" class="headerlink" title="Lists"></a>Lists</h2><ul>
+<li><p>unordered list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* list 1</span><br><span class="line">* list 2</span><br><span class="line">* list 3</span><br><span class="line">* list 4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>list 1</p>
+</li>
+<li>list 2</li>
+<li>list 3</li>
+<li>list 4</li>
+</ul>
+<hr>
+<ul>
+<li>ordered list<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. list 1</span><br><span class="line">2. list 2</span><br><span class="line">3. list 3</span><br><span class="line">4. list 4</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 <ol>
-<li><p>Idle<br>들어오는 요청이 없습니다.</p>
+<li>list 1</li>
+<li>list 2</li>
+<li>list 3</li>
+<li>list 4</li>
+</ol>
+<hr>
+<ul>
+<li><p>nested list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">* parent 1</span><br><span class="line"> * child 1</span><br><span class="line"> * child 2</span><br><span class="line">* parent 2</span><br><span class="line"> * child 1</span><br><span class="line"> * child 2</span><br><span class="line"> * child 3</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>ab -c 5<br><a href="https://httpd.apache.org/docs/2.4/ko/programs/ab.html" rel="external nofollow noopener noreferrer" target="_blank">Apache bench</a>를 이용하여 한번에 5개의 요청을 생성합니다.</p>
+<li><p>parent 1</p>
+<ul>
+<li>child 1</li>
+<li>child 2</li>
+</ul>
 </li>
-<li><p>ab -c 10<br>한번에 10개의 요청을 생성합니다.</p>
+<li>parent 2<ul>
+<li>child 1</li>
+<li>child 2</li>
+<li>child 3</li>
+<li>child’s child 1</li>
+</ul>
 </li>
-<li><p>ab -c 10 (느린 백엔드)<br>서버가 요청보내는 외부 HTTP 서버는 요청을 받으면 1초 후에 응답을 반환하도록 하여, 느린 백엔드를 만들었습니다. 이렇게 하면, 노드서버가 HTTP 서버로부터 응답을 기다리면서 흔히 말하는 back pressure가 발생합니다.</p>
+</ul>
+<hr>
+<ul>
+<li>nested list 에서도 indent를 맞추어 주고 싶을때는 다음과 같이 한다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. this is for indent.</span><br><span class="line">same indent.</span><br><span class="line"></span><br><span class="line"> same indent 2.</span><br><span class="line"></span><br><span class="line">2. this is for number 2.</span><br><span class="line"></span><br><span class="line"> same indent.</span><br><span class="line"> &gt; do blockquotes.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li><p>this is for indent.<br>same indent.</p>
+<p>same indent 2.</p>
+</li>
+<li><p>this is for number 2.</p>
+<p>same indent.</p>
+<blockquote>
+<p>do blockquotes.</p>
+</blockquote>
 </li>
 </ol>
-<p><img src="https://user-images.githubusercontent.com/13212502/52789733-08b17f80-30a8-11e9-9806-2f65964d0207.png" alt="eventloop_f"></p>
-<p>이 결과 차트를 보면, 재밌는 내용을 발견 할 수 있습니다.</p>
-<p>이벤트루프 tick 수행시간과 빈도는 동적으로 조정됩니다.</p>
-<p>노드 어플리케이션에 아무런 요청도 없는 상태인 경우, (타이머, 콜백 등) 대기중인 작업이 없는 상태로서, 위에서 설명했던 모든 단계들(timers, I/O callbacks, polling 등)을 미친듯이 계속 도는게 아니라 이벤트루프가 이에 적응하고 polling 단계에서 새로운 콜백이 등록되기를 잠시 기다립니다.</p>
-<p>즉, 요청이 없을때에는 이벤트루프의 tick 빈도는 적고 tick의 duration은 긴 상황입니다.</p>
-<p>이 상황에서의 지표는 이후에 진행한 느린 백엔드에서 진행했던 지표와 유사합니다.</p>
-<p>이 노드 어플리케이션은 5개의 요청을 한번에 요청했던 시나리오에서 최고로 좋은 성능을 냅니다.</p>
-<p>결과적으로, tick 빈도나 tick duration을 보고 분석할 때에는 노드 서버의 초당요청 수를 기준삼아 보아야합니다.</p>
-<p>이 지표들은 우리에게 의미있는 내용들을 제공해주긴 했지만, 아직까지는 실제로 어느 단계(phase)에서 시간이 소비되었는지 알지 못하기 때문에 두가지 측정항목이 더 필요합니다.</p>
-<h2 id="작업-처리-지연시간"><a href="#작업-처리-지연시간" class="headerlink" title="작업 처리 지연시간"></a>작업 처리 지연시간</h2><p>작업처리 지연시간은 비동기 작업이 스레드 풀에서 처리 될 때까지 걸리는 시간을 의미합니다.</p>
-<p>여기서 지연시간이 길다면, 이는 libuv 스레드 풀의 사용량이 많고 굉장히 바쁘다는 것과 같습니다.</p>
-<p>이 지연되는 시간을 측정하기 위해, express.js 노드 어플리케이션에 <a href="https://github.com/lovell/sharp" rel="external nofollow noopener noreferrer" target="_blank">Sharp</a> 라이브러리를 이용하여 이미지를 가공하거나 처리해주는 API를 추가했습니다. 이미지처리는 부하가 있는 작업이기에, Sharp 라이브러리는 스레드 풀을 사용합니다.</p>
-<p><img src="https://user-images.githubusercontent.com/13212502/52790882-fe44b500-30aa-11e9-906c-a4485f15e916.png" alt="sharp"></p>
-<p>그래프를 보면, Apache bench를 이용하여 5개의 요청을 동시에 보냈을때 이미지처리가 있는 요청과 그 전에서 진행했던 일반적인 HTTP서버 처리가 있는 요청은 확실하게 구별됩니다.</p>
-<h2 id="이벤트루프-지연시간"><a href="#이벤트루프-지연시간" class="headerlink" title="이벤트루프 지연시간"></a>이벤트루프 지연시간</h2><p>이벤트루프 지연시간은 setTimeout(X)로 스케줄링 된 작업이 실제로 처리될 때 까지 추가로 소요되는 시간을 의미합니다.</p>
-<p>이벤트루프 지연시간이 높다는 것은, 이벤트루프가 콜백을 처리하기 엄청 바쁜 상태라는 것과 같습니다.</p>
-<p>이 이벤트루프 지연시간 측정을 위해, 이번에는 굉장히 비효율적인 알고리즘으로 피보나치를 계산하는 API를 추가했습니다.</p>
-<p><img src="https://user-images.githubusercontent.com/13212502/52791701-ec641180-30ac-11e9-9859-50fc3bb302bd.png" alt="fibonacci"></p>
-<p>Apache bench를 이용해 피보나치를 계산하는 API로 부하를 주면 콜백 큐가 바쁘다는 걸 알 수 있습니다.</p>
-<p>우리는 이러한 4가지 주요 메트릭(Tick Frequency, Tick duration, 작업처리 지연시간, 이벤트루프 지연시간)으로 Node.js 내부동작을 더 잘 이해할 수 있게 되었고, 꽤 중요한 내용들도 알게되었습니다.</p>
-<h2 id="이벤트루프-튜닝"><a href="#이벤트루프-튜닝" class="headerlink" title="이벤트루프 튜닝"></a>이벤트루프 튜닝</h2><p>물론, 이 메트릭 정보들만으로 문제를 해결 할 수는 없습니다. 실제 이벤트루프가 고갈되었을때, 어떻게 대응 해야하는지 알아봅시다.</p>
-<p><img src="https://user-images.githubusercontent.com/13212502/52792299-5e892600-30ae-11e9-8124-e96d83f3c4f3.png" alt="exhausted"></p>
-<h2 id="모든-CPU-활용"><a href="#모든-CPU-활용" class="headerlink" title="모든 CPU 활용"></a>모든 CPU 활용</h2><p>Node.js 어플리케이션은 싱글 스레드로 작동합니다. 멀티코어 환경에서 1개의 Node.js 어플리케이션은 효율적으로 작동하지 않습니다. 낭비되는 CPU가 있기 때문입니다. <a href="https://nodejs.org/api/cluster.html" rel="external nofollow noopener noreferrer" target="_blank">Cluster Module</a>을 사용하면, CPU 마다 child 프로세스를 쉽게 만들 수 있습니다. 각각의 child 프로세스는 각자 자신만의 이벤트루프가 존재하고 master 프로세스는 모든 자식들에게 요청을 분산시켜 줍니다.</p>
-<h2 id="스레드-풀-조정"><a href="#스레드-풀-조정" class="headerlink" title="스레드 풀 조정"></a>스레드 풀 조정</h2><p>앞서 언급했듯이, libuv는 스레드 4개로 스레드 풀을 생성합니다. 스레드 풀의 기본 크기는 <code>UV_THREADPOOL_SIZE</code> 환경변수를 설정해서 수정할 수 있습니다. 이 방법은 I/O 작업이 많은 어플리케이션에서 도움이 될 수 있겠지만, 큰 스레드 풀은 메모리나 CPU를 고갈시킬 수 있음을 기억해야 합니다.</p>
-<h2 id="작업을-다른서비스에-맡기기"><a href="#작업을-다른서비스에-맡기기" class="headerlink" title="작업을 다른서비스에 맡기기"></a>작업을 다른서비스에 맡기기</h2><p>만약 Node.js가 CPU사용이 과도하게 필요한 작업에서 사용된다면, 이 특정 작업에 더 잘맞는 다른 언어를 선택해서 그 쪽으로 처리를 옮겨 작업량을 줄이는 것이 가능한 방법일 수 있습니다.</p>
-<h2 id="요약"><a href="#요약" class="headerlink" title="요약"></a>요약</h2><ul>
-<li>이벤트루프는 Node.js를 실행시켜주는 것이다.</li>
-<li>이벤트루프의 기능을 잘못 알고 있는 경우가 많습니다 - 몇가지 단계들을 차례대로 반복하면서 순서대로 각 단계들의 작업들을 처리해나갑니다.</li>
-<li>이벤트루프 자체에서 제공해주는 메트릭이 없으므로, 수집된 메트릭들은 APM 제품들마다 다릅니다.</li>
-<li>이벤트루프 메트릭들은 병목현상에 대해 중요한 정보들을 제공해주지만, 이벤트루프와 실행중인 코드에 대한 깊은 이해가 가장 중요합니다.</li>
-</ul>
-<p>감사합니다.</p>
+<h2 id="hr-수평선"><a href="#hr-수평선" class="headerlink" title="hr(수평선)"></a>hr(수평선)</h2><p>수평선은 다음과 같이 나타낸다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* * *</span><br><span class="line">***</span><br><span class="line">*****</span><br><span class="line">- - -</span><br></pre></td></tr></table></figure></p>
+<hr>
+<hr>
+<hr>
+<hr>
+<h2 id="Paragraphs"><a href="#Paragraphs" class="headerlink" title="Paragraphs"></a>Paragraphs</h2><p>다음과 같은 문단을 작성한다고 해보자.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is paragraph.</span><br><span class="line">this is sentence 1.</span><br><span class="line">this is sentence 2.</span><br></pre></td></tr></table></figure></p>
+<p>하지만 이를 markdown으로 렌더링하면 줄바꿈이 되지 않고 다음과 같이 보인다.</p>
+<p>this is paragraph.<br>this is sentence 1.<br>this is sentence 2.</p>
+<p>줄바꿈을 하려면 여러가지 방법이 있는데 첫번째는 <em>hard break</em> 라고 불리는 방법을 사용하는 것이다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">this is paragraph.</span><br><span class="line"></span><br><span class="line">this is sentence 1.</span><br><span class="line"></span><br><span class="line">this is sentence 2.</span><br></pre></td></tr></table></figure></p>
+<p>this is paragraph.</p>
+<p>this is sentence 1.</p>
+<p>this is sentence 2.</p>
+<hr>
+<p><em>soft break</em> 방식은 다음과 같다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is paragraph.··</span><br><span class="line">this is sentence 1.··</span><br><span class="line">this is sentence 2.··</span><br></pre></td></tr></table></figure></p>
+<p>(여기서의 ·은 space를 의미한다.)<br>즉, 줄의 마지막에 space 2개를 붙여주면 된다.</p>
+<p>this is paragraph.<br>this is sentence 1.<br>this is sentence 2.  </p>
 
         </div>
         

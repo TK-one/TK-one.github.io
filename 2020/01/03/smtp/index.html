@@ -178,7 +178,7 @@
 <p>메일서버에서 상대 메일서버로 메일을 보내는 상황에서, 먼저 클라이언트 SMTP는 서버 SMTP의 25번 포트로 TCP연결을 맺는다. 만약 서버가 죽어있으면 클라이언트는 나중에 다시 시도한다.<br>TCP 연결이 맺어지면, 클라이언트와 서버는 SMTP 핸드쉐이킹을 수행한다. 이 SMTP 핸드쉐이킹 과정에서 클라이언트는 송신자와 수신자의 email 주소를 제공한다.  </p>
 <p>핸드쉐이킹 과정을 마치면, 클라이언트는 메시지를 보낸다.  </p>
 <p>SMTP 클라이언트와 SMTP 서버 사이의 메시지 전달과정을 예를들어 살펴보자.<br>클라이언트 호스트네임은 github.io 이고, 서버 호스트네임은 korea.ac.kr 이라고 하자.<br>C는 클라, S는 서버를 나타내고 TCP 연결 직후의 상황을 가정한다.<br>메일 내용은 “Hello, this is TK-one. Can I know the result of the interview?” 이다.</p>
-<p><code><br>S: 220 korea.ac.kr<br>C: HELO github.io<br>S: 250 Hello github.io, pleased to meet you<br>C: MAIL FROM: <a href="mailto:&#116;&#x6b;&#x2d;&#x6f;&#110;&#x65;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x69;&#x6f;">&#116;&#x6b;&#x2d;&#x6f;&#110;&#x65;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x69;&#x6f;</a><br>S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok<br>C: RCPT TO: <a href="mailto:&#107;&#105;&#109;&#x40;&#107;&#x6f;&#114;&#101;&#x61;&#46;&#x61;&#x63;&#46;&#107;&#x72;">&#107;&#105;&#109;&#x40;&#107;&#x6f;&#114;&#101;&#x61;&#46;&#x61;&#x63;&#46;&#107;&#x72;</a><br>S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok<br>C: DATA<br>S: 354 Enter mail, end with “.” on a line by itself<br>C: Hello, this is TK-one. (메일내용)<br>C: Can I know the result of the interview? (메일내용)<br>C: .<br>S: 250 Message accepted for delivery<br>C: QUIT<br>S: 221 korea.ac.kr closing connection<br></code></p>
+<p><code><br>S: 220 korea.ac.kr<br>C: HELO github.io<br>S: 250 Hello github.io, pleased to meet you<br>C: MAIL FROM: <a href="mailto:&#x74;&#x6b;&#45;&#111;&#x6e;&#x65;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#105;&#x6f;">&#x74;&#x6b;&#45;&#111;&#x6e;&#x65;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#105;&#x6f;</a><br>S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok<br>C: RCPT TO: <a href="mailto:&#107;&#105;&#109;&#64;&#107;&#111;&#x72;&#101;&#x61;&#46;&#x61;&#99;&#46;&#107;&#x72;">&#107;&#105;&#109;&#64;&#107;&#111;&#x72;&#101;&#x61;&#46;&#x61;&#99;&#46;&#107;&#x72;</a><br>S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok<br>C: DATA<br>S: 354 Enter mail, end with “.” on a line by itself<br>C: Hello, this is TK-one. (메일내용)<br>C: Can I know the result of the interview? (메일내용)<br>C: .<br>S: 250 Message accepted for delivery<br>C: QUIT<br>S: 221 korea.ac.kr closing connection<br></code></p>
 <p>클라이언트는 5개의 명령(<strong>HELO, MAIL FROM, RCPT TO, DATA, QUIT</strong>)을 내리며 하나의 점(.)으로 된 라인을 송신하면 이는 메시지의 끝을 의미한다.<br>서버는 각 명령에 대해 답하며, 각 응답은 응답코드와 옵션 설명을 갖고 있다.<br>그리고 주의할 점이 있는데, SMTP는 메시지의 body와 header를 포함하여 전부 7bit ASCII 코드로 작성되어야 한다.<br>HTTP는 이런 제한이 없는 반면, SMTP는 한글이나 binary 데이터 처럼 ASCII가 아닌 문자를 포함한다면 반드시 이 메시지는 전송되기 전에 7bit ASCII로 인코딩이 되어야한다.  </p>
 <p>이렇게 SMTP를 통해 한 메일서버에서 다른 메일서버로 메시지가 전달된다.<br>그렇다면 수신자는 자신의 PC에서 user agent를 통해 자신의 메일서버에 있는 메시지들을 어떻게 얻을 수 있을까?<br>수신자의 user agent는 메일을 가져오기위해 SMTP를 사용할 수는 없다. 왜냐하면 SMTP는 푸시(push)용 프로토콜인 반면, 메시지를 가져오는 것은 풀(pull) 동작이기 때문이다.<br>여기서는 메일서버로부터 자신의 user agent로 메시지를 가져오기 위해 특별한 메일 접속 프로토콜을 사용한다. 이들중엔 <strong>POP3(Post Office Protocol - Version 3), IMAP(Internet Mail Access Protocol), HTTP</strong> 등이 있다.<br><br><br><br><br>참고: <a href="https://www.amazon.com/Computer-Networking-Top-Down-Approach-7th/dp/0133594149" rel="external nofollow noopener noreferrer" target="_blank">Computer Networking - A Top-Down approach</a></p>
 
@@ -209,6 +209,13 @@
 
 <div class="card card-transparent">
     <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2022/03/05/how-to-use-markdown/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">마크다운(Markdown) 사용법</span>
+            </a>
+        </div>
         
         
         <div class="level-end">
@@ -262,7 +269,7 @@
                 <div>
                     
                     <figure class="image is-128x128 has-mb-6">
-                        <img class="" src="/images/profile.png" alt="TK-one">
+                        <img class="" src="/images/tk-one-profile.jpeg" alt="TK-one">
                     </figure>
                     
                     <p class="is-size-4 is-block">
@@ -291,7 +298,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            3
+                            4
                         </p>
                     </a>
                 </div>
@@ -303,7 +310,7 @@
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
-                            2
+                            3
                         </p>
                     </a>
                 </div>
@@ -315,7 +322,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            3
+                            4
                         </p>
                     </a>
                 </div>
@@ -374,6 +381,14 @@
             <span class="level-end">
                 <span class="level-item tag">2</span>
             </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/tool/">
+            <span class="level-start">
+                <span class="level-item">tool</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
         </a></li>
             </ul>
         </div>
@@ -385,7 +400,7 @@
         <h3 class="menu-label">
             태그 클라우드
         </h3>
-        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/smtp/" style="font-size: 10px;">smtp</a>
+        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/smtp/" style="font-size: 10px;">smtp</a>
     </div>
 </div>
     
@@ -397,6 +412,25 @@
         <h3 class="menu-label">
             최근 글
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2022/03/05/how-to-use-markdown/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="마크다운(Markdown) 사용법">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time></div>
+                    <a href="/2022/03/05/how-to-use-markdown/" class="title has-link-black-ter is-size-6 has-text-weight-normal">마크다운(Markdown) 사용법</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/tool/">tool</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -467,6 +501,17 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2022/03/">
+                <span class="level-start">
+                    <span class="level-item">3월 2022</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
                     <span class="level-item">1월 2020</span>
@@ -515,6 +560,13 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/event-loop/">
                         <span class="tag">event-loop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/markdown/">
+                        <span class="tag">markdown</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -557,6 +609,25 @@
         
         <article class="media">
             
+            <a href="/2022/03/05/how-to-use-markdown/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="마크다운(Markdown) 사용법">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time></div>
+                    <a href="/2022/03/05/how-to-use-markdown/" class="title has-link-black-ter is-size-6 has-text-weight-normal">마크다운(Markdown) 사용법</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/tool/">tool</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/01/03/smtp/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/thumbnail.svg" alt="인터넷 메일시스템 (SMTP)">
@@ -624,6 +695,17 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2022/03/">
+                <span class="level-start">
+                    <span class="level-item">3월 2022</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
                     <span class="level-item">1월 2020</span>
@@ -677,6 +759,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/markdown/">
+                        <span class="tag">markdown</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/nodejs/">
                         <span class="tag">nodejs</span>
                         <span class="tag is-grey">2</span>
@@ -711,7 +800,7 @@
                 
                 </a>
                 <p class="is-size-7">
-                &copy; 2020 TK-one&nbsp;
+                &copy; 2022 TK-one&nbsp;
                 Powered by <a href="https://hexo.io/" target="_blank" rel="external nofollow noopener noreferrer">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="external nofollow noopener noreferrer">Icarus</a>
                 
                 <br>

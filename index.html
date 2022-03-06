@@ -126,6 +126,176 @@
         
         <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
             <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/tool/">tool</a>
+                </div>
+                
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                <a class="has-link-black-ter" href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a>
+            
+        </h1>
+        <div class="content">
+            <p>이번 포스트는 markdown에 대해 알아보는 포스트입니다.<br>자주 사용하는 markdown 키워드들 위주로 정리하였습니다.  </p>
+<h2 id="Italics-and-Bolds"><a href="#Italics-and-Bolds" class="headerlink" title="Italics and Bolds"></a>Italics and Bolds</h2><ul>
+<li>Italics<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is _italic_</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>this is <em>italic</em></p>
+<ul>
+<li>Bolds<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is **bold**</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>this is <strong>bold</strong></p>
+<ul>
+<li>Italics and Bolds<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is **_italics and bolds_**</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>this is <strong><em>italics and bolds</em></strong></p>
+<h2 id="Headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h2><ul>
+<li>Header 1부터 6까지 지원한다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># header 1</span><br><span class="line">## header 2</span><br><span class="line">### header 3</span><br><span class="line">#### header 4</span><br><span class="line">##### header 5</span><br><span class="line">###### header 6</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="header-1"><a href="#header-1" class="headerlink" title="header 1"></a>header 1</h1><h2 id="header-2"><a href="#header-2" class="headerlink" title="header 2"></a>header 2</h2><h3 id="header-3"><a href="#header-3" class="headerlink" title="header 3"></a>header 3</h3><h4 id="header-4"><a href="#header-4" class="headerlink" title="header 4"></a>header 4</h4><h5 id="header-5"><a href="#header-5" class="headerlink" title="header 5"></a>header 5</h5><h6 id="header-6"><a href="#header-6" class="headerlink" title="header 6"></a>header 6</h6><h2 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h2><h4 id="inline-링크와-reference-링크가-있다"><a href="#inline-링크와-reference-링크가-있다" class="headerlink" title="inline 링크와 reference 링크가 있다."></a>inline 링크와 reference 링크가 있다.</h4><ul>
+<li>inline link<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[블로그 바로가기](https://tk-one.github.io)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><a href="https://tk-one.github.io">블로그 바로가기</a></p>
+<ul>
+<li>reference link<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Here&apos;s [블로그 바로가기][my github].</span><br><span class="line"></span><br><span class="line">[my github]: https://tk-one.github.io</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>Here’s <a href="https://tk-one.github.io">블로그 바로가기</a>.  </p>
+<h2 id="Image"><a href="#Image" class="headerlink" title="Image"></a>Image</h2><h4 id="이미지도-링크와-비슷하게-inline-이미지와-reference-이미지가-있다"><a href="#이미지도-링크와-비슷하게-inline-이미지와-reference-이미지가-있다" class="headerlink" title="이미지도 링크와 비슷하게 inline 이미지와 reference 이미지가 있다."></a>이미지도 링크와 비슷하게 inline 이미지와 reference 이미지가 있다.</h4><ul>
+<li>inline image<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![alt text](url)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="/images/markdown.png" alt="markdown"></p>
+<ul>
+<li>reference image<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">![alt text][markdown image]</span><br><span class="line"></span><br><span class="line">[markdown image]: /images/markdown.png</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="/images/markdown.png" alt="markdown"></p>
+<ul>
+<li>이미지의 width와 height를 직접 지정해야 하는 상황이면 HTML의 img tag를 직접 사용한다.</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;/path&quot; width=&quot;500px&quot; height=&quot;300px&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/markdown.png" width="500px" height="300px"></p>
+<h2 id="BlockQuotes"><a href="#BlockQuotes" class="headerlink" title="BlockQuotes"></a>BlockQuotes</h2><ul>
+<li>BlockQuotes를 만들기 위해서는 앞에 caret(&gt;)을 넣어준다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; this is quotes.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>this is quotes.</p>
+<ul>
+<li>BlockQuotes안에서도 다른 markdown 문법을 사용할 수 있다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; this is _italic_.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>this is <em>italic</em>.</p>
+</blockquote>
+<h2 id="Lists"><a href="#Lists" class="headerlink" title="Lists"></a>Lists</h2><ul>
+<li><p>unordered list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* list 1</span><br><span class="line">* list 2</span><br><span class="line">* list 3</span><br><span class="line">* list 4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>list 1</p>
+</li>
+<li>list 2</li>
+<li>list 3</li>
+<li>list 4</li>
+</ul>
+<hr>
+<ul>
+<li>ordered list<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. list 1</span><br><span class="line">2. list 2</span><br><span class="line">3. list 3</span><br><span class="line">4. list 4</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li>list 1</li>
+<li>list 2</li>
+<li>list 3</li>
+<li>list 4</li>
+</ol>
+<hr>
+<ul>
+<li><p>nested list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">* parent 1</span><br><span class="line"> * child 1</span><br><span class="line"> * child 2</span><br><span class="line">* parent 2</span><br><span class="line"> * child 1</span><br><span class="line"> * child 2</span><br><span class="line"> * child 3</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>parent 1</p>
+<ul>
+<li>child 1</li>
+<li>child 2</li>
+</ul>
+</li>
+<li>parent 2<ul>
+<li>child 1</li>
+<li>child 2</li>
+<li>child 3</li>
+<li>child’s child 1</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>nested list 에서도 indent를 맞추어 주고 싶을때는 다음과 같이 한다.<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. this is for indent.</span><br><span class="line">same indent.</span><br><span class="line"></span><br><span class="line"> same indent 2.</span><br><span class="line"></span><br><span class="line">2. this is for number 2.</span><br><span class="line"></span><br><span class="line"> same indent.</span><br><span class="line"> &gt; do blockquotes.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ol>
+<li><p>this is for indent.<br>same indent.</p>
+<p>same indent 2.</p>
+</li>
+<li><p>this is for number 2.</p>
+<p>same indent.</p>
+<blockquote>
+<p>do blockquotes.</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="hr-수평선"><a href="#hr-수평선" class="headerlink" title="hr(수평선)"></a>hr(수평선)</h2><p>수평선은 다음과 같이 나타낸다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* * *</span><br><span class="line">***</span><br><span class="line">*****</span><br><span class="line">- - -</span><br></pre></td></tr></table></figure></p>
+<hr>
+<hr>
+<hr>
+<hr>
+<h2 id="Paragraphs"><a href="#Paragraphs" class="headerlink" title="Paragraphs"></a>Paragraphs</h2><p>다음과 같은 문단을 작성한다고 해보자.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is paragraph.</span><br><span class="line">this is sentence 1.</span><br><span class="line">this is sentence 2.</span><br></pre></td></tr></table></figure></p>
+<p>하지만 이를 markdown으로 렌더링하면 줄바꿈이 되지 않고 다음과 같이 보인다.</p>
+<p>this is paragraph.<br>this is sentence 1.<br>this is sentence 2.</p>
+<p>줄바꿈을 하려면 여러가지 방법이 있는데 첫번째는 <em>hard break</em> 라고 불리는 방법을 사용하는 것이다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">this is paragraph.</span><br><span class="line"></span><br><span class="line">this is sentence 1.</span><br><span class="line"></span><br><span class="line">this is sentence 2.</span><br></pre></td></tr></table></figure></p>
+<p>this is paragraph.</p>
+<p>this is sentence 1.</p>
+<p>this is sentence 2.</p>
+<hr>
+<p><em>soft break</em> 방식은 다음과 같다.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">this is paragraph.··</span><br><span class="line">this is sentence 1.··</span><br><span class="line">this is sentence 2.··</span><br></pre></td></tr></table></figure></p>
+<p>(여기서의 ·은 space를 의미한다.)<br>즉, 줄의 마지막에 space 2개를 붙여주면 된다.</p>
+<p>this is paragraph.<br>this is sentence 1.<br>this is sentence 2.  </p>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
                 <time class="level-item has-text-grey" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time>
                 
                 <div class="level-item">
@@ -169,7 +339,7 @@
 <p>메일서버에서 상대 메일서버로 메일을 보내는 상황에서, 먼저 클라이언트 SMTP는 서버 SMTP의 25번 포트로 TCP연결을 맺는다. 만약 서버가 죽어있으면 클라이언트는 나중에 다시 시도한다.<br>TCP 연결이 맺어지면, 클라이언트와 서버는 SMTP 핸드쉐이킹을 수행한다. 이 SMTP 핸드쉐이킹 과정에서 클라이언트는 송신자와 수신자의 email 주소를 제공한다.  </p>
 <p>핸드쉐이킹 과정을 마치면, 클라이언트는 메시지를 보낸다.  </p>
 <p>SMTP 클라이언트와 SMTP 서버 사이의 메시지 전달과정을 예를들어 살펴보자.<br>클라이언트 호스트네임은 github.io 이고, 서버 호스트네임은 korea.ac.kr 이라고 하자.<br>C는 클라, S는 서버를 나타내고 TCP 연결 직후의 상황을 가정한다.<br>메일 내용은 “Hello, this is TK-one. Can I know the result of the interview?” 이다.</p>
-<p><code><br>S: 220 korea.ac.kr<br>C: HELO github.io<br>S: 250 Hello github.io, pleased to meet you<br>C: MAIL FROM: <a href="mailto:&#116;&#x6b;&#x2d;&#x6f;&#110;&#x65;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x69;&#x6f;">&#116;&#x6b;&#x2d;&#x6f;&#110;&#x65;&#64;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#x69;&#x6f;</a><br>S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok<br>C: RCPT TO: <a href="mailto:&#107;&#105;&#109;&#x40;&#107;&#x6f;&#114;&#101;&#x61;&#46;&#x61;&#x63;&#46;&#107;&#x72;">&#107;&#105;&#109;&#x40;&#107;&#x6f;&#114;&#101;&#x61;&#46;&#x61;&#x63;&#46;&#107;&#x72;</a><br>S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok<br>C: DATA<br>S: 354 Enter mail, end with “.” on a line by itself<br>C: Hello, this is TK-one. (메일내용)<br>C: Can I know the result of the interview? (메일내용)<br>C: .<br>S: 250 Message accepted for delivery<br>C: QUIT<br>S: 221 korea.ac.kr closing connection<br></code></p>
+<p><code><br>S: 220 korea.ac.kr<br>C: HELO github.io<br>S: 250 Hello github.io, pleased to meet you<br>C: MAIL FROM: <a href="mailto:&#x74;&#x6b;&#45;&#111;&#x6e;&#x65;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#105;&#x6f;">&#x74;&#x6b;&#45;&#111;&#x6e;&#x65;&#x40;&#x67;&#105;&#x74;&#104;&#117;&#x62;&#46;&#105;&#x6f;</a><br>S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok<br>C: RCPT TO: <a href="mailto:&#107;&#105;&#109;&#64;&#107;&#111;&#x72;&#101;&#x61;&#46;&#x61;&#99;&#46;&#107;&#x72;">&#107;&#105;&#109;&#64;&#107;&#111;&#x72;&#101;&#x61;&#46;&#x61;&#99;&#46;&#107;&#x72;</a><br>S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok<br>C: DATA<br>S: 354 Enter mail, end with “.” on a line by itself<br>C: Hello, this is TK-one. (메일내용)<br>C: Can I know the result of the interview? (메일내용)<br>C: .<br>S: 250 Message accepted for delivery<br>C: QUIT<br>S: 221 korea.ac.kr closing connection<br></code></p>
 <p>클라이언트는 5개의 명령(<strong>HELO, MAIL FROM, RCPT TO, DATA, QUIT</strong>)을 내리며 하나의 점(.)으로 된 라인을 송신하면 이는 메시지의 끝을 의미한다.<br>서버는 각 명령에 대해 답하며, 각 응답은 응답코드와 옵션 설명을 갖고 있다.<br>그리고 주의할 점이 있는데, SMTP는 메시지의 body와 header를 포함하여 전부 7bit ASCII 코드로 작성되어야 한다.<br>HTTP는 이런 제한이 없는 반면, SMTP는 한글이나 binary 데이터 처럼 ASCII가 아닌 문자를 포함한다면 반드시 이 메시지는 전송되기 전에 7bit ASCII로 인코딩이 되어야한다.  </p>
 <p>이렇게 SMTP를 통해 한 메일서버에서 다른 메일서버로 메시지가 전달된다.<br>그렇다면 수신자는 자신의 PC에서 user agent를 통해 자신의 메일서버에 있는 메시지들을 어떻게 얻을 수 있을까?<br>수신자의 user agent는 메일을 가져오기위해 SMTP를 사용할 수는 없다. 왜냐하면 SMTP는 푸시(push)용 프로토콜인 반면, 메시지를 가져오는 것은 풀(pull) 동작이기 때문이다.<br>여기서는 메일서버로부터 자신의 user agent로 메시지를 가져오기 위해 특별한 메일 접속 프로토콜을 사용한다. 이들중엔 <strong>POP3(Post Office Protocol - Version 3), IMAP(Internet Mail Access Protocol), HTTP</strong> 등이 있다.<br><br><br><br><br>참고: <a href="https://www.amazon.com/Computer-Networking-Top-Down-Approach-7th/dp/0133594149" rel="external nofollow noopener noreferrer" target="_blank">Computer Networking - A Top-Down approach</a></p>
 
@@ -417,7 +587,7 @@
                 <div>
                     
                     <figure class="image is-128x128 has-mb-6">
-                        <img class="" src="/images/profile.png" alt="TK-one">
+                        <img class="" src="/images/tk-one-profile.jpeg" alt="TK-one">
                     </figure>
                     
                     <p class="is-size-4 is-block">
@@ -446,7 +616,7 @@
                     </p>
                     <a href="/archives">
                         <p class="title has-text-weight-normal">
-                            3
+                            4
                         </p>
                     </a>
                 </div>
@@ -458,7 +628,7 @@
                     </p>
                     <a href="/categories">
                         <p class="title has-text-weight-normal">
-                            2
+                            3
                         </p>
                     </a>
                 </div>
@@ -470,7 +640,7 @@
                     </p>
                     <a href="/tags">
                         <p class="title has-text-weight-normal">
-                            3
+                            4
                         </p>
                     </a>
                 </div>
@@ -529,6 +699,14 @@
             <span class="level-end">
                 <span class="level-item tag">2</span>
             </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/tool/">
+            <span class="level-start">
+                <span class="level-item">tool</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
         </a></li>
             </ul>
         </div>
@@ -540,7 +718,7 @@
         <h3 class="menu-label">
             태그 클라우드
         </h3>
-        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/smtp/" style="font-size: 10px;">smtp</a>
+        <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/smtp/" style="font-size: 10px;">smtp</a>
     </div>
 </div>
     
@@ -552,6 +730,25 @@
         <h3 class="menu-label">
             최근 글
         </h3>
+        
+        <article class="media">
+            
+            <a href="/2022/03/05/how-to-use-markdown/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="마크다운(Markdown) 사용법">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time></div>
+                    <a href="/2022/03/05/how-to-use-markdown/" class="title has-link-black-ter is-size-6 has-text-weight-normal">마크다운(Markdown) 사용법</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/tool/">tool</a>
+                    </p>
+                </div>
+            </div>
+        </article>
         
         <article class="media">
             
@@ -622,6 +819,17 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2022/03/">
+                <span class="level-start">
+                    <span class="level-item">3월 2022</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
                     <span class="level-item">1월 2020</span>
@@ -670,6 +878,13 @@
                 <div class="control">
                     <a class="tags has-addons" href="/tags/event-loop/">
                         <span class="tag">event-loop</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/markdown/">
+                        <span class="tag">markdown</span>
                         <span class="tag is-grey">1</span>
                     </a>
                 </div>
@@ -712,6 +927,25 @@
         
         <article class="media">
             
+            <a href="/2022/03/05/how-to-use-markdown/" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/images/thumbnail.svg" alt="마크다운(Markdown) 사용법">
+                </p>
+            </a>
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time></div>
+                    <a href="/2022/03/05/how-to-use-markdown/" class="title has-link-black-ter is-size-6 has-text-weight-normal">마크다운(Markdown) 사용법</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/tool/">tool</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2020/01/03/smtp/" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/images/thumbnail.svg" alt="인터넷 메일시스템 (SMTP)">
@@ -779,6 +1013,17 @@
         <ul class="menu-list">
         
         <li>
+            <a class="level is-marginless" href="/archives/2022/03/">
+                <span class="level-start">
+                    <span class="level-item">3월 2022</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
             <a class="level is-marginless" href="/archives/2020/01/">
                 <span class="level-start">
                     <span class="level-item">1월 2020</span>
@@ -832,6 +1077,13 @@
                 </div>
                 
                 <div class="control">
+                    <a class="tags has-addons" href="/tags/markdown/">
+                        <span class="tag">markdown</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
                     <a class="tags has-addons" href="/tags/nodejs/">
                         <span class="tag">nodejs</span>
                         <span class="tag is-grey">2</span>
@@ -866,7 +1118,7 @@
                 
                 </a>
                 <p class="is-size-7">
-                &copy; 2020 TK-one&nbsp;
+                &copy; 2022 TK-one&nbsp;
                 Powered by <a href="https://hexo.io/" target="_blank" rel="external nofollow noopener noreferrer">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="external nofollow noopener noreferrer">Icarus</a>
                 
                 <br>
