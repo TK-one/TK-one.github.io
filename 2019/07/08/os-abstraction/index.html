@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>운영체제 1편 - 추상화 - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.   먼저 운영체제를 공부하기에 앞서 살짝 마음가짐을 다르게 해야한다.운영체제를 이해할때는 Abstraction, 즉 추상화를 이해하는게 가장 중요하다.운영체제에 대한 연구는 매일매일 이루어지고 실제 구현내용은 정말 자주 바뀐다. 그러므로 운"><meta property="og:type" content="blog"><meta property="og:title" content="운영체제 1편 - 추상화"><meta property="og:url" content="https://tk-one.github.io/2019/07/08/os-abstraction/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.   먼저 운영체제를 공부하기에 앞서 살짝 마음가짐을 다르게 해야한다.운영체제를 이해할때는 Abstraction, 즉 추상화를 이해하는게 가장 중요하다.운영체제에 대한 연구는 매일매일 이루어지고 실제 구현내용은 정말 자주 바뀐다. 그러므로 운"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/process-memory-segment.png"><meta property="og:image" content="https://tk-one.github.io/images/systemcall.png"><meta property="og:image" content="https://tk-one.github.io/images/systemcall-argument.png"><meta property="article:published_time" content="2019-07-08T13:07:35.000Z"><meta property="article:modified_time" content="2023-06-07T16:17:04.557Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="OS"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/process-memory-segment.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2019/07/08/os-abstraction/"},"headline":"운영체제 1편 - 추상화","image":["https://tk-one.github.io/images/process-memory-segment.png","https://tk-one.github.io/images/systemcall.png","https://tk-one.github.io/images/systemcall-argument.png"],"datePublished":"2019-07-08T13:07:35.000Z","dateModified":"2023-06-07T16:17:04.557Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.   먼저 운영체제를 공부하기에 앞서 살짝 마음가짐을 다르게 해야한다.운영체제를 이해할때는 Abstraction, 즉 추상화를 이해하는게 가장 중요하다.운영체제에 대한 연구는 매일매일 이루어지고 실제 구현내용은 정말 자주 바뀐다. 그러므로 운"}</script><link rel="canonical" href="https://tk-one.github.io/2019/07/08/os-abstraction/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-07-08T13:07:35.000Z" title="08/07/2019, 22:07:35">2019-07-08</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">14분안에 읽기 (약 2044 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">운영체제 1편 - 추상화</h1><div class="content"><p>이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.<br>맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.  </p>
+<p>먼저 운영체제를 공부하기에 앞서 살짝 마음가짐을 다르게 해야한다.<br>운영체제를 이해할때는 Abstraction, 즉 추상화를 이해하는게 가장 중요하다.<br>운영체제에 대한 연구는 매일매일 이루어지고 실제 구현내용은 정말 자주 바뀐다. 그러므로 운영체제를 공부할때에는 실제 구현에 초점을 맞추기 보다는 Abstraction을 이해해보자.  </p>
+<span id="more"></span>
+
+<p>Memory를 abstract 해주는 것은 memory address 이고, 디스크를 abstract 해주는 것은 File 이다.<br>그러면 Hardware를 Abstraction 해주는 것은 무엇일까? 바로 <strong>운영체제</strong>이다.<br>운영체제는 하드웨어를 손쉽게 사용할 수 있는 Abstraction을 제공한다.<br>운영체제를 공부할때에는 실제 구현에 초점을 맞추기 보다는 Abstraction을 이해하는게 가장 중요하다.  </p>
+<p>대표적인 Abstraction인 프로세스와 포트를 알아보자.  </p>
+<h2 id="Process"><a href="#Process" class="headerlink" title="Process"></a>Process</h2><p>Process는 실행되고 있는 프로그램에 대한 Abstraction 이다.<br>프로그램은 일련의 순차적으로 작성된 명령어들의 모음으로 disk와 같은 secondary storage에 저장되어 있다. 이들이 메모리에 올라오면서 실행이 되는 프로그램이 된다. 그러면 프로그램은 프로세스가 된다.<br>메모리에 올라와서 동작을 하게되면 이를 프로세스라고 한다.<br>프로세스의 메모리구조는 다음과 같다.  </p>
+<p align="center">
+    <img alt="프로세스 메모리구조(https://sudonull.com/post/95562-Program-anatomy-in-memory)" src="/images/process-memory-segment.png"/>
+</p>
+
+<p>이후의 프로세스편에서 다룰 예정이라 메모리구조만 살짝 보기만 하고 넘어가자.<br>물론 당연히 여기서의 메모리구조는 가상메모리를 얘기하는 것이다.  </p>
+<p>그러면 프로세스는 파일인가? 아니다. 하지만 이를 볼 수 있도록 구현해놓은게 있다.<br><code>/proc</code> 을 보면 현재 실행되고있는 프로세스들을 파일로 볼 수 있다.<br>프로세스가 뜨면 각각 프로세스들은 address space를 가진다.<br>이는 다른 프로세스끼리 공유가 안되고 직접 접근할 수도 없다. 즉 A 프로세스에서 B 프로세스의 함수로 한번에 jump가 불가능하다는 것이다.  </p>
+<h2 id="Port"><a href="#Port" class="headerlink" title="Port"></a>Port</h2><p>우리가 흔히 말하는 포트도 Abstraction이다.<br>포트는 프로세스가 세상을 바라보는 창이다.<br>우리는 여러 프로그램을 동시에 켜고서는 네트워크를 통해 각 패킷을 주고받지만, 외부에서는 우리의 프로세스의 존재를 알지 못한다.<br>외부에서는 우리의 port를 향해서 보낸다.<br>포트는 컴퓨터간의 메시지를 주고받는 communication endpoint로 설명할 수 있다. </p>
+<h2 id="운영체제의-특징"><a href="#운영체제의-특징" class="headerlink" title="운영체제의 특징"></a>운영체제의 특징</h2><p>운영체제는 supervisor mode(kernel mode), user mode가 있다. 운영체제는 hardware 자원을 접근하고 제어한다. 그래서 운영체제는 supervisor mode에서 동작을 한다.<br>supervisor mode는 cpu가 제공을 해준다. 운영체제가 시작을 하면서 supervisor mode로 switching을 한다.<br>이와 반대로 다른 애플리케이션들은 user mode로 동작한다. device 들도 프로세스가 직접 제어를 못하고 운영체제를 통해서 제어가 가능하다.</p>
+<p>운영체제의 Kernel 이라는 것은 운영체제의 핵심적인 부분으로서 자원할당, hardware에 대한 인터페이스 제공, 보안 등을 담당한다.  </p>
+<h2 id="Time-sharing"><a href="#Time-sharing" class="headerlink" title="Time sharing"></a>Time sharing</h2><p>운영체제는 CPU의 실행시간을 time slice로 나누어서 실행한다.
+kernel이 프로세스를 돌리다가 context switching을 한다. 즉, 모든 프로세스는 time slice 동안 CPU를 점유하고 그 시간이 끝나면 CPU를 양보한다.<br>Time slice는 옛날에는 10ms로 했었는데 이는 아주 옛날이야기이고 점점 timeslice값이 줄어들고 있다.<br>단순하게 왜 time slice가 줄어들까? CPU가 점점 빨라지고 있기 때문이다.<br>예전에 10ms로 정했던 이유는 task에 대해 대략적으로 휴리스틱하게 시간을 측정해서 10ms정도면 다 끝나겠다라고 생각해서 정했는데 cpu가 점점 빨라지면서 이 값이 같이 줄어드는게 당연하다.<br>요즘에는 timeslice를 상수로 두지 않는다. 이를 가변으로 둔다.  </p>
+<p>이런 CPU의 time sharing으로 concurrent 하게 여러 프로세스들이 수행된다.<br>싱글코어에서는 cpu에서 특정 시간의 그 순간에 수행되고 있는 프로세스는 1개이지만 밖에서 바라볼때에는 여러개를 동시에 수행하는 것처럼 보인다.<br>concurrent라는 뜻은 물리적으로는 1개의 프로그램만 수행하더라도 다른 프로그램들도 같이 수행중인 것임을 의미한다.<br>이와 반대되는 단어로 simutaniously 가 있는데 요즘에는 여러개의 코어로 컴퓨터가 구성되어있는데 실제로 여러 cpu에서 여러 프로그램이 동시에 수행되고 있음을 의미한다.  </p>
+<h2 id="Cpu-mode"><a href="#Cpu-mode" class="headerlink" title="Cpu mode"></a>Cpu mode</h2><p>위의 운영체제 특징에서 보았듯이 cpu에는 execution mode(실행모드)가 있다.<br>user mode와 kernel mode가 있다.  </p>
+<p><strong>Kernel mode</strong>  </p>
+<ul>
+<li>모든 권한을 가진 execution mode</li>
+<li>Kernel이 실행되는 mode</li>
+<li>Privileged 명령어 실행 및 register 접근 가능
+ex) I&#x2F;O 장치 제어 명령어, memory management register CR3</li>
+</ul>
+<p><strong>User mode</strong></p>
+<ul>
+<li>Kernel에 비해 낮은 권한의 execution mode</li>
+<li>User Application이 실행되는 mode</li>
+<li>Privileged 명령어 실행 불가능</li>
+</ul>
+<p>kernel은 오직 kernel mode에서만 작동한다.<br>user mode에서는 instruction이 수행할 수 있는 previledge가 달라진다.<br>execution mode는 하드웨어가 지원해준다. 만약에 유저의 application이 device로 직접 접근하려고 하면 hardware로 막아버린다.<br>kernel mode에서 쓸수있는 instruction을 user mode에서는 쓸수가 없다.<br>예를들어 in, out이라는 instruction 이 있다. 이런 instruction은 usermode 에서 작동을 안한다. 
+intel processor에는 wing이라는 mechanism을 지원해서 이 wing이 execution mode를 지원한다.<br>wing 0 는 kernel mode이고 wing 3가 user mode이다.<br>virtualization으로 가면 wing을 한가지 더 쓴다. 처음에 설계를 할때 wing1과 wing2는 미래를 위해 남겨놓았는데 여기서 쓴다.<br>당연한 얘기지만 여기서 말하는 kernel mode는 sudo가 아니다. sudo 라는 것은 사용자 관점에서의 권한을 다루는 것이다.<br>아무리 sudo라고 해서 kernel level에 접근할 수 없다.  </p>
+<p>그렇다면 user mode에서 kernel mode로 들어갈 일이 있을까? 그러면 뭔가 스위칭 해주는게 필요한가?<br>여기서 <strong>시스템 콜</strong>이 필요하다.<br>시스템콜을 통해서 유저가 커널로 파일을쓰거나 패킷을 읽을 수 있다.<br>시스템 콜의 종류에는 <code>open</code>, <code>write</code>, <code>msgsnd</code>, <code>shm</code> 등이 있다.</p>
+<h2 id="시스템콜"><a href="#시스템콜" class="headerlink" title="시스템콜"></a>시스템콜</h2><p>시스템콜은 기본적으로 사용자 프로그램에서 시스템콜을 호출하면 user mode에서 kernel mode로 스위칭이 된다.<br>그러면 커널함수로 점프를 한다. 예로 open이라고 하면 open을 구현한 커널함수로 뛰어간다.  </p>
+<p align="center">
+    <img style="max-width: 600px" alt="시스템콜 호출" src="/images/systemcall.png"/>
+</p>
+
+<p>system call에 파라미터를 받기도하는데 register를 통해서 전달한다.  </p>
+<p align="center">
+    <img alt="시스템콜 Argument 전달" src="/images/systemcall-argument.png"/>
+</p>
+
+  
+<p>애플리케이션과 커널 사이에는 시스템콜이라는 interface가 있는 것이다. 같은 개념으로 하드웨어와 커널사이에는 driver interface가 있다.  </p>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><ul>
+<li>운영체제는 하드웨어의 Abstraction 이다.</li>
+<li>운영체제는 Time sharing을 지원한다.</li>
+<li>운영체제는 Kernel mode에서 실행되며, 애플리케이션이 user mode에서 kernel mode로 가려면 systemcall이 필요하다.</li>
+</ul>
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OS/">OS</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2019/07/09/os-virtualization/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">운영체제 2편 - 가상화</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2019/02/07/nodejs-event-loop/"><span class="level-item">Node.js 이벤트루프 제대로 이해하기</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2019/07/08/os-abstraction/';
+            this.page.identifier = '2019/07/08/os-abstraction/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

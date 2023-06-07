@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>파일시스템 4편 - 파일시스템 디자인-1 - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 글은 학부 System Programming 수업을 듣고 파일시스템 관련내용을 정리한 글입니다.   이번 편에서는 크게 다음 2가지를 볼 것이다.    File System의 디자인 Directory의 디자인  unix 시스템에서 파일과 디렉토리는 비슷하면서도 다르게 구현이된다.파일의 디자인부터 살펴보자."><meta property="og:type" content="blog"><meta property="og:title" content="파일시스템 4편 - 파일시스템 디자인-1"><meta property="og:url" content="https://tk-one.github.io/2020/09/08/file-system-design-1/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 글은 학부 System Programming 수업을 듣고 파일시스템 관련내용을 정리한 글입니다.   이번 편에서는 크게 다음 2가지를 볼 것이다.    File System의 디자인 Directory의 디자인  unix 시스템에서 파일과 디렉토리는 비슷하면서도 다르게 구현이된다.파일의 디자인부터 살펴보자."><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/contiguous-allocation.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/linkedlist-allocation.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/msdos-fat.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/linkedlist-with-index.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/inode.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/directory-msdos.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/directory-linux.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/directory-lookup.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vsfs-1.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vsfs-2.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vsfs-3.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vsfs-4.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vsfs-5.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vsfs-6.png"><meta property="article:published_time" content="2020-09-07T15:51:46.000Z"><meta property="article:modified_time" content="2023-06-07T16:21:36.345Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="OS"><meta property="article:tag" content="파일시스템"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/filesystem/contiguous-allocation.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2020/09/08/file-system-design-1/"},"headline":"파일시스템 4편 - 파일시스템 디자인-1","image":["https://tk-one.github.io/images/filesystem/contiguous-allocation.png","https://tk-one.github.io/images/filesystem/linkedlist-allocation.png","https://tk-one.github.io/images/filesystem/msdos-fat.png","https://tk-one.github.io/images/filesystem/linkedlist-with-index.png","https://tk-one.github.io/images/filesystem/inode.png","https://tk-one.github.io/images/filesystem/directory-msdos.png","https://tk-one.github.io/images/filesystem/directory-linux.png","https://tk-one.github.io/images/filesystem/directory-lookup.png","https://tk-one.github.io/images/filesystem/vsfs-1.png","https://tk-one.github.io/images/filesystem/vsfs-2.png","https://tk-one.github.io/images/filesystem/vsfs-3.png","https://tk-one.github.io/images/filesystem/vsfs-4.png","https://tk-one.github.io/images/filesystem/vsfs-5.png","https://tk-one.github.io/images/filesystem/vsfs-6.png"],"datePublished":"2020-09-07T15:51:46.000Z","dateModified":"2023-06-07T16:21:36.345Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 글은 학부 System Programming 수업을 듣고 파일시스템 관련내용을 정리한 글입니다.   이번 편에서는 크게 다음 2가지를 볼 것이다.    File System의 디자인 Directory의 디자인  unix 시스템에서 파일과 디렉토리는 비슷하면서도 다르게 구현이된다.파일의 디자인부터 살펴보자."}</script><link rel="canonical" href="https://tk-one.github.io/2020/09/08/file-system-design-1/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-07T15:51:46.000Z" title="08/09/2020, 00:51:46">2020-09-08</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">31분안에 읽기 (약 4638 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">파일시스템 4편 - 파일시스템 디자인-1</h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 파일시스템 관련내용을 정리한 글입니다.  </p>
+<p>이번 편에서는 크게 다음 2가지를 볼 것이다.  </p>
+<ol>
+<li>File System의 디자인</li>
+<li>Directory의 디자인</li>
+</ol>
+<p>unix 시스템에서 파일과 디렉토리는 비슷하면서도 다르게 구현이된다.<br>파일의 디자인부터 살펴보자.  </p>
+<span id="more"></span>
+<h2 id="File-Implementation"><a href="#File-Implementation" class="headerlink" title="File Implementation"></a>File Implementation</h2><p>File 구현의 핵심은 file의 내용을 담고있는 data block이 저장되는 디스크상의 위치정보를 결정하는 것과 이에 대한 관리방법이다.  </p>
+<p>data block의 디스크에서의 위치정보를 결정하기 위해서는 여러가지 할당방법들이 존재하는데 실제로 사용되고 있는 몇가지 방법들을 알아보자.  </p>
+<h4 id="Contiguous-Allocation"><a href="#Contiguous-Allocation" class="headerlink" title="Contiguous Allocation"></a>Contiguous Allocation</h4><p>Contiguous는 말그대로 연속적인, 연결되어있는 이런 의미이다.<br>Contiguous Allocation 방식은 파일을 물리적으로 연속된 disk block에 저장한다. 우리가 프로그래밍 할때 고정 길이의 배열을 할당하고 사용하는 것과 유사하다.<br>이 방식은 구현이 간단하며, 물리적으로 연속된 공간에 block이 위치하기 때문에 전체 파일을 한번에 읽어들일경우 성능상 매우 큰 이득을 볼 수 있다. 이처럼 파일의 맨 처음부터 끝까지 읽는 방식을 sequential read라고 한다. 이의 반대는 random read이다.<br>Contiguous Allocation은 random read도 빠르다. 파일에서 특정 block의 위치를 바로 알 수 있다. 연속된 block이므로 index로 block 주소를 바로 계산할 수 있기 때문이다.  </p>
+<p align="center">
+    <img alt="Contiguous Allocation" src="/images/filesystem/contiguous-allocation.png"/>
+</p>
+  
+<p>위 그림에서 block 14, 15, 16을 을 차지하고 있는 파일을 수정할때는 어떻게 해야할까?<br>Contiguous Allocation에서는 파일 수정시 수정한 block들을 어디에 위치할지 빈공간을 계속해서 찾아야 한다. 새로운 빈 연속된 block들을 찾으면 이에 복사하면서 massive copy가 발생한다.<br>위의 예시에서는 파일크기가 더 작도록 수정하기 때문에 반드시 다른 비어있는 다른 block들을 찾아야하는 것은 아니지만, 파일의 크기가 늘어나면서 수정을 하게되면 copy가 불가피하다.<br>이런 비용을 최소화 하기위해 파일끝에 예비용 block을 남기는 경우도 있지만 이는 disk 공간을 낭비한다.  </p>
+<p>이런 방식은 많이 사용할 것 같지 않아보이지만 예상외로 많이 사용된다. 실제로 데이터베이스는 이런 방식으로 구현하는 경우가 많다. Disk block을 연속해서 여러개 할당하고 그 안에서 내부적으로 읽고 쓰고를 반복한다.<br>static한 파일들을 담고있는 서버에서도 파일에 대한 sequential read 성능이 매우 중요하기 때문에 사용하는 경우가 있고, 나중에 보게되겠지만 log structured file system에서 flash 같은 메모리는 이런 방식을 사용한다.<br>또한 구현이 간단하기에 임베디드에서 이를 채택하는 경우가 많다.  </p>
+<h4 id="Linked-List-Allocation"><a href="#Linked-List-Allocation" class="headerlink" title="Linked List Allocation"></a>Linked List Allocation</h4><p>위에서 본 Contiguous Allocation 방식은 파일을 쓸때 능동적으로할 수 없다. block이 연속적이여야 하기 때문이다. 그래서 disk의 block을 linked list로 구현해서 file의 data를 저장하도록 하는 방식이 Linked List Allocation 방식이다.  </p>
+<p align="center">
+    <img alt="Linked List Allocation" src="/images/filesystem/linkedlist-allocation.png"/>
+</p>
+  
+<p>위 그림을 보게되면 파일을 읽을때 파일의 시작 block에서 출발해서 그 다음 block을 찾아가는 방식이다. data block에 다음 block의 주소를 같이 저장한다.  </p>
+<p>이 방식은 file의 data block이 disk의 어디든지 위치할 수 있기때문에 유연하다. 또한 Contiguous allocation의 방법과 다르게 공간의 낭비가 없다.  </p>
+<p>단점도 존재하는데 Random access를 하는데 성능이 좋지 못하다. File의 특정위치를 찾아가기 위해서는 해당 file의 시작 block부터 찾아가야 하기 때문이다. 이를 해결하기 위해 file의 metadata를 in-memory에 캐싱을 하기도 한다.<br>Data block에 다음 block 주소를 저장해야 하는 공간낭비 문제도 존재한다.  </p>
+<p>실제로 MS-DOS의 FAT(File Allocation Table) File System은 Linked List Allocation 방식을 사용한다.  </p>
+<p align="center">
+    <img alt="Allocation in FAT" src="/images/filesystem/msdos-fat.png"/>
+</p>
+
+<p>Random access가 느리기 때문에 더 나은 방법으로 File의 data block의 위치를 별도의 block에 모아둘 수 있다. 
+이렇게 File의 data block을 모아놓은 block을 index block이라고 하며 이 block을 읽어 파일의 모든 data block의 위치를 알 수 있다.<br>이 방식이 Linked List Allocation 보다 개선된 점은 random access 시 index block만 읽으면 찾아가고자 하는 data block의 위치를 알 수 있으므로 빠르게 random access가 가능하다.<br>index block이 몇개의 block 주소를 가질 수 있느냐가 이 파일시스템이 지원하는 최대 파일크기를 결정한다.  </p>
+<p align="center">
+    <img alt="Linked List Allocation With Index" src="/images/filesystem/linkedlist-with-index.png"/>
+</p>
+  
+<p>위 그림을 보면 19번 block에 index block을 위치하고 이 block에 data block을 순서대로 위치한다.  </p>
+<h4 id="inode"><a href="#inode" class="headerlink" title="inode"></a>inode</h4><p>inode는 unix 파일시스템에서 사용하는 방식이고, windows 에서도 이와 비슷한 방식을 사용한다.<br>inode는 index node의 줄임말로 file의 metadata를 가지고있는 구조체이다. inode는 파일시스템 디자인에서 매우 중요한 역할을 맡는다. 
+inode는 파일에 대한 data block index를 계층 형태로 관리하도록 한다. 메모리에서의 multi-level paging 방식과 비슷하다. 이러한 방식으로 inode의 data block 관리방식으로 구현을 하면 많은 flexibility를 얻을 수 있다.  .  </p>
+<p>PCB에는 프로세스 관련한 정보가 다 들어가있듯이, inode에는 파일에 대한 대부분의 데이터가 전부 다 들어가있다.<br>inode의 구성요소는 대략적으로 다음과 같다.  </p>
+<ul>
+<li>File에 대한 속성을 나타내는 field들이 존재한다. file owner, timestamp, hard link counter, last access time, acl 정보 등이 있다.  </li>
+<li>작은 크기의 파일을 위한 direct index가 존재한다.  </li>
+<li>파일의 크기가 커짐에 따라서 요구되는 data block의 index들을 저장하기 위한 index table들이 존재한다. 이 index table을 가리키는 single indirect, double indirect, triple indirect 이 있다.</li>
+</ul>
+<p>inode의 대략적인 도식을 그림으로 보자.  </p>
+<p align="center">
+    <img alt="inode 도식" src="/images/filesystem/inode.png"/>
+</p>
+
+<h4 id="Multi-Level-Index-in-inode"><a href="#Multi-Level-Index-in-inode" class="headerlink" title="Multi-Level Index in inode"></a>Multi-Level Index in inode</h4><p>direct block은 그 자체의 값들이 data block을 가리키는 포인터이다.<br>direct block이 8개가 있고 block size가 4KB라면 파일크기가 최대 32KB까지는 indirect block을 사용하지 않는다.<br>파일이 그 크기가 넘어가면, 즉 direct block에서 처리가능한 block 개수가 넘어가게되면 indirect block을 사용하기 시작한다.<br>single direct를 사용하기 시작한다. single indirect는 data block의 주소를 담고있는 index block을 가리킨다. index block은 data block을 가리킨다. single direct에서 처리가능한 크기가 넘어가게 되면 double indirect를 사용한다.<br>double indirect는 index block을 가리키는데 이 index block은 또다시 index block을 가리킨다. 즉 2-level page table과 동일하다.<br>triple indirect는 이 단계가 3단계로 이루어져 있다.  </p>
+<p>inode에서 direct block, single indirect, double indirect, triple indirect가 각각 지원할 수 있는 최대 크기를 계산해보자.<br>Block size는 4KB, direct block 개수는 12개, block 주소는 4byte 라고 가정하자.  </p>
+<ul>
+<li>Direct blocks : 4KB * 12 &#x3D; 48KB</li>
+<li>Single Indirect : 1024 * 4KB &#x3D; 4MB</li>
+<li>Double Indirect : 1024 * 1024 * 4KB &#x3D; 4GB</li>
+<li>Triple Indirect : 1024 * 1024 * 1024 * 4KB &#x3D; 4TB</li>
+</ul>
+<p>이는 block 주소 크기 등을 가정한 후의 계산값으로 실제 파일시스템이 지원하는 파일 최대크기와는 다름을 참고하자.  </p>
+<p>왜 이런 방식을 사용할까?<br>inode 같은 방식을 사용하면 inode의 크기가 고정이 된다. inode는 파일당 1개씩 존재하며 시스템에서 파일의 개수만큼 존재한다. inode는 파일의 metadata 그 자체인데 이에 대한 크기가 파일의 크기와 관계없이 모두 동일하므로, 파일의 크기가 늘어나도 충분히 유연성을 확보할 수 있어 관리하기 편하다.  </p>
+<h4 id="Extent"><a href="#Extent" class="headerlink" title="Extent"></a>Extent</h4><p>Linux의 ext2, ext3 파일시스템은 위와같이 Multi-Level index 방식을 사용하여 block mapping 체계를 제공한다. 다만 이 방식은 크기가 작은 파일에 대해서는 효율적이나 큰 파일에 대해서는 높은 오버헤드를 가진다. 구조상 파일의 크기가 조금 커지면 disk 에 반드시 fragment가 일어나게 되고 파일을 처음부터 연속적으로 읽어도 random access 가 많이 발생할 수 밖에 없다.<br>그리고 위의 block pointer 지정방식은 공간낭비도 심하다. 예를들어 single direct 방식에서 각 block 이 4, 5, 6, 7, 8 를 가리킨다면 각 주소가 4byte 일때 4 * 5 &#x3D; 20 byte 를 차지한다. 하지만 이는 연속된 block 일때 (4, 5) 라고 표현할 수 있다. (5개의 block 이 연속되어 있다는 의미)<br>물론 연속된 block 이 아니라면 매 block 마다 (4, 1), (5, 1) 처럼 될 것이다.<br>이처럼 매 block 마다 pointer를 적용하는 방식대신 포인터와 length를 명시함으로서 연속된 block을 명시하는 방식을 적용한 것이 <strong>extent</strong> 이다.<br>ext4 파일시스템은 이 extent 를 사용한다. 위의 inode 구조체에서 앞부분은 ext3의 inode와 동일하고 single indirect block 의 필드부터 indirect block 대신 extent 들을 가짐으로서 최대한 하위호환성을 유지했다.<br>이런 extent 기반의 방식은 disk 에 충분히 여유있는 공간이 있고 파일의 block 이 연속적으로 할당될 수 있을때 가장 높은 효율을 낼 수 있다.  </p>
+<br/>
+
+<h2 id="Directory-Implementation"><a href="#Directory-Implementation" class="headerlink" title="Directory Implementation"></a>Directory Implementation</h2><p>Directory는 파일들의 묶음을 나타내는데, 이는 굉장히 독특한 자료구조를 가진다.<br><strong>Directory entry</strong>라는 Directory를 표현하기 위한 자료구조가 존재한다. 파일시스템에 따라서 directory entry를 구성하는 필드도 달라진다. MS-DOS에서의 Directory entry와 Linux에서의 Directory entry를 살펴보자.  </p>
+<h4 id="Directory-in-MS-DOS"><a href="#Directory-in-MS-DOS" class="headerlink" title="Directory in MS-DOS"></a>Directory in MS-DOS</h4><p>MS-DOS는 파일구현에 Linked List Allocation 방식을 사용한다. 여기서 사용하는 Directory entry 구조는 다음과 같다.  </p>
+<p align="center">
+    <img alt="Directory entry in MS-DOS" src="/images/filesystem/directory-msdos.png"/>
+</p>
+
+<p>그림을 보면 첫 8byte는 file name을 가지고 다음 3byte는 extension을 가진다. extension은 따라서 3글자까지만 지원을 한다. 그리고 뒤에 first block number 부분이 있는데 이 값이 linked list의 첫번째 block을 가리킨다.<br>Linked List Allocation 방식을 사용하므로 맨 처음의 data block만 알면 전체 파일의 data을 알 수 있다.  </p>
+<h4 id="Directory-in-Linux"><a href="#Directory-in-Linux" class="headerlink" title="Directory in Linux"></a>Directory in Linux</h4><p>Linux에서는 directory를 특별한 타입의 file로 간주한다.<br>그래서 디렉토리도 inode가 존재한다.<br>Linux에서의 directory entry는 file name과 inode로 이루어진다.<br>MS-DOS와는 다르게 directory의 metadata 정보는 inode 자료구조에 담겨있다.  </p>
+<p align="center">
+    <img alt="Directory entry in Linux" src="/images/filesystem/directory-linux.png"/>
+</p>
+
+<p>디렉토리의 inode는 type에 regular file이 아닌 directory라는 타입으로 명시되어있고 inode의 data block에는 그 directory의 내용이 저장되어있다. 그렇기에 우리의 directory 구조는 영구히 저장될 수 있다.  </p>
+<h4 id="Directory-lookup-in-Linux"><a href="#Directory-lookup-in-Linux" class="headerlink" title="Directory lookup in Linux"></a>Directory lookup in Linux</h4><p>리눅스에서 directory를 lookup 하는 과정을 살펴보자.<br><code>/usr/ast/mbox</code> path에 있는 mbox라는 파일에 접근한다고 가정하자. 이 과정을 그림을 표현하면 다음과 같다.  </p>
+<p align="center">
+    <img alt="Directory lookup in Linux" src="/images/filesystem/directory-lookup.png"/>
+</p>
+
+<p>처음의 시작은 Root Directory에서 시작한다. 그림의 맨 왼쪽은 root directory의 inode의 data block의 내용을 그림으로 표현한 것이다. 물리 disk에 있는 block들은 파일의 내용도 가질 수 있으며 directory의 내용도 가질 수 있다. 여기서 <code>usr</code> directory를 찾고 그에 대한 inode로 가서 data block을 읽는다.<br><code>usr</code>는 directory 이므로 이에 대한 data block은 다시 directory entry들을 담고있다. 여기서 <code>ast</code> directory의 inode를 찾고 이에 대한 data block을 다시 읽는다. <code>ast</code>도 directory 이므로 data block은 또다시 directory entry를 담고있다.<br>최종적으로 <code>mbox</code>파일을 찾고 이 inode의 data block을 읽음으로서 파일을 읽게된다.  </p>
+<p>이를 정리해보면 disk 접근횟수가 상당히 많다. 이를 개선하기위해 directory cache를 사용하며 directory cache는 hit rate가 99% 정도로 매우 높은 hit rate를 가진다. directory entry가 inode number + file name 이므로 크기가 크지않다.<br>directory cache는 시스템이 부팅할때 root directory부터 읽어 캐싱을 한다.  </p>
+<br/>
+  
+<h2 id="Free-space-management"><a href="#Free-space-management" class="headerlink" title="Free space management"></a>Free space management</h2><p>파일시스템이 inode가 할당되어 있는지, data block이 할당되어 있는지 tracking을 해야한다. 그래야 새로운 파일을 생성할 때 적절한 space를 할당해줄 수 있다.<br>예를들면 파일을 만들면 inode를 할당한다. 이때 inode table을 보고 비어있는 위치에 inode를 할당한다. 예를들어 inode table이 bitmap으로 구현되어있다면 해당 순서의 bit를 1로 설정한다.<br>또 새로운 파일에 대한 data block 또한 할당을 해야한다. 이 data block 을 할당할때에도 여러가지 기법을 사용한다.<br>ext2나 ext3 파일시스템의 경우에는 사용하지 않으면서 연속된 약 8개의 block들의 묶음을 찾고 이를 할당함으로서 파일시스템이 파일의 부분이 contiguous하도록 보장해주어 성능향상을 꾀한다.<br>이러한 방법을 <strong>pre-allocation</strong>이라고 하며 자주 쓰이는 방법이다.  </p>
+<br/>
+
+<h2 id="Very-Simple-File-System"><a href="#Very-Simple-File-System" class="headerlink" title="Very Simple File System"></a>Very Simple File System</h2><p>파일시스템이 정확히 어떻게 구성되어있고 작동하는지를 알아보기 위해 예시로 아주 간단한 파일시스템을 보자.<br>이를 Very Simple File System 이라고 부르고 이하 vsfs 라고 부르겠다.<br>우리는 disk partition 이 있고 이 disk를 block 단위로 나눌 수 있다. block은 일반적인 크기인 4KB로 하겠다.<br>아래는 우리의 disk partition 에 대한 그림이다. 총 64개의 block 들로 나누어져 있고 각 block의 주소는 0부터 63까지이다.<br>disk partition 의 크기는 64 * 4 KB 인 아주 작은 partition 이다.  </p>
+<p align="center">
+    <img style="max-width: 550px" src="/images/filesystem/vsfs-1.png"/>
+</p>
+
+<p>우리는 이 block 들에 무엇을 저장해야할까? 가장먼저 user data 가 떠오를 것이다. 실제로도 파일시스템의 대부분의 데이터는 user data 이다.<br>이런 user data 가 담기는 부분의 영역을 <strong>data region</strong> 이라고 부르자. 그리고 간단하게 64개의 block 중 56개를 data region 이라고 미리 정해두자.  </p>
+<p align="center">
+    <img style="max-width: 550px" src="/images/filesystem/vsfs-2.png"/>
+</p>
+
+<p>위에서 보았듯이 파일시스템에서 각 파일을 추적하기위해 <strong>metadata</strong> 가 필요하다. 즉 inode 가 필요하다.<br>각 파일의 data block 의 위치가 어떻게 되는지, 파일의 크기는 어떻게되는지 등을 저장한다.<br>우리는 이런 inode 들 또한 disk 에 저장해야한다. 이들을 저장하기 위한 영역도 미리 정해두자. 64개의 block 중 5개를 잡고 이 영역을 inode table 이라고 하자.  </p>
+<p align="center">
+    <img style="max-width: 550px" src="/images/filesystem/vsfs-3.png"/>
+</p>
+
+<p>inode의 크기는 보통 그렇게 크지는 않다. inode 한개가 256 byte 라고 가정하자. 그러면 4KB 크기인 block 1개에는 64개의 inode를 저장할 수 있다.<br>그러므로 우리의 inode table 은 5개의 block 으로 구성되어 있으므로 총 80개의 inode를 저장할 수 있겠다. 이는 우리가 설계한 vsfs 에서 가질 수 있는 최대 파일개수와 같다.<br>실제 파일시스템에서는 훨씬 더 큰 크기의 disk를 가지고, 단순하게 더 큰 크기의 inode table 영역을 잡을 수 있기때문에 훨씬 더 많은 파일을 가질 수 있다.  </p>
+<p>우리는 inode table 영역을 할당하고 이를 <code>I</code> 로 표시하였고 date region 영역을 <code>D</code> 로 표시하였다. 하지만 궁극적으로 inode 나 data block 이 할당되어있는지를 추적할 수 있는 장치가 필요하다. 이런 할당여부에 대한 추적은 어떤 파일시스템이든 꼭 필요한 내용이다.<br>이런 할당여부를 추적하기 위해 여러가지 방법을 생각해볼 수 있지만 우리는 간단하게 bitmap 을 활용하여 표시할 것이다. 2개의 bitmap을 사용하여 한 개는 inode bitmap 으로 사용하고 다른 한개는 data bitmap 으로 사용한다.  </p>
+<p align="center">
+    <img style="max-width: 550px" src="/images/filesystem/vsfs-4.png"/>
+</p>
+
+<p>각 bitmap 을 각각 한 개의 block 에 할당했다. block 한개는 4KB 이므로 약 3만 2천개의 bitmap을 저장할 수 있다. 우리는 80개의 inode 그리고 56개의 data block 을 가질 수 있기때문에 bitmap 을 과도하게 크게 설계했지만 간단한 예제이므로 그렇다고 하고 넘어가자.<br>그리고 0번째 block 이 남아있다. 이를 <strong>super block</strong> 으로 할당하자. super block 은 파일시스템의 정보를 포함한다.<br>파일시스템에 몇 개의 inode가 있는지 몇개의 data block을 사용하는지 inode table 은 몇번째 block 에서 시작하는지 등의 정보를 담고있다. </p>
+<p align="center">
+    <img style="max-width: 550px" src="/images/filesystem/vsfs-5.png"/>
+</p>
+
+<p>그래서 파일시스템을 mount 하면 OS가 먼저 super block을 읽어서 어느부분 부터 읽어들여야 하는지 알아낸다.  </p>
+<p>inode는 보통 inode 마다 할당되는 번호가 있다. 이 vsfs 에서는 총 80개의 inode를 담을 수 있으므로 0번부터 79번까지 번호가 존재한다.<br>따라서 파일시스템이 특정번호의 inode에 접근이 필요할때에면 inode의 번호로 바로 주소를 계산해서 접근할 수 있다.<br>보통 disk는 sector 단위로 접근이 가능하기 때문에 <code>(inode table 시작주소 + (N * sizeof(inode)) / 512</code> 로 나누면 sector 번호를 알아낼 수 있다.<br>inode table의 시작주소는 super block 을 보고 알아낼 수 있다.  </p>
+<p align="center">
+    <img style="max-width: 600px" src="/images/filesystem/vsfs-6.png"/>
+</p>
+
+<p>파일을 새로 만들어야 할때에는 inode bitmap을 보고 비어있는 곳을 찾아 inode 를 새로 할당하고, data block 도 data bitmap 을 보고 비어있는 block 을 찾아 할당한다.<br>이 vsfs 예제를 보고 파일시스템 구현의 감을 잡으면 된다.  </p>
+<br/>
+<br/>
+<br/>
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OS/">OS</a><a class="link-muted mr-2" rel="tag" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/">파일시스템</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/09/08/file-system-design/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">파일시스템 5편 - 파일시스템 디자인-2</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/09/07/file-system-concept/"><span class="level-item">파일시스템 3편 - 파일시스템이란?</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2020/09/08/file-system-design-1/';
+            this.page.identifier = '2020/09/08/file-system-design-1/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

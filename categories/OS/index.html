@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="robots" content="noindex"><meta><title>카테고리: OS - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta property="og:type" content="blog"><meta property="og:title" content="기술블로그"><meta property="og:url" content="https://tk-one.github.io/"><meta property="og:site_name" content="기술블로그"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/img/og_image.png"><meta property="article:author" content="TK-one"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io"},"headline":"기술블로그","image":["https://tk-one.github.io/img/og_image.png"],"author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":""}</script><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-content"><nav class="breadcrumb" aria-label="breadcrumbs"><ul><li><a href="/categories">카테고리</a></li><li class="is-active"><a href="#" aria-current="page">OS</a></li></ul></nav></div></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-07T16:51:46.000Z" title="08/09/2020, 01:51:46">2020-09-08</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">20분안에 읽기 (약 2990 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></h1><div class="content"><p>이 글은 지난번 파일시스템 디자인-1 에 이은 글입니다.</p>
+<h2 id="파일시스템-계층화"><a href="#파일시스템-계층화" class="headerlink" title="파일시스템 계층화"></a>파일시스템 계층화</h2><p>파일시스템은 계층화가 잘되어있다. 일반적으로 파일시스템은 여러 개의 layer로 나뉘어져 구성된다.  </p>
+<p align="center">
+    <img style="max-width:200px" alt="파일시스템 계층화" src="/images/filesystem/file-system-layering.png"/>
+</p>
+
+<p>위의 그림에서 각 layer를 간단하게 살펴보자.  </p>
+<h4 id="Logical-file-system"><a href="#Logical-file-system" class="headerlink" title="Logical file system"></a>Logical file system</h4><p>여기서는 파일시스템의 메타데이터를 관리한다.  </p>
+<h4 id="File-organization-module"><a href="#File-organization-module" class="headerlink" title="File-organization module"></a>File-organization module</h4><p>이 layer에서는 파일의 logical block 주소를 physical block 주소로 변환해준다. 예를들어 하드디스크를 매체로 사용하게되면 sector 주소로 접근해야 하는데 이를 위한 변환을 진행한다.  </p>
+<h4 id="Basic-file-system"><a href="#Basic-file-system" class="headerlink" title="Basic file system"></a>Basic file system</h4><p>여기서는 위에서 변환된 physical block 주소를 가지고 읽고 쓰도록 command를 날린다. 여기서 DMA를 사용한다.  </p>
+<h4 id="I-x2F-O-control"><a href="#I-x2F-O-control" class="headerlink" title="I&#x2F;O control"></a>I&#x2F;O control</h4><p>이는 device driver다. device driver가 하드웨어에 맞게 명령을 전달한다.  </p>
+<br/>
+
+<h2 id="Virtual-File-System"><a href="#Virtual-File-System" class="headerlink" title="Virtual File System"></a>Virtual File System</h2><p>파일시스템은 어쩔 수 없이 사용하는 매체에 의존성이 있다. 그래서 파일시스템은 종류가 여러가지가 있을 수 있다. 예를들어 요즘은 잘 안쓰지만 CD-ROM이 있을 수 있고 USB, SSD, Disk 그리고 파일이 현재 호스트가 아닌 다른 네트워크의 호스트에 있을 수도 있다.  Linux kernel 에서는 여러가지 파일시스템을 지원한다.<br>VFS는 다양한 logical file system 들을 추상화한다. 따라서 VFS를 통해 실제로 시스템에는 여러개의 다른 파일시스템이 사용되더라도 마치 1개의 파일시스템만 사용하는 것처럼 프로프래밍 할 수 있다. 이는 OOP의 개념과 같은데 특정 파일에 대해 read&#x2F;write syscall 이 호출되면 해당 파일이 속한 파일시스템 구현체의 read&#x2F;write 가 호출되는 방식이다.  </p>
+<p align="center">
+    <img style="max-width:500px" alt="VFS" src="/images/filesystem/vfs.png"/>
+</p>
+
+<br/>
+
+<h2 id="File-System-data-structure"><a href="#File-System-data-structure" class="headerlink" title="File System data structure"></a>File System data structure</h2><p>파일시스템에서 사용하는 자료구조를 알아보면서 파일시스템에 대한 이해를 높여보자.<br>On-disk 그리고 In-memory 에서 사용하는 자료구조들을 볼 것이다.  </p>
+<h4 id="On-disk-data-structure"><a href="#On-disk-data-structure" class="headerlink" title="On-disk data structure"></a>On-disk data structure</h4><p>On-disk 자료구조들은 이미 이전 포스트인 파일시스템 디자인-1 에서 vsfs(very simple file system)에서 살펴봤던 내용들이 많다.  </p>
+<ul>
+<li><strong>Boot block</strong><br>첫번째 block으로 운영체제가 booting 하기위해 필요한 정보를 담아놓는 block이다. 하지만 이를 안만드는 경우도 많다.  </li>
+<li><strong>Super block</strong><br>파일시스템 관련 정보들이 어디에 저장되어있는지에 대한 metadata를 저장한다. 예를들어 inode table은 어디서 시작인지, data block은 어디 block부터 시작하는지, root directory에 대한 inode 번호 등을 저장한다. Super block은 보통은 각 disk partition의 첫번째 block 에 할당하고 이 super block 이 손상되면 파일시스템의 복구가 힘들기때문에 보통 중복해서 super block을 저장한다. 그리고 이 super block은 in-memory data structure로 메모리에 올려 캐싱한다.  </li>
+<li><strong>File control block</strong><br>FCB(file control block)은 결국 inode와 같다. inode 자체도 disk에 저장이 필요하다.</li>
+</ul>
+<p>다음의 disk structure layout를 살펴보자.  </p>
+<p align="center">
+    <img style="max-width:300px" alt="On-disk data structure" src="/images/filesystem/disk-structure.png"/>
+</p>
+
+<p>여기서 각 inode table을 여러개로 나누어 저장한 이유는 data block과 inode가 가까우면 성능을 높일 수 있기때문에 조금씩 inode 들을 나누어 설계했다. 다만 이런 내용들은 전적으로 파일시스템 구현에 달라진다.<br>결국 여기서의 그림을 보면 파일 접근을 위해서 super block, inode, data block 에 대한 접근으로 파일 하나의 접근에 대해 3번의 disk access가 필요하다.  </p>
+<br/>
+
+<h4 id="In-memory-data-structure"><a href="#In-memory-data-structure" class="headerlink" title="In-memory data structure"></a>In-memory data structure</h4><p>보통 파일시스템에서의 in-memory data structure 들은 거의 caching을 통한 성능향상 그리고 파일시스템 관리가 목표이다.  </p>
+<ul>
+<li><strong>Dentry</strong><br>이는 directory cache 이다. directory 접근을 위해 on-disk 의 super block 그리고 root directory 의 inode 부터 접근해서 dentry 라는 directory cache를 만든다. dentry로 파일접근시 해당 파일의 inode를 알기위해 여러번 disk 에 접근할 필요가 없이 memory 에서 처리할 수 있다.  </li>
+<li><strong>open file table</strong><br>이는 예전에 살펴본 내용으로 system-wide open file table 그리고 per process open file table 이 있는데 각각 open 한 file을 관리한다. per-process open file table 에서 각 index 번호가 file descriptor 가 된다.  </li>
+<li><strong>Buffer cache</strong><br>최근에 사용한 data block 을 memory 에 캐싱한다.</li>
+</ul>
+<br/>
+
+<h2 id="Buffer-Cache"><a href="#Buffer-Cache" class="headerlink" title="Buffer Cache"></a>Buffer Cache</h2><p>Buffer cache는 조금 더 자세히 살펴보겠다.<br>Buffer cache는 파일의 메타데이터가 아닌 data block 자체를 메모리에 올려둔다. 보통 같은 data block을 다시 접근해야 하는 경우가 많기때문에 이를 캐싱해두면 다시 disk를 조회하지 않아도된다.<br>다만 buffer cache는 완전한 software로 구현된다. 이 말은 virtual memory의 주소변환을 위해 TLB 같은 하드웨어를 도입하는게 아닌 순수한 software 레벨에서 구현한 캐시라는 의미이다.<br>Buffer cache는 보통 물리메모리의 1 ~ 10% 정도로 할당하고 이는 kernel parameter로 수정이 가능하다. Buffer cache 도 공간이 한정되므로 교체알고리즘을 사용한다. 보통 disk access 에는 locality가 나타나기 때문에 LRU 방식을 사용한다.<br>다만 DBMS 나 multimedia application은 LRU 로 이득을 볼 수 없는 경우가 대부분이기 때문에 이들은 buffer cache를 거치지 않고 바로 disk 에 접근할 수 있는 flag를 사용해서 buffer cache를 거치지 않도록 프로그래밍 한다.  </p>
+<p>Read syscall 과 Write syscall 각각의 동작방식을 buffer cache 의 관점에서 살펴보자.  </p>
+<h4 id="Read-syscall"><a href="#Read-syscall" class="headerlink" title="Read syscall"></a>Read syscall</h4><p align="center">
+    <img style="max-width:600px" alt="Buffer cache read" src="/images/filesystem/buffer-cache-read.png"/>
+</p>
+
+<p>먼저 <code>read(fd, buf, size)</code> syscall 을 호출한다. <code>read</code> syscall 의 두번째 인자인 buf 는 사용자의 buffer를 의미한다.<br>그다음 VFS에서는 file descriptor를 보고 file이 있는 device를 알아낸 후 logical block number 를 physical block number 로 변환한다. buffer cache 쪽에 해당 block이 있는지 확인을 하고 block 이 없다면 파일시스템에서 가져와야한다. 만약 buffer cache에 이미 cache된 block이 있으면 VFS에 반환한다.<br>cache된 block이 없다면 파일시스템에 block을 요청하고 이 <code>read</code> 를 요청한 프로세스는 sleep 한다. 즉, context switching 이 일어난다. I&#x2F;O가 필요하기 때문이다. 나중에 disk에서 block을 읽어오면 interrupt 가 발생하고 그 block 을 다시 caching 해주고 block 을 반환한다.<br>VFS에 반환할때는 application의 buf에 block들을 copy해주고 읽어온 byte 수를 반환한다.  </p>
+<p>만약 <code>read</code> 를 하더라도 buffer cache 에 대상 block 이 존재하여 cache hit 이 된다면, 해당 프로세스는 sleep 하지 않는다.<br>그리고 buffer cache 쪽을 보게되면 hash table 구조로 구현되어 있고 value로는 linked list 로 각 cache 되어있는 data block 들이 있는 것을 확인할 수 있다. hash 의 key로는 보통은 block number 를 사용한다고 한다.</p>
+<br/>
+
+<h4 id="Write-syscall"><a href="#Write-syscall" class="headerlink" title="Write syscall"></a>Write syscall</h4><p align="center">
+    <img style="max-width:600px" alt="Buffer cache write" src="/images/filesystem/buffer-cache-write.png"/>
+</p>
+
+<p>먼저 <code>write(fd, buf, size)</code> syscall 을 호출한다.<br>VFS에서 device 및 block number로 변환하여 buffer cache에 해당 block이 이미 있는지 확인한다. 만약 write 하려는 block 이 buffer cache에 없다면 먼저 파일시스템에서 읽어오도록 요청한다. 이 과정에서도 <code>write</code>를 요청한 프로세스는 sleep 한다.<br>파일시스템에서 읽어왔으면 다시 write를 시도하면 해당 block이 buffer cache 에 존재하므로 이 경우에는 해당 buffer cache의 data block에 직접 write를 수행하고(in-memory) 해당 block이 disk에 있는 block과 일치하지 않는다는 표시를 하기위해 dirty bit를 체크한다.<br>만약 처음부터 buffer cache에 write 시도시 해당 block 이 buffer cache에 있었다면 바로 그 block에 write 하고 반환한다.  </p>
+<p>이런 방식이면 buffer cache와 disk 의 sync가 깨지게 되는데 이는 다른 worker 스레드가 주기적으로 dirty bit가 체크된 data block 들을 disk에 sync 시켜준다.  </p>
+<h4 id="kworker"><a href="#kworker" class="headerlink" title="kworker"></a>kworker</h4><p>이 kworker 라는 kernel thread가 buffer cache와 disk block 간의 동기화를 수행한다.<br>예를들어 data block은 30초, metadata는 5초마다 동기화를 시킬수도 있다. 다만 이런 구현은 실제 OS 구현마다 다르며 파일시스템 구현마다도 다르다.<br>다만 이런 방식이면 순간적으로 머신이 꺼지거나 할때 동기화가 되지 않은 부분은 유실될 수 있다. 즉 write를 하더라도 그 내용이 disk에 반영된다는 보장이 없다. 이를 위해 저널링 파일시스템 같은 대안을 사용한다.<br>Application 에서 <code>fsync</code> system call을 사용하면 강제적으로 buffer cache의 내용을 disk에 반영한다.<br>DBMS도 구현마다 다르지만 매번의 update 마다 fsync 를 수행하지는 않는다. DBMS에서는 이를 write ahead log 과 transaction을 이용해 해결한다.  </p>
+<br/>
+
+<h2 id="Memory-Mapped-File-mmap"><a href="#Memory-Mapped-File-mmap" class="headerlink" title="Memory-Mapped File(mmap)"></a>Memory-Mapped File(mmap)</h2><p>mmap은 파일을 프로세스의 address space 한 부분으로 mapping 한다. 파일을 프로세스의 memory space 에 그냥 가져다가 붙힌다고 생각하면 쉽다.<br>이렇게 되면 단순히 memory access instruction 을 통해 파일에 대한 read, write을 할 수 있다. kernel은 이런 memory access instruction 을 적절하게 read, write로 변환하여 수행해준다.<br>mmap 함수는 다음과 같다.  </p>
+<p><code>void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)</code></p>
+<p><code>start</code>는 단지 이 주소를 사용했으면 좋겠다는 의미로 0을 보통 넣는다. 그리고 <code>offset</code> 부터의  <code>length</code> 만큼의 바이트를 <code>start</code> 주소로 매핑하기를 원한다는 의미이다.<br><code>fd</code>는 파일에 대한 file descriptor 로 이미 존재하는 파일에 대한 file descriptor 를 넘겨 이를 읽거나 수정할 수도 있고, 새로운 파일을 <code>O_CREAT</code> flag 와 함께 open 하여 이 file descriptor 를 넘겨 새로운 파일을 쓸 수도 있다.  </p>
+<p>유저는 파일에 대한 I&#x2F;O 를 단지 <code>memset</code>, <code>memcpy</code> 같은 memory access 로 단순화 할 수 있다.<br>그리고 여러개의 프로세스에서 동일한 파일을 open 하여 사용할 경우 kernel 은 동일한 파일에 대한 내용을 memory에 1개만 들고있으면 된다.  </p>
+<p>mmap 파일의 동작을 그림으로 보자.  </p>
+<p align="center">
+    <img style="max-width:600px" alt="mmap 과정" src="/images/filesystem/mmap.png"/>
+</p>
+
+<p>먼저 mmap 을 사용하지 않는 경우를 생각해보면, disk 에서 DMA로 data block을 가져오면 이를 buffer cache에 올리고 그다음 사용자 buffer 로 copy를 해야한다.<br>buffer cache 로는 DMA 가 copy 해주지만, buffer cache 에서 user buffer 로는 CPU가 직접 copy 해야한다. 따라서 file IO 가 빨라지려면 CPU도 중요하다.  </p>
+<p>mmap은 조금 다르다. mmap은 buffer cache를 사용하지 않는다. mmap은 buffer cache에 data block을 쓰지 않고 바로 kernel space로 DMA가 쓴다. 그리고 이를 프로세스의 address space 에 page table을 통해 매핑한다.<br>따라서 user buffer 로의 copy가 존재하지 않는다.<br>위의 그림에서는 process A 와 process B 가 각각 mmap 되어있는 physical fragment 를 공유하고 있다. mmap 에서는 flag에 <code>MAP_SHARED</code> flag 를 통해 다른 프로세스와 mmap 된 파일을 공유할 수 있다. 하지만 다른 동기화 같은 장치는 제공하지 않는다.<br>process A 에서 먼저 특정 파일을 mmap 하였을때 그 다음 process B 에서 같은 파일에 대해 mmap을 하게되면 서로 반환받는 virtual address 주소는 다르지만, 결국 page table 에 매핑된 physical address 주소는 같아 같은 파일을 바라보게 된다.  </p>
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-07T15:51:46.000Z" title="08/09/2020, 00:51:46">2020-09-08</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">31분안에 읽기 (약 4638 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 파일시스템 관련내용을 정리한 글입니다.  </p>
+<p>이번 편에서는 크게 다음 2가지를 볼 것이다.  </p>
+<ol>
+<li>File System의 디자인</li>
+<li>Directory의 디자인</li>
+</ol>
+<p>unix 시스템에서 파일과 디렉토리는 비슷하면서도 다르게 구현이된다.<br>파일의 디자인부터 살펴보자.  </p></div><a class="article-more button is-small is-size-7" href="/2020/09/08/file-system-design-1/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-07T07:14:20.000Z" title="07/09/2020, 16:14:20">2020-09-07</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">40분안에 읽기 (약 6049 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 파일시스템 관련내용을 정리한 글입니다.  </p>
+<h2 id="파일-File-이란"><a href="#파일-File-이란" class="headerlink" title="파일(File)이란?"></a>파일(File)이란?</h2><p>파일은 무엇일까?<br>파일은 <strong>linear array of bytes</strong> 이다. 이게 무슨말일까?<br>이전 운영체제 메모리편에서 보았듯이 address space는 sparse 하다. 즉 프로세스가 사용하는 주소공간은 중간부분을 사용하지 않고 비어있을 수 있다. 그러므로 효율적으로 사용하고자 multi-level page table을 사용하곤 했었다.<br>이와 다르게 파일은 linear array of bytes로 중간이 비어있지 않다. 그리고 파일은 byte addressable하다. Byte 단위로 접근이 가능하다는 것이다. 그리고 여기서의 linear array는 밑에서 보겠지만 logical한 block이 linear하다는 것이다.  </p></div><a class="article-more button is-small is-size-7" href="/2020/09/07/file-system-concept/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-05T16:51:46.000Z" title="06/09/2020, 01:51:46">2020-09-06</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">44분안에 읽기 (약 6653 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/09/06/file-system-flash/">파일시스템 2편 - Flash 그리고 SSD</a></h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.<br>이전 포스트의 하드디스크에 이어 이번 포스트에서는 Flash 그리고 SSD에 대해 알아볼 것입니다.  </p>
+<p>이번 편은 이전의 <a href="/2019/07/09/os-computer-architecture/">운영체제 3편 - 컴퓨터 구조와 I&#x2F;O</a> 글의 I&#x2F;O 부분을 이해하고보면 도움이 됩니다.  </p>
+<br/>
+
+<h2 id="Flash-Memory"><a href="#Flash-Memory" class="headerlink" title="Flash Memory"></a>Flash Memory</h2><p>하드디스크와 다르게 Flash는 메모리나 CPU처럼 트랜지스터 들로 구성이 되어있다. 즉 disk의 arm이 움직이거나 platter가 회전하는 물리적인 움직임이 없다.<br>Reliability 측면에서도 disk에 비해 훌륭한 편이다. Disk는 물리적인 head crash가 날수도 있고, dead block(더이상 사용할 수 없는 block) 자체가 생길 수 있다. 물리적으로 읽고 쓰기 때문이다. 그리고 disk는 생각보다 자주깨진다.<br>이와는 다르게 Flash는 순수한 silicon으로 구성되어 있으며 전자적으로 동작하기에 더 신뢰성이 높다. Flash는 또한 매우 빠른 access time을 제공하고 power가 적게드는 반도체 특성으로 disk에 비해 매우매우 저전력이다. Flash Memory는 여러타입이 있는데 보통은 NAND-Flash를 의미한다. 
+다만 Flash가 가진 특이한 특성들 때문에 이를 해결하기 위해 몇가지 기법들을 적용해야한다. 이들은 밑에서 자세히 알아볼 것이다.   </p>
+<p>Flash chip은 하나의 transistor의 1개 이상의 bit를 저장할 수 있다. <strong>SLC(Single-Level Cell)</strong> flash는 오직 1개의 bit만 transistor에 저장할 수 있고, <strong>MLC(Multi-Level Cell)</strong> flash는 2개의 bit를 저장할 수 있다. 그러므로 00, 01, 10, 11을 저장할 수 있다. <strong>TLC(Triple-Level Cell)</strong> flash는 3개의 bit를 저장가능하다. 전반적으로 SLC가 더 성능이 좋고 가격이 비싸다.  </p></div><a class="article-more button is-small is-size-7" href="/2020/09/06/file-system-flash/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-04T15:51:46.000Z" title="05/09/2020, 00:51:46">2020-09-05</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">25분안에 읽기 (약 3718 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/09/05/file-system-hard-disk/">파일시스템 1편 - 하드디스크</a></h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.  </p>
+<p>처음으로 파일시스템 자체를 보기전에 물리적인 device의 작동원리에 대해 이해를 하고 파일시스템을 보게되면 더 이해가 쉽습니다. 이번 편에서는 하드디스크에 대해 다룰 것입니다.  </p>
+<p>이번 편은 이전의 <a href="/2019/07/09/os-computer-architecture/">운영체제 3편 - 컴퓨터 구조와 I&#x2F;O</a> 글의 I&#x2F;O 부분을 이해하고보면 도움이 됩니다.  </p></div><a class="article-more button is-small is-size-7" href="/2020/09/05/file-system-hard-disk/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-04T15:51:46.000Z" title="05/09/2020, 00:51:46">2020-09-05</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">27분안에 읽기 (약 4115 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/09/05/raid/">파일시스템 2편 - RAID</a></h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.<br>이전 포스트의 하드디스크에 이어 이번 포스트에서는 RAID에 대해 알아볼 것입니다.  </p>
+<p>이번 편은 이전의 <a href="/2019/07/09/os-computer-architecture/">운영체제 3편 - 컴퓨터 구조와 I&#x2F;O</a> 글의 I&#x2F;O 부분을 이해하고보면 도움이 됩니다.  </p>
+<br/>
+
+<h2 id="What-is-RAID"><a href="#What-is-RAID" class="headerlink" title="What is RAID?"></a>What is RAID?</h2><p><strong>RAID</strong>는 <strong>Redundant Array of Inexpensive Disks</strong>의 약자이다. 즉 여러개의 disk를 사용해서 더 빠르고, 더 크고, 더 신뢰성 있는 disk 시스템을 구축하는 방식이다.<br>외부적으로 보는 관점에서는 RAID는 그냥 disk와 동일하다. 외부에서는 그저 큰 disk처럼 바라볼 뿐이다. disk와 동일하게 block의 묶음을 읽고 쓸수있다. 하지만 RAID 내부적으로는 시스템을 관리하는 프로세서도 존재하고 메모리도 존재하며 무엇보다 여러개의 disk로 구성되어 있다. </p>
+<p>RAID는 왜 쓰는 것일까?<br>RAID를 사용하면 먼저 성능상으로 이득을 볼 수 있다. 여러개의 disk에 병렬로 I&#x2F;O를 할 수 있다. 그리고 용량(capacity)측면에서도 이득을 볼 수 있다. 한개의 disk 크기를 넘어서는 크기를 저장할 수 있기 때문이다.<br>그리고 신뢰성(reliability)도 더 높은데 RAID를 구성하는 방식에 따라 다를 수 있지만 데이터를 여러 disk에 중복해서 저장함으로서 single disk failure에 대해 극복할 수 있고 외부에서는 single disk failure가 일어나도 아무 일도 일어나지 않은 것처럼 수행할 수 있다.  </p>
+<br/>
+
+<h2 id="RAID-Internals"><a href="#RAID-Internals" class="headerlink" title="RAID Internals"></a>RAID Internals</h2><p>파일시스템 밑에서 RAID는 그저 매우 크고 신뢰성있고 빠른 disk 처럼 보일뿐이다. single disk처럼 linear array of blocks로 보이고 각 block은 파일시스템에 의해 읽고 쓰여질 수 있다.<br>파일시스템이 RAID에 logical block에 대해 I&#x2F;O 요청을 하면 RAID는 내부적으로 여러 disk를 가지고 있는데 어떤 disk에 접근해서 physical I&#x2F;O를 할 지 결정하고, 수행한 후 그 결과를 반환한다. 이 physical I&#x2F;O를 어떻게 수행할 것인가는 밑에서 볼 RAID level에 따라 다르다.<br>간단하게 RAID가 각 disk의 copy본을 들고있는 mirrored RAID 라고 해보자. 그러면 write을 수행할 때 각 block들을 disk에 2번씩 써주어야 한다.  </p>
+<br/>
+
+<h2 id="RAID-Evaluation"><a href="#RAID-Evaluation" class="headerlink" title="RAID Evaluation"></a>RAID Evaluation</h2><p>RAID를 구성하는 방법은 여러가지가 있다. 구성하는 방법에 따라 특징 그리고 장단점이 존재하는데 이런 특징을 수치로 측정할 수 있으로면 비교하기 쉽다. 그래서 우리는 3가지 측면에서 RAID의 특징을 측정할 것이다.  </p>
+<h4 id="capacity"><a href="#capacity" class="headerlink" title="capacity"></a>capacity</h4><p>먼저 capacity이다. <code>B</code>개의 block을 저장할 수 있는 <code>N</code>개의 disk가 있다. 클라이언트는 RAID에 얼마나 많은 용량을 저장할 수 있을까?<br>중복없이 저장한다면 <code>N * B</code>가 되겠다. 각 block마다 copy본을 둔다면 <code>N * B / 2</code>가 되겠다.  </p>
+<h4 id="reliability"><a href="#reliability" class="headerlink" title="reliability"></a>reliability</h4><p>두번째는 reliability 즉 신뢰성이다. RAID가 몇개의 disk failure 까지 허용할 수 있을까에 대해 이야기한다.  </p>
+<h4 id="performance"><a href="#performance" class="headerlink" title="performance"></a>performance</h4><p>마지막은 performance이다. Performance는 측정하기 조금 힘들 수 있는데 RAID에 요청되는 작업의 종류에 의존하는 경우가 많기 때문이다.<br>RAID performance를 측정할때는 크게 2가지 측면을 고려할 것인데 첫번째는 <strong>single-request latency</strong>이다. RAID에서 single I&#x2F;O 요청에 대해 어떤 latency를 가지는지를 측명하면 얼마나 해당 RAID가 병렬성을 가지고 있는지 그대로 이해할 수 있다.<br>두번째는 <strong>steady-state throughput</strong> 이다. 어떤 규칙적인 요청이 왔을때 그때의 처리량을 의미한다. 예를들어 여러개의 요청이 동시에 왔을때 그때의 RAID 전체의 bandwidth를 측정할 수 있겠다.<br>이들을 조금 더 자세히 측정하기 위해 각 요청에 대한 내용들이 두가지 종류가 있다고 가정한다. <strong>sequential</strong>과 <strong>random</strong>이다.<br>sequential workload는 요청들이 큰 단위의 연속된 block을 읽는 요청들로 이루어져 있다고 가정한다. 이런 sequential workload는 큰 파일을 읽어 특정 키워드를 찾고싶을때처럼 자주 오는 요청들이다.<br>random workload는 각 요청은 매우 작은 크기의 block을 읽는 요청들이고 각 요청들은 서로 다른 disk location을 대상으로 한다. 예를들어 처음 4KB에 대해 logical address 10에 접근하고 그다음은 logical address 55,000 그 다음은 logical address 4,500 에 접근하는 방식이다. 이런 random workload는 database에서 빈번하게 일어난다.  </p>
+<p>위의 sequential, random workload는 disk의 특성으로 인해 각각 다른 performance 특징을 가진다.<br>sequential access에서는 disk는 가장 효율적인 방식으로 동작한다. seek time과 rotational delay에 매우 적은 시간을 사용하므로 대부분의 시간을 data transfer에 활용할 수 있다.<br>다만 random access의 경우는 대부분의 시간을 seek time과 rotational delay에 사용하므로 상대적으로 data transfer에는 작은 시간을 할애할 수밖에 없다.<br>그래서 이런 차이점을 더 명확히 확인하기 위해 sequential workload 에서는 <code>S MB/s</code> 로 data transfer가 가능하다고 하고, random workload 에서는 <code>R MB/s</code> 속도로 data transfer가 가능하다고 하자. 보통은 S가 R보다 훨씬 크다. 이 측정치를 밑에서 RAID level 별로 계산해보며 성능을 비교해볼 것이다.  </p>
+<p>밑에서는 몇가지 RAID 종류들을 보게될 것이다. <strong>RAID Level 0</strong>(striping), <strong>RAID Level 1</strong>(leveling), <strong>RAID Levels 4, 5</strong>(parity-based redundancy)이다.  </p>
+<br/>
+
+<h2 id="RAID-Level-0-Striping"><a href="#RAID-Level-0-Striping" class="headerlink" title="RAID Level 0: Striping"></a>RAID Level 0: Striping</h2><p>RAID 0은 <strong>striping</strong>으로 더 잘 알려져 있다. 이 방식은 capacity와 performance 측면에서 높은 결과를 낸다.<br>striping은 말그대로 줄무늬 방식이라고 이해해도 좋다. striping 방식에서는 각 block들을 여러 disk에 걸쳐 줄무늬처럼 배열한다. 다음 그림을 보자.  </p>
+<p align="center">
+    <img alt="RAID 0: Striping" style="max-width: 350px;" src="/images/filesystem/raid-0.png"/>
+</p>
+  
+<p>여기서는 4개의 disk를 사용했다. striping의 기본 아이디어는 block의 array를 라운드로빈 방식으로 disk에 하나씩 할당한다. 이 방식은 large sequential read 요청에 대해 병렬로 처리할 수 있도록 설계한 방식이다.<br>위의 예에서는 1개의 block(4KB) 기준으로 라운드로빈으로 disk에 할당하였는데 다음과 같이 할당할수도 있다.  </p>
+<p align="center">
+    <img alt="RAID 0: Bigger chunk size" style="max-width: 400px;" src="/images/filesystem/raid-0-bigger.png"/>
+</p>
+
+<p>여기서는 다음 disk로 넘어가기 전에 2개의 block(8KB)를 할당하고 다음 disk로 넘어갔다. 이 단위를 <strong>chunk size</strong>라고 한다. 여기서는 8KB의 chunk size를 사용하였다. </p>
+<h4 id="Chunk-Size"><a href="#Chunk-Size" class="headerlink" title="Chunk Size"></a>Chunk Size</h4><p>chunk size는 performance에 영향을 많이 끼친다. 작은 chunk size를 사용한다면 많은 파일들이 여러 disk에 striped 되어 저장될 것이다. 그러므로 파일 read write 시에 병렬성을 증가시킬 수 있을것이다.<br>다만 block에 접근하기 위한 positioning time(seek time + rotational delay)가 증가한다. 왜냐하면 여러 disk에 병렬로 읽거나 쓰게될때 결국 완료시간은 가장 오랜시간이 걸린 positioning time에 의해 결정되기 때문이다.  </p>
+<p>chunk size를 크게잡으면 어떨까?<br>작은 크기의 파일에 대해선은 read, write에 병렬성은 떨어질 것이다. 그러나 positioning time이 줄어들 것이다. 만약 작은 크기의 파일의 크기가 chunk size보다 작아 single disk에 저장된다면 그 single disk 에서의 positioning time이 결정한다.  </p>
+<p>그러므로 최적의 chunk size를 찾기 위해서는 어떤 요청들을 위주로 처리할지에 대한 지식이 먼저 있으면 결정하기 좋다.<br>대부분은 큰 chunk size(64KB)를 사용하고는 한다.  </p>
+<h4 id="RAID-0-Evaluation"><a href="#RAID-0-Evaluation" class="headerlink" title="RAID 0 Evaluation"></a>RAID 0 Evaluation</h4><p>RAID 0 에서 capacity, reliability, performance를 측정해보자.<br>먼저 capacity는 간단하다. <code>B</code>개의 block들로 이루어진 <code>N</code>개의 disk가 있다면 <code>N * B</code>의 block을 저장할 수 있다.<br>reliability도 간단한데 striping 방식에서는 reliability가 좋지 않다. 하나의 disk가 fail이 나더라도 바로 data loss로 이어진다.   </p>
+<p>performance는 위에서 본 sequential workload의 <code>S</code>와 random workload의 <code>R</code>을 구해보며 비교해보자.<br>sequential transfer size는 평균적으로 10MB, random transfer size는 평균적으로 10KB라고 가정하자. 이들을 전송하는데 속도가 얼마인지 계산해보자.<br>Disk의 spec은 다음과 같다.  </p>
+<ul>
+<li>Average seek time: 7ms</li>
+<li>Average rotational delay: 3ms</li>
+<li>Transfer rate of disk: 50MB&#x2F;s</li>
+</ul>
+<p><code>S</code>는 <code>(Amound of Data) / (Time to access)</code> 이므로 <code>10MB / (7ms + 3ms + 200ms) = 47.62 MB/s</code> 와 같다. Time to access는 seek time + rotational delay와 10MB를 전송하는데 200ms가 걸리므로 이를 합치면 계산할 수 있다.<br><code>R</code>은 <code>10KB / 10.195ms = 0.981 MB/s</code>이다. 10KB를 전송하는데 0.195ms가 걸린다.<br>이 <code>S</code>와 <code>R</code>은 disk 1개에서 고려한 속도이다.  </p>
+<p>이처럼 striping의 performace를 보게되면 single-block request에 대해서는 single disk 성능과 동일하다.<br>하지만 sequential, random workload 관점에서 볼때 sequential workload는 하나의 disk가 <code>S</code>의 속도를 낼때 <code>N</code>개의 disk가 있다면 전체 처리량은 <code>S * N</code>이 되겠다.<br>randon workload 에서의 전체 처리량은 <code>R * N</code>이 된다. </p>
+<br/>
+
+<h2 id="RAID-Level-1-Mirroring"><a href="#RAID-Level-1-Mirroring" class="headerlink" title="RAID Level 1: Mirroring"></a>RAID Level 1: Mirroring</h2><p>RAID Level 1은 <strong>mirroring</strong>으로 잘 알려져있다. Mirrored System에서는 각 block에 대해 copy본을 같이 저장함으로서 disk failure를 극복할 수 있다. 전형적인 mirroring 방식은 다음과 같다.  </p>
+<p align="center">
+    <img alt="RAID 1: Mirroring" style="max-width: 350px;" src="/images/filesystem/raid-1.png"/>
+</p>
+
+<p>위의 방식에서는 RAID는 물리적으로 두개의 물리적 copy를 저장한다. disk 0은 disk 1과 동일한 내용을 들고있고 disk 2는 disk 3과 동일한 내용을 들고있다. 데이터들은 이 mirror pair들에 걸쳐 striped 된다.<br>disk들에 copy본들을 어디에 위치시킬지는 여러가지 방법이 있는데 위에서 본 방식은 가장 일반적인 방식으로 이런 방식을 <code>RAID-10</code>이라고 부르기도 한다. <strong>stripe of mirror</strong>로 RAID1+0 라는 의미이다.  </p>
+<p>disk read를 할때는 복제본 disk 두개중 어디에서 읽어도 상관없다. 다만 write은 두개의 disk에 모두 써주어야 한다. 이 2번의 write은 병렬로 처리할 수 있다.<br>또 위의 경우 복제본을 2개 저장했는데 이를 <strong>mirroring level</strong>이라고도 한다. 여기서는 mirroring level이 2이다.  </p>
+<h4 id="RAID-1-Evaluation"><a href="#RAID-1-Evaluation" class="headerlink" title="RAID 1 Evaluation"></a>RAID 1 Evaluation</h4><p>RAID 1 에서 capacity를 먼저보자. capacity 관점에서 RAID 1은 비용이 비싸다. mirroring level 2 에서는 전체 용량의 절반만 저장할 수 있으므로 capacity는 <code>N * B / 2</code>가 되겠다.  </p>
+<p>reliability의 관점에서는 좋다. 아무 disk 1개의 failure를 허용할 수 있다. 사실 정확히는 최대 <code>N/2</code>개의 disk failure 까지 허용가능하다. 위에서 본 예제에서도 만약 운이 좋게도 disk 0과 disk 2가 동시에 fail 했다고 하더라도 data loss가 발생하지 않는다. 운이 좋게 각 copy 본을 저장하는 disk가 중복없이 fail이 발생했기 때문이다.  </p>
+<p>performance 관점을 살펴보자. single read request는 single disk와 성능이 동일하다.<br>다만 single write request는 살짝 더 latency가 늘어날 수 있는데, 각 copy 본을 병렬로 write한다고 하더라도 완료되는 시점은 두개의 disk중 더 오래걸린 시간이기 때문이다.  </p>
+<p>steady-state throughput을 살펴보자. 
+sequential write에서는 각 logical write은 두개의 physical write으로 나누어진다. 그러므로 mirroring 방식에서 전체 bandwidth는 <code>(N / 2) * S</code>가 된다. 최대 bandwidth의 절반밖에 안된다.<br>sequential read도 똑같은데 얼핏 생각하면 각 logical read를 모든 disk에 나누어 처리하면 상황이 더 나아질 것 같지만 disk의 물리적 특성을 생각하면 그렇지 않다. 예를들어 위의 그림에서 block 0 부터 7까지 읽는다고 했을때 block 0은 disk 0에서, block 1은 disk 2에서, block 2는 disk 1에서 block 3은 disk 3에서 읽는다고 해보자. disk 0에서는 block 0을 읽고 그다음 block 4를 읽으면 될 것 같지만 어차피 중간에 block 2가 존재하기 때문에 rotation 하면서 이를 지나가야한다. 그러므로 성능향상이 없다. 그러므로 sequential read 에서의 전체 bandwidth도 <code>N / 2) * S</code>와 같다.  </p>
+<p>Random read는 mirroring 방식에서 best case이다. read를 전체 disk에 분산시킬 수 있으므로 <code>N * R MB/s</code>의 대역폭을 가진다.<br>Random write은 sequential write과 동일하게 두개의 physical write로 나누어지므로 <code>(N / 2) * R MB/s</code> 이다.  </p>
+<br/>
+
+<h2 id="RAID-Level-5-Rotating-Parity"><a href="#RAID-Level-5-Rotating-Parity" class="headerlink" title="RAID Level 5: Rotating Parity"></a>RAID Level 5: Rotating Parity</h2><p>RAID Level 5에서는 parity 정보를 활용한다.<br>Parity bit은 오류가 생겼는지 검사하는 bit 인데 2가지 종류가 존재한다. 짝수 parity와 홀수 parity이다.<br>개념은 간단한데 짝수 parity에서는 데이터의 각 bit의 값에서 parity bit를 포함한 1의 개수가 짝수가 되도록 하는 것이다. 홀수 parity는 홀수가 되도록 하는것이다. 예를들어 다음과 같다.  </p>
+<p align="center">
+    <img style="max-width: 350px;" src="/images/filesystem/parity.png"/>
+</p>
+
+<p>짝수 parity라면 C0, C1, C2, C3의 bit에서 1의 개수가 2개이므로 parity bit을 0으로 둔다. 그래야 짝수인 2개로 유지되기 때문이다. parity bit을 활용하면 C0, C1, C2, C3 중 한개가 유실되어도 그 값을 bit 계산으로 알아낼 수 있다.  </p>
+<p>다시 RAID로 돌아와서 RAID Level 5 방식을 그림으로 보자.  </p>
+<p align="center">
+    <img alt="RAID 5: Rotating Parity" style="max-width: 400px;" src="/images/filesystem/raid-5.png"/>
+</p>
+  
+<p>여기서는 parity bit을 disk 별로 돌아가며 설정한다. 즉 위의 block 0, 1, 2, 3의 각 block의 bit를 계산해서 그에 대한 parity bit을 disk 4에 저장한다.  </p>
+<h4 id="RAID-5-Evalutation"><a href="#RAID-5-Evalutation" class="headerlink" title="RAID 5 Evalutation"></a>RAID 5 Evalutation</h4><p>capacity 부터 확인해보자. stripe 당 1개의 parity block을 두기때문에 <code>(N - 1) * B</code>의 용량을 가지게 된다.<br>reliability 는 1개의 disk failure를 허용한다. parity bit를 활용해 recovery 가능하다. 다만 2개이상의 disk failure가 나면 복구할 방법이 없다.<br>그렇다면 performance를 계산해보자.<br>single read request는 1개의 disk로 매핑되기 때문에 single disk와 성능이 동일하다.<br>다만 single write request는 다른데 위 예제에서 block 0에 write을 하려면 block 0을 읽고 parity block도 읽어서 parity bit를 다시 계산해야한다. 즉 read 2번, write 2번이 필요하고 read, write 각각 병렬로 처리할 수 있으므로 single disk의 latency의 약 2배정도 걸린다.  </p>
+<p>sequential read는 parity block으로 인해 <code>(N - 1) * S MB/s</code>의 대역폭을 가진다. sequential write도 parity bit을 같이 써주어야 하므로 <code>(N - 1) * S MB/s</code>가 되겠다.<br>random read는 모든 disk를 활용할 수 있다. 다만 random write은 <code>(N / 4) * R MB/s</code>을 가진다.<br>왜냐하면 만약 random write가 위 예제에서 block 1과 block 10에 대해 요청이 왔다면 parity bit 계산을 위해 disk 1과 disk 4를 읽어 block 1을 처리하고, disk 0과 disk 2를 읽어 block 10을 처리한다. 각 요청안에서 block data write과 parity block write은 병렬로 처리할 수 있므으로 총 4개의 I&#x2F;O 가 필요하다.(disk 1의 read&#x2F;write + disk 0의 read&#x2F;write)  </p>
+<p>RAID Level 별로의 evaluation 결과는 다음과 같다.  </p>
+<p align="center">
+    <img alt="RAID Evaluation" style="max-width: 700px;" src="/images/filesystem/raid-evaluation.png"/>
+</p>
+
+<br/>
+
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>reliability는 고려하지 않고 performance가 중요한 상황이라면 RAID 0 striping이 좋은 선택이 될 수 있다.<br>반대로 reliability가 중요하고 random I&#x2F;O 성능이 중요하다면 RAID 1 mirroring이 좋은 선택이다. 다만 비용이 비싸다.<br>capacity와 reliability가 중요하다면 RAID 5 가 좋은 선택이다. 다만 small-write의 성능이 좋지않은면이 있다.<br>만약 sequential I&#x2F;O가 주된 접근이고 capacity를 최대화 해야하는 상황이라면 이 경우에도 RAID 5가 좋은 선택이다.  </p>
+<p>여기서 살펴본 RAID 디자인 말고도 다른 여러가지 디자인이 존재한다. 예를들어 RAID 6은 multiple disk failure를 허용한다.<br>RAID는 hardware 자체로 구현되어 제공되기도 하고 software로도 구현되어 제공될 수 있다. </p>
+<br/>
+
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.amazon.com/Operating-Systems-Three-Easy-Pieces-ebook/dp/B00TPZ17O4">https://www.amazon.com/Operating-Systems-Three-Easy-Pieces-ebook/dp/B00TPZ17O4</a></li>
+</ul>
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-08-08T14:07:51.000Z" title="08/08/2019, 23:07:51">2019-08-08</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">한 시간안에 읽기 (약 9389 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/08/08/os-memory/">운영체제 9편 - 메모리</a></h1><div class="content"><p>이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.<br>맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.  </p>
+<p>이번 편은 메모리에 대한 내용입니다.  </p></div><a class="article-more button is-small is-size-7" href="/2019/08/08/os-memory/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-07-25T12:50:23.000Z" title="25/07/2019, 21:50:23">2019-07-25</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">16분안에 읽기 (약 2358 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/25/classic-problem-of-synchronization/">운영체제 8편 - 동기화의 고전적인 문제들</a></h1><div class="content"><p>이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.<br>맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.  </p>
+<p>이번 편은 동기화(synchronization)에 이어 동기화의 고전적인 문제들에 대한 내용입니다.  </p>
+<p>동기화에 대한 고전적인 대표적인 문제들이 몇가지 있는데 이중 2가지를 알아볼 것이다.  </p>
+<ul>
+<li>Bounded-buffer problem</li>
+<li>Readers and Writers problem</li>
+</ul></div><a class="article-more button is-small is-size-7" href="/2019/07/25/classic-problem-of-synchronization/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-07-24T11:51:23.000Z" title="24/07/2019, 20:51:23">2019-07-24</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">26분안에 읽기 (약 3917 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/24/os-synchronization/">운영체제 7편 - 동기화(Synchronization)</a></h1><div class="content"><p>이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.<br>맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.  </p>
+<p>이번 편은 동기화(synchronization)에 대한 내용입니다.  </p></div><a class="article-more button is-small is-size-7" href="/2019/07/24/os-synchronization/#more">자세히 보기</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-07-23T07:31:06.000Z" title="23/07/2019, 16:31:06">2019-07-23</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">18분안에 읽기 (약 2660 단어)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/23/os-scheduling/">운영체제 5편 - CPU 스케줄링</a></h1><div class="content"><p>이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.<br>맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.  </p>
+<p>이번 편은 CPU 스케줄링에 대한 내용입니다.  </p></div><a class="article-more button is-small is-size-7" href="/2019/07/23/os-scheduling/#more">자세히 보기</a></article></div><nav class="pagination" role="navigation" aria-label="pagination"><div class="pagination-previous is-invisible is-hidden-mobile"><a href="/categories/OS/page/0/">이전</a></div><div class="pagination-next"><a href="/categories/OS/page/2/">다음</a></div><ul class="pagination-list is-hidden-mobile"><li><a class="pagination-link is-current" href="/categories/OS/">1</a></li><li><a class="pagination-link" href="/categories/OS/page/2/">2</a></li></ul></nav></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

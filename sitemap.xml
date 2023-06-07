@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+
     <sitemap>
         <loc>https://tk-one.github.io/post-sitemap.xml</loc>
-        <lastmod>2022-04-08T13:26:53.725Z</lastmod>
+        <lastmod>2023-06-07T16:21:36.345Z</lastmod>
     </sitemap>
 
     <sitemap>
         <loc>https://tk-one.github.io/category-sitemap.xml</loc>
-        <lastmod>2020-01-03T08:13:32.940Z</lastmod>
-    </sitemap>
-
-    <sitemap>
-        <loc>https://tk-one.github.io/tag-sitemap.xml</loc>
-        <lastmod>2020-01-03T08:13:32.940Z</lastmod>
+        <lastmod>2023-06-07T16:21:36.345Z</lastmod>
     </sitemap>
 
 </sitemapindex>

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>운영체제 2편 - 가상화 - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.   이번에는 Kernel Architecture에 대한 내용입니다.크게 Monolithic kernel, Micro kernel, Hypervisor를 알아봅시다."><meta property="og:type" content="blog"><meta property="og:title" content="운영체제 2편 - 가상화"><meta property="og:url" content="https://tk-one.github.io/2019/07/09/os-virtualization/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.   이번에는 Kernel Architecture에 대한 내용입니다.크게 Monolithic kernel, Micro kernel, Hypervisor를 알아봅시다."><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/monolithic-kernel.png"><meta property="og:image" content="https://tk-one.github.io/images/micro-kernel.png"><meta property="og:image" content="https://tk-one.github.io/images/block-io-compare.png"><meta property="og:image" content="https://tk-one.github.io/images/hypervisor.png"><meta property="og:image" content="https://tk-one.github.io/images/hypervisor-2.png"><meta property="og:image" content="https://tk-one.github.io/images/container.png"><meta property="og:image" content="https://tk-one.github.io/images/hypervisor-type1-vs-type2.png"><meta property="article:published_time" content="2019-07-08T15:20:51.000Z"><meta property="article:modified_time" content="2023-06-07T16:17:20.619Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="OS"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/monolithic-kernel.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2019/07/09/os-virtualization/"},"headline":"운영체제 2편 - 가상화","image":["https://tk-one.github.io/images/monolithic-kernel.png","https://tk-one.github.io/images/micro-kernel.png","https://tk-one.github.io/images/block-io-compare.png","https://tk-one.github.io/images/hypervisor.png","https://tk-one.github.io/images/hypervisor-2.png","https://tk-one.github.io/images/container.png","https://tk-one.github.io/images/hypervisor-type1-vs-type2.png"],"datePublished":"2019-07-08T15:20:51.000Z","dateModified":"2023-06-07T16:17:20.619Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.   이번에는 Kernel Architecture에 대한 내용입니다.크게 Monolithic kernel, Micro kernel, Hypervisor를 알아봅시다."}</script><link rel="canonical" href="https://tk-one.github.io/2019/07/09/os-virtualization/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-07-08T15:20:51.000Z" title="09/07/2019, 00:20:51">2019-07-09</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">16분안에 읽기 (약 2414 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">운영체제 2편 - 가상화</h1><div class="content"><p>이 글은 학부 운영체제 수업을 듣고 정리한 글입니다.<br>맥락없이 운영체제에 대한 내용들이 불쑥 등장하니 양해부탁드립니다.  </p>
+<p>이번에는 Kernel Architecture에 대한 내용입니다.<br>크게 Monolithic kernel, Micro kernel, Hypervisor를 알아봅시다.  </p>
+<span id="more"></span>
+
+<h2 id="Monolithic-Kernel"><a href="#Monolithic-Kernel" class="headerlink" title="Monolithic Kernel"></a>Monolithic Kernel</h2><p>Monolithic Kernel은 우리가 주로 사용하는 운영체제들에서 볼 수 있는 방식이라고 생각하면 편하다.
+Monolithic Kernel에서는 사용자와 Kernel이 같은 주소공간에 위치한다. 즉 주소공간을 Kernel과 사용자가 나누어서 사용하는 것이다.<br>Monolithic Kernel에서는 kernel 코드가 큰 한덩어리로 구성된다. 흔히 말하는 Monolithic Server Architecture를 생각하면된다. (반대로 흔히 MSA라고 부르는 Micro Server Architecture가 있다)</p>
+<p align="center">
+    <img style="max-width:500px" src="/images/monolithic-kernel.png"/>
+</p>
+
+<p>Monolithic Kernel의 장점은 유저의 Application과 커널이 같은 주소공간에 위치하기 때문에 SystemCall 및 커널 서비스 간의 데이터 전달시 오버헤드가 적다.
+SystemCall 호출시간도 짧은 편이다.<br>다만 단점도 존재하는데 모든 서비스 모듈이 하나의 바이너리로 이루어져 있기 때문에 커널 개발자로서 일부분의 수정이 전체에 영향을 미친다. 또한 커널의 크기가 커질수록 유지보수가 어려워 진다.<br>이에 대한 대항마로 Micro Kernel이 있다.  </p>
+<br/>
+  
+<h2 id="Micro-Kernel"><a href="#Micro-Kernel" class="headerlink" title="Micro Kernel"></a>Micro Kernel</h2><p>Micro kernel은 kernel을 쪼개기 시작한다.  커널이 한개가 아니고 여러개로 독립된 주소공간을 갖는다.<br>Micro kernel은 kernel 서비스를 각 기능에 따라 모듈화 하여 각각 독립된 주소공간에서 실행한다고 보면 된다.<br>각각의 모듈화한 모듈을 서버라고 부르며 이 서버들은 다른 process로서 존재한다.<br>여러개의 kernel들의 address space가 다 다르기때문에 function call을 할 수 없다.<br>그래서 message를 보내야 한다. Micro kernel 에서는 IPC(서버들간의 통신)라든지, RPC(Remote Procedure Call) 이런 공통기능만 제공한다.<br>File write이 필요하면 “File을 써주세요”라고 message passing을 한다. 그러면 message passing으로 VFS를 호출하고 다시 message passing으로 결과를 반환하는 구조이다.    </p>
+<p align="center">
+    <img style="max-width:500px" src="/images/micro-kernel.png"/>
+</p>
+
+<p>Micro Kernel의 장점은 각 커널 서비스가 따로 구현되어있어 독립적인 개발이 가능하며, 커널 유지보수가 상대적으로 용이하다는 장점이 있다.<br>다만 성능적으로 Monolithic Kernel 보다 낮은 점이 단점이다.  </p>
+<p>다음은 block I&#x2F;O에 대해 Monolithic Kernel과 Micro Kernel의 처리를 비교한 그림이다.  </p>
+<p align="center">
+    <img alt="block I/O 처리비교" src="/images/block-io-compare.png"/>
+</p>
+
+<br/>
+  
+<h2 id="가상화"><a href="#가상화" class="headerlink" title="가상화"></a>가상화</h2><p>이제는 가상화라는 것이 많이 보편화되었다.<br>기본적으로 가상화는 Monolithic vs Micro kernel과는 조금 다른 관점이다.<br>어떤 kernel이든 예전에는 OS와 하드웨어는 1대1로 매핑되어 존재했다.<br>하나의 하드웨어 위에 OS가 여러개 있으면 뭐가 문제인데? 라는 질문을 할 수 있다. 이에 대한 질문으로 가상화가 시작된다.<br>가상화의 시작은 Virtual Machine부터 시작했다. 하나의 하드웨어 위에 여러개의 OS를 올릴 필요가 있었다. 
+여러개의 OS를 올려야 하니까 OS의 OS가 필요하다. 이름하여 <strong>Hypervisor</strong>이다.<br>다만 성능이 문제였다. 성능이 매우 좋지않아 사용하지 못하는 수준이였다.<br>하지만 이후에 Xen이라는 논문이 발표되었는데, 논문에서 소개한 방식으로 구현을 하게 되면 machine에 OS를 1개만 올리는 것과 성능이 거의 동일하다는 내용이였다. 약 3% 정도의  성능하락만 있다.<br>이때부터 많은 것이 바뀌었고, Cloud라는 새로운 industry가 급성장하기 시작했다고 한다.  </p>
+<p align="center">
+    <img style="max-width:500px" src="/images/hypervisor.png"/>
+</p>
+
+<p>위 그림의 Virtualization Layer가 Hypervisor 이다.<br>옛날에는 OS마다 하드웨어를 분리해서 동작시켜야 했다. 이런 일련의 모든 작업들을 프로비저닝(provisioning)이라고 한다.<br>예전에는 모든 OS에 대해 프로비저닝을 해야 했다.<br>그러나 가상화는 하드웨어를 다 합친다음에 그 위에 여러개의 OS를 돌릴 수 있다.<br>즉 하드웨어를 합쳐서 프로비저닝을 쉽게할 수 있다.  </p>
+<p>자동차 하나에 CPU가 몇개가 있을까?  자동차에 CPU가 최소 100개가 넘게 들어간다. 만약 이들을 10개로 줄이려는 노력을 한다고 가정해보자.<br>그러러면 어떻게 해야할까? Micro CPU들을 조금 더 강력한 CPU들로 대체해야한다.<br>그런데 그냥 막 대체할 수가 없다. 왜냐하면 기존의 코드수정이 필요할 수 있기 때문이다. 하지만 코드수정하기가 쉽지 않은 상황이라면 어떻게 해야할까?<br>여기서 가상화를 사용하면 쉽게 문제를 해결할 가능성이 높다. 100개의 Application들을 10개의 cpu 위에서 돌리면된다.<br>가상화는 software와 hardware의 결합도를 낮추도록 도와준다.  </p>
+<p>이것 말고도 isolation 관점에서의 장점도 있다. Guest OS들은 서로 독립되어 있다. Guest OS를 2개 돌렸을때 한개가 죽었을때 다른 한개에 영향을 주지 않는다.<br>즉, Hardware의 abstract를 guest os가 하는게 아니라 하이퍼바이저가 한다.<br>각각의 guest OS는 독립적인 virtual machine으로 작동한다.  </p>
+<br/>
+
+<h2 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h2><p>Hypervisor는 쉽게말해 Guest OS와 Hardware 사이에 위치하며 virtualize된 컴퓨터 Hardware 자원을 제공하기 위한 관리계층이다.<br>Hypervisor는 hardware의 자원을 분배하는 역할을 한다. 이는 기존의 os가 하던 일이다. Guest OS는 Hypervisor가 제공하는 가상화된 Hardware 자원을 이용한다.  </p>
+<p align="center">
+    <img style="max-width:500px" alt="Hypervisor 구조" src="/images/hypervisor-2.png"/>
+</p>
+
+<p>간단하게 Hypervisor의 장단점을 보자.  </p>
+<p><strong>Hypervisor 장점</strong>  </p>
+<ul>
+<li>하나의 Physical Machine에서 여러 종류의 Guest OS가 운용이 가능하다.</li>
+<li>실제 컴퓨터가 제공하는 것과 다른 형태의 명령어 집합구조(Instruction Set Architecture)를 제공할 수 있다.
+다른 Hardware 환경으로 compile된 Guest OS 및 Application도 구동이 가능하다는 것이다.</li>
+</ul>
+<p><strong>Hypervisor 단점</strong></p>
+<ul>
+<li>Hardware를 직접 사용하는 OS에 비해 성능이 떨어질 수 밖에 없다.
+이 문제는 밑에서 설명할 반가상화(Para-virtualization)으로 성능저하 문제를 해결한다.</li>
+</ul>
+<p>Hypervisor가 device를 emulation 해준다고 볼수있다. Guest OS의 역할은 결국 hardware를 제어하는 것이다.<br>결국 guest OS는 hypervisor위에 있다는 것을 모른다.<br>실제 하드웨어는 intel 칩인데 application은 ARM일 수 있다. 가상화 환경에서 돌리려다 보니까 instruction이 다르다. 그러나 이것도 돌려줄수 있다. Hypervisor가 emulation으로 ARM instruction을 흉내를 낸다.  </p>
+<p>가상화 자체는 좋은 아이디어지만 성능때문에 처음에는 쓸 수 없다고 생각했다. 그러나 Para virtualization(반가상화)라는 것이 나오면서 생각이 바뀌게 된다.<br>반가상화는 Guest OS를 본인이 Hypervisor 위에서 돌아가는 OS라는 것을 알게한다. 이것이 가상화 성능을 확 끌어올렸다.<br>이를 Hypervisor-aware 라고 한다. OS가 Hypervisor 위에 올라가는 걸 알게하려면 Kernel 코드를 뜯어 고쳐야했고 쉽지않았다.<br>결국 Para-virtualization은 Hypervisor와 협력을 해서 성능을 끌어올린 것이다.<br>반가상화는 가상화를 안한것과 성능이 거의 비슷하도록 발전했다.  </p>
+<p>하드웨어에서도 virtualization에 대한 큰 발전이 있었는데, Memory Management도 MMU라는 하드웨어가 CPU안에 들어가면서 Memory management가 확 발전하기 시작한 것처럼, intel에서도 가상화 자체를 CPU가 지원하면서 가상화가 확 발전하기 시작했다.  </p>
+<p>현재 자주 사용하는 경량화된 Hypervisor로서 KVM과 Container가 있다.<br>KVM 이라는 것은 리눅스에 포함된 hypervisor이다. KVM에서는 Xen의 Para-virtualization을 제거하고 intel에서 제공하는 가상화(VT-x) 하드웨어를 사용하여 가속할 수 있다.  </p>
+<p>더 최근에는 오히려 더 잘알려진 개념인 Container를 많이 쓴다.<br>Container는 OS를 우리가 올리지 말고 경량화해서 사용하자는 개념이다. Container는 Guest OS가 없다.<br>Container는 root file system을 공유하고 라이브러리들을 공유한다. 그러므로 KVM보다 가볍다.  </p>
+<p align="center">
+    <img alt="Container" src="/images/container.png"/>
+</p>
+
+
+<p>Hypervisor에는 Type 1과 Type 2가 있다.<br>지금까지 설명한 것은 Type 1 Hypervisor이고 Bare-metal Hypervisor라고도 한다.<br>Host OS위에 Guest OS가 올라가있는 것을 Type 2 hypervisor라고 한다.<br>성능은 당연히 Type 1이 빠르다. 밑의 그림은 Type 1과 Type 2의 비교이다.  </p>
+<p align="center">
+    <img alt="Hypervisor Type 1 vs 2(https://www.techtarget.com/searchitoperations/tip/Whats-the-difference-between-Type-1-vs-Type-2-hypervisor)" src="/images/hypervisor-type1-vs-type2.png"/>
+</p>
+
+<br/>
+
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><ul>
+<li>Monolithic Kernel의 단점을 보완하기 위한 Micro Kernel도 있다.</li>
+<li>Hypervisor의 존재로 한개의 Physical Machine 위에 여러개의 OS를 구동할 수 있었다.</li>
+<li>요즘은 intel 가상화의 도움을 받을 수 있는 KVM이나 Container 기반의 기술들을 주로 사용한다.</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.redhat.com/ko/topics/virtualization/what-is-KVM">https://www.redhat.com/ko/topics/virtualization/what-is-KVM</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.techtarget.com/searchitoperations/tip/Whats-the-difference-between-Type-1-vs-Type-2-hypervisor">https://www.techtarget.com/searchitoperations/tip/Whats-the-difference-between-Type-1-vs-Type-2-hypervisor</a></li>
+</ul>
+<br/>
+<br/>
+<br/>
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OS/">OS</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2019/07/09/os-computer-architecture/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">운영체제 3편 - 컴퓨터 구조와 I/O(Interrupt &amp; Trap)</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2019/07/08/os-abstraction/"><span class="level-item">운영체제 1편 - 추상화</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2019/07/09/os-virtualization/';
+            this.page.identifier = '2019/07/09/os-virtualization/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

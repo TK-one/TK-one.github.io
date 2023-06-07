@@ -1,158 +1,39 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="utf-8">
-
-<meta name="generator" content="Hexo 3.9.0">
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-<title>인터넷 메일시스템 (SMTP) - 기술블로그</title>
-
-
-    <meta name="description" content="이 포스트에서는 Application Layer의 SMTP (Simple Mail Transfer Protocol) 에 대해 알아본다.먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.   Mail System인터넷 메일 시스템은 크게 user agent, 메일서버, SMTP 이 3가지 요소로 구성되어 있다.아래의">
-<meta name="keywords" content="smtp">
-<meta property="og:type" content="article">
-<meta property="og:title" content="인터넷 메일시스템 (SMTP)">
-<meta property="og:url" content="https://tk-one.github.io/2020/01/03/smtp/index.html">
-<meta property="og:site_name" content="기술블로그">
-<meta property="og:description" content="이 포스트에서는 Application Layer의 SMTP (Simple Mail Transfer Protocol) 에 대해 알아본다.먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.   Mail System인터넷 메일 시스템은 크게 user agent, 메일서버, SMTP 이 3가지 요소로 구성되어 있다.아래의">
-<meta property="og:locale" content="ko">
-<meta property="og:image" content="https://tk-one.github.io/images/og_image.png">
-<meta property="og:updated_time" content="2020-01-05T06:30:46.950Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="인터넷 메일시스템 (SMTP)">
-<meta name="twitter:description" content="이 포스트에서는 Application Layer의 SMTP (Simple Mail Transfer Protocol) 에 대해 알아본다.먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.   Mail System인터넷 메일 시스템은 크게 user agent, 메일서버, SMTP 이 3가지 요소로 구성되어 있다.아래의">
-<meta name="twitter:image" content="https://tk-one.github.io/images/og_image.png">
-
-
-
-
-
-
-
-<link rel="icon" href="/images/favicon.svg">
-
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
-
-
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>인터넷 메일시스템 (SMTP) - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 포스트에서는 Application Layer의 SMTP (Simple Mail Transfer Protocol) 에 대해 알아본다.먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.   Mail System인터넷 메일 시스템은 크게 user agent, 메일서버, SMTP 이 3가지 요소로 구성되어 있다.아래의"><meta property="og:type" content="blog"><meta property="og:title" content="인터넷 메일시스템 (SMTP)"><meta property="og:url" content="https://tk-one.github.io/2020/01/03/smtp/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 포스트에서는 Application Layer의 SMTP (Simple Mail Transfer Protocol) 에 대해 알아본다.먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.   Mail System인터넷 메일 시스템은 크게 user agent, 메일서버, SMTP 이 3가지 요소로 구성되어 있다.아래의"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/mail_system_topology.png"><meta property="article:published_time" content="2020-01-03T10:44:29.000Z"><meta property="article:modified_time" content="2020-01-05T06:30:46.950Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="smtp"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/mail_system_topology.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2020/01/03/smtp/"},"headline":"인터넷 메일시스템 (SMTP)","image":["https://tk-one.github.io/images/mail_system_topology.png"],"datePublished":"2020-01-03T10:44:29.000Z","dateModified":"2020-01-05T06:30:46.950Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 포스트에서는 Application Layer의 SMTP (Simple Mail Transfer Protocol) 에 대해 알아본다.먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.   Mail System인터넷 메일 시스템은 크게 user agent, 메일서버, SMTP 이 3가지 요소로 구성되어 있다.아래의"}</script><link rel="canonical" href="https://tk-one.github.io/2020/01/03/smtp/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
     
-    
-<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
 
-    
-    
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
 
-    
-    
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
 
-    
-    
-    
-    
-<link rel="stylesheet" href="/css/back-to-top.css">
-
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-124797892-1');
-</script>
-
-    
-    
-    
-    
-    
-    <link rel="stylesheet" href="/css/progressbar.css">
-<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
-    
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
-
-
-<link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="is-3-column">
-    <nav class="navbar navbar-main">
-    <div class="container">
-        <div class="navbar-brand is-flex-center">
-            <a class="navbar-item navbar-logo" href="/">
-            
-                <img src="/images/logo.svg" alt="인터넷 메일시스템 (SMTP)" height="28">
-            
-            </a>
-        </div>
-        <div class="navbar-menu">
-            
-            <div class="navbar-start">
-                
-                <a class="navbar-item" href="/">Home</a>
-                
-                <a class="navbar-item" href="/archives">Archives</a>
-                
-                <a class="navbar-item" href="/categories">Categories</a>
-                
-                <a class="navbar-item" href="/tags">Tags</a>
-                
-            </div>
-            
-            <div class="navbar-end">
-                
-                
-                
-                <a class="navbar-item search" title="검색" href="javascript:;">
-                    <i class="fas fa-search"></i>
-                </a>
-                
-            </div>
-        </div>
-    </div>
-</nav>
-    
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
-<div class="card">
-    
-    <div class="card-content article ">
-        
-        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
-            <div class="level-left">
-                <time class="level-item has-text-grey" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time>
-                
-                <div class="level-item">
-                <a class="has-link-grey -link" href="/categories/network/">network</a>
-                </div>
-                
-                
-                
-                <span class="level-item has-text-grey" id="busuanzi_container_page_pv">
-                    <i class="far fa-eye"></i>
-                    <span id="busuanzi_value_page_pv">0</span> Besuche
-                </span>
-                
-            </div>
-        </div>
-        
-        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
-            
-                인터넷 메일시스템 (SMTP)
-            
-        </h1>
-        <div class="content">
-            <p><br></p>
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-01-03T10:44:29.000Z" title="03/01/2020, 19:44:29">2020-01-03</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/network/">network</a></span><span class="level-item">12분안에 읽기 (약 1737 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">인터넷 메일시스템 (SMTP)</h1><div class="content"><p><br></p>
 <p>이 포스트에서는 Application Layer의 <strong>SMTP (Simple Mail Transfer Protocol)</strong> 에 대해 알아본다.<br>먼저, SMTP를 보기전에 인터넷 전자메일 시스템이 어떤식으로 동작하는지 알고있어야 한다.  </p>
 <h2 id="Mail-System"><a href="#Mail-System" class="headerlink" title="Mail System"></a>Mail System</h2><p>인터넷 메일 시스템은 크게 <strong>user agent, 메일서버, SMTP</strong> 이 3가지 요소로 구성되어 있다.<br>아래의 그림을 보면서 이해하면 쉽다.</p>
 <p><img src="/images/mail_system_topology.png" alt="mail_system"></p>
@@ -178,891 +59,78 @@
 <p>메일서버에서 상대 메일서버로 메일을 보내는 상황에서, 먼저 클라이언트 SMTP는 서버 SMTP의 25번 포트로 TCP연결을 맺는다. 만약 서버가 죽어있으면 클라이언트는 나중에 다시 시도한다.<br>TCP 연결이 맺어지면, 클라이언트와 서버는 SMTP 핸드쉐이킹을 수행한다. 이 SMTP 핸드쉐이킹 과정에서 클라이언트는 송신자와 수신자의 email 주소를 제공한다.  </p>
 <p>핸드쉐이킹 과정을 마치면, 클라이언트는 메시지를 보낸다.  </p>
 <p>SMTP 클라이언트와 SMTP 서버 사이의 메시지 전달과정을 예를들어 살펴보자.<br>클라이언트 호스트네임은 github.io 이고, 서버 호스트네임은 korea.ac.kr 이라고 하자.<br>C는 클라, S는 서버를 나타내고 TCP 연결 직후의 상황을 가정한다.<br>메일 내용은 “Hello, this is TK-one. Can I know the result of the interview?” 이다.</p>
-<p><code><br>S: 220 korea.ac.kr<br>C: HELO github.io<br>S: 250 Hello github.io, pleased to meet you<br>C: MAIL FROM: <a href="mailto:&#x74;&#107;&#x2d;&#111;&#x6e;&#101;&#x40;&#103;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#x69;&#x6f;">&#x74;&#107;&#x2d;&#111;&#x6e;&#101;&#x40;&#103;&#x69;&#116;&#104;&#117;&#98;&#x2e;&#x69;&#x6f;</a><br>S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok<br>C: RCPT TO: <a href="mailto:&#107;&#x69;&#x6d;&#64;&#x6b;&#x6f;&#x72;&#101;&#97;&#x2e;&#97;&#x63;&#x2e;&#107;&#114;">&#107;&#x69;&#x6d;&#64;&#x6b;&#x6f;&#x72;&#101;&#97;&#x2e;&#97;&#x63;&#x2e;&#107;&#114;</a><br>S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok<br>C: DATA<br>S: 354 Enter mail, end with “.” on a line by itself<br>C: Hello, this is TK-one. (메일내용)<br>C: Can I know the result of the interview? (메일내용)<br>C: .<br>S: 250 Message accepted for delivery<br>C: QUIT<br>S: 221 korea.ac.kr closing connection<br></code></p>
+<p><code>
+S: 220 korea.ac.kr
+C: HELO github.io
+S: 250 Hello github.io, pleased to meet you
+C: MAIL FROM: <a href="mailto:&#116;&#107;&#45;&#111;&#x6e;&#x65;&#64;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#105;&#111;">&#116;&#107;&#45;&#111;&#x6e;&#x65;&#64;&#103;&#105;&#116;&#104;&#x75;&#98;&#x2e;&#105;&#111;</a>
+S: 250 <a href="mailto:tk-one@github.io" rel="external nofollow noopener noreferrer" target="_blank">tk-one@github.io</a> … Sender ok
+C: RCPT TO: <a href="mailto:&#x6b;&#105;&#109;&#x40;&#x6b;&#111;&#114;&#101;&#97;&#x2e;&#x61;&#x63;&#46;&#107;&#114;">&#x6b;&#105;&#109;&#x40;&#x6b;&#111;&#114;&#101;&#97;&#x2e;&#x61;&#x63;&#46;&#107;&#114;</a>
+S: 250 <a href="mailto:kim@korea.ac.kr" rel="external nofollow noopener noreferrer" target="_blank">kim@korea.ac.kr</a> … Recipient ok
+C: DATA
+S: 354 Enter mail, end with “.” on a line by itself
+C: Hello, this is TK-one. (메일내용)
+C: Can I know the result of the interview? (메일내용)
+C: .
+S: 250 Message accepted for delivery
+C: QUIT
+S: 221 korea.ac.kr closing connection
+</code></p>
 <p>클라이언트는 5개의 명령(<strong>HELO, MAIL FROM, RCPT TO, DATA, QUIT</strong>)을 내리며 하나의 점(.)으로 된 라인을 송신하면 이는 메시지의 끝을 의미한다.<br>서버는 각 명령에 대해 답하며, 각 응답은 응답코드와 옵션 설명을 갖고 있다.<br>그리고 주의할 점이 있는데, SMTP는 메시지의 body와 header를 포함하여 전부 7bit ASCII 코드로 작성되어야 한다.<br>HTTP는 이런 제한이 없는 반면, SMTP는 한글이나 binary 데이터 처럼 ASCII가 아닌 문자를 포함한다면 반드시 이 메시지는 전송되기 전에 7bit ASCII로 인코딩이 되어야한다.  </p>
-<p>이렇게 SMTP를 통해 한 메일서버에서 다른 메일서버로 메시지가 전달된다.<br>그렇다면 수신자는 자신의 PC에서 user agent를 통해 자신의 메일서버에 있는 메시지들을 어떻게 얻을 수 있을까?<br>수신자의 user agent는 메일을 가져오기위해 SMTP를 사용할 수는 없다. 왜냐하면 SMTP는 푸시(push)용 프로토콜인 반면, 메시지를 가져오는 것은 풀(pull) 동작이기 때문이다.<br>여기서는 메일서버로부터 자신의 user agent로 메시지를 가져오기 위해 특별한 메일 접속 프로토콜을 사용한다. 이들중엔 <strong>POP3(Post Office Protocol - Version 3), IMAP(Internet Mail Access Protocol), HTTP</strong> 등이 있다.<br><br><br><br><br>참고: <a href="https://www.amazon.com/Computer-Networking-Top-Down-Approach-7th/dp/0133594149" rel="external nofollow noopener noreferrer" target="_blank">Computer Networking - A Top-Down approach</a></p>
-
-        </div>
-        
-        <div class="level is-size-7 is-uppercase">
-            <div class="level-start">
-                <div class="level-item">
-                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/smtp/">smtp</a>
-                </div>
-            </div>
-        </div>
-        
-        
-        
-        
-<div class="sharethis-inline-share-buttons"></div>
-<script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5e0f08edf689ea0012c9e33e&amp;product=inline-share-buttons" async="async"></script>
-
-        
-    </div>
-</div>
-
-
-
-
-
-<div class="card card-transparent">
-    <div class="level post-navigation is-flex-wrap is-mobile">
-        
-        <div class="level-start">
-            <a class="level level-item has-link-grey  article-nav-prev" href="/2020/03/24/maven-basic/">
-                <i class="level-item fas fa-chevron-left"></i>
-                <span class="level-item">Maven(메이븐) 이란?</span>
-            </a>
-        </div>
-        
-        
-        <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2019/02/07/nodejs-event-loop/">
-                <span class="level-item">Node.js 이벤트루프 제대로 이해하기</span>
-                <i class="level-item fas fa-chevron-right"></i>
-            </a>
-        </div>
-        
-    </div>
-</div>
-
-
-
-<div class="card">
-    <div class="card-content">
-        <h3 class="title is-5 has-text-weight-normal">댓글</h3>
-        
-<script>
-    var disqus_config = function () {
-        this.page.url = 'https://tk-one.github.io/2020/01/03/smtp/';
-        this.page.identifier = '2020/01/03/smtp/';
-    };
-    (function() {
-        var d = document, s = d.createElement('script');  
-        s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-
-<div id="disqus_thread">
-    
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-    </div>
-</div>
-</div>
-                
-
-
-
-
-<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
-    
-        
-<div class="card widget">
-    <div class="card-content">
-        <nav class="level">
-            <div class="level-item has-text-centered" style="flex-shrink: 1">
-                <div>
-                    
-                    <figure class="image is-128x128 has-mb-6">
-                        <img class="" src="/images/tk-one-profile.jpeg" alt="TK-one">
-                    </figure>
-                    
-                    <p class="is-size-4 is-block">
-                        TK-one
-                    </p>
-                    
-                    
-                    <p class="is-size-6 is-block">
-                        항상 하던대로
-                    </p>
-                    
-                    
-                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
-                        <i class="fas fa-map-marker-alt has-mr-7"></i>
-                        <span>Seoul, South Korea</span>
-                    </p>
-                    
-                </div>
-            </div>
-        </nav>
-        <nav class="level is-mobile">
-            <div class="level-item has-text-centered is-marginless">
-                <div>
-                    <p class="heading">
-                        포스트
-                    </p>
-                    <a href="/archives">
-                        <p class="title has-text-weight-normal">
-                            6
-                        </p>
-                    </a>
-                </div>
-            </div>
-            <div class="level-item has-text-centered is-marginless">
-                <div>
-                    <p class="heading">
-                        카테고리
-                    </p>
-                    <a href="/categories">
-                        <p class="title has-text-weight-normal">
-                            5
-                        </p>
-                    </a>
-                </div>
-            </div>
-            <div class="level-item has-text-centered is-marginless">
-                <div>
-                    <p class="heading">
-                        태그
-                    </p>
-                    <a href="/tags">
-                        <p class="title has-text-weight-normal">
-                            7
-                        </p>
-                    </a>
-                </div>
-            </div>
-        </nav>
-        
-        <div class="level">
-            <a class="level-item button is-link is-rounded" href="https://github.com/TK-one/" target="_blank" rel="external nofollow noopener noreferrer">
-                팔로우</a>
-        </div>
-        
-        
-        
-        <div class="level is-mobile">
-            
-            <a class="level-item button is-white is-marginless" target="_blank" rel="external nofollow noopener noreferrer" title="Github" href="https://github.com/TK-one/">
-                
-                <i class="fab fa-github"></i>
-                
-            </a>
-            
-            <a class="level-item button is-white is-marginless" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook" href="https://www.facebook.com/MiraGeKJH">
-                
-                <i class="fab fa-facebook"></i>
-                
-            </a>
-            
-        </div>
-        
-    </div>
-</div>
-    
-        
-    
-        
-<div class="card widget">
-    <div class="card-content">
-        <div class="menu">
-            <h3 class="menu-label">
-                카테고리
-            </h3>
-            <ul class="menu-list">
-            <li>
-        <a class="level is-marginless" href="/categories/maven/">
-            <span class="level-start">
-                <span class="level-item">maven</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/network/">
-            <span class="level-start">
-                <span class="level-item">network</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/nodejs/">
-            <span class="level-start">
-                <span class="level-item">nodejs</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">2</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/personal/">
-            <span class="level-start">
-                <span class="level-item">personal</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li><li>
-        <a class="level is-marginless" href="/categories/tool/">
-            <span class="level-start">
-                <span class="level-item">tool</span>
-            </span>
-            <span class="level-end">
-                <span class="level-item tag">1</span>
-            </span>
-        </a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-    
-        <div class="card widget">
-    <div class="card-content">
-        <h3 class="menu-label">
-            태그 클라우드
-        </h3>
-        <a href="/tags/coronavirus/" style="font-size: 10px;">coronavirus</a> <a href="/tags/covid19/" style="font-size: 10px;">covid19</a> <a href="/tags/event-loop/" style="font-size: 10px;">event-loop</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/maven/" style="font-size: 10px;">maven</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/smtp/" style="font-size: 10px;">smtp</a>
-    </div>
-</div>
-    
-    
-        <div class="column-right-shadow is-hidden-widescreen ">
-        
-            <div class="card widget">
-    <div class="card-content">
-        <h3 class="menu-label">
-            최근 글
-        </h3>
-        
-        <article class="media">
-            
-            <a href="/2022/03/07/coronavirus-confirmed/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="코로나 확진후기">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-07T13:21:13.000Z">2022-03-07</time></div>
-                    <a href="/2022/03/07/coronavirus-confirmed/" class="title has-link-black-ter is-size-6 has-text-weight-normal">코로나 확진후기</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/personal/">personal</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2022/03/05/how-to-use-markdown/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="마크다운(Markdown) 사용법">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time></div>
-                    <a href="/2022/03/05/how-to-use-markdown/" class="title has-link-black-ter is-size-6 has-text-weight-normal">마크다운(Markdown) 사용법</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/tool/">tool</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2020/03/24/maven-basic/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Maven(메이븐) 이란?">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-24T12:16:21.000Z">2020-03-24</time></div>
-                    <a href="/2020/03/24/maven-basic/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Maven(메이븐) 이란?</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/maven/">maven</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2020/01/03/smtp/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="인터넷 메일시스템 (SMTP)">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time></div>
-                    <a href="/2020/01/03/smtp/" class="title has-link-black-ter is-size-6 has-text-weight-normal">인터넷 메일시스템 (SMTP)</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/network/">network</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/02/07/nodejs-event-loop/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js 이벤트루프 제대로 이해하기">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time></div>
-                    <a href="/2019/02/07/nodejs-event-loop/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Node.js 이벤트루프 제대로 이해하기</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-    </div>
-</div>
-        
-            <div class="card widget">
-    <div class="card-content">
-        <div class="menu">
-        <h3 class="menu-label">
-            아카이브
-        </h3>
-        <ul class="menu-list">
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2022/03/">
-                <span class="level-start">
-                    <span class="level-item">3월 2022</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">2</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2020/03/">
-                <span class="level-start">
-                    <span class="level-item">3월 2020</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2020/01/">
-                <span class="level-start">
-                    <span class="level-item">1월 2020</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2019/02/">
-                <span class="level-start">
-                    <span class="level-item">2월 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2018/08/">
-                <span class="level-start">
-                    <span class="level-item">8월 2018</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        </ul>
-        </div>
-    </div>
-</div>
-        
-            <div class="card widget">
-    <div class="card-content">
-        <div class="menu">
-            <h3 class="menu-label">
-                태그
-            </h3>
-            <div class="field is-grouped is-grouped-multiline">
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/coronavirus/">
-                        <span class="tag">coronavirus</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/covid19/">
-                        <span class="tag">covid19</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/event-loop/">
-                        <span class="tag">event-loop</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/markdown/">
-                        <span class="tag">markdown</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/maven/">
-                        <span class="tag">maven</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/nodejs/">
-                        <span class="tag">nodejs</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/smtp/">
-                        <span class="tag">smtp</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
-        
-        </div>
-    
-</div>
-
-                
-
-
-
-
-<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
-    
-        <div class="card widget">
-    <div class="card-content">
-        <h3 class="menu-label">
-            최근 글
-        </h3>
-        
-        <article class="media">
-            
-            <a href="/2022/03/07/coronavirus-confirmed/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="코로나 확진후기">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-07T13:21:13.000Z">2022-03-07</time></div>
-                    <a href="/2022/03/07/coronavirus-confirmed/" class="title has-link-black-ter is-size-6 has-text-weight-normal">코로나 확진후기</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/personal/">personal</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2022/03/05/how-to-use-markdown/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="마크다운(Markdown) 사용법">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2022-03-05T12:59:06.000Z">2022-03-05</time></div>
-                    <a href="/2022/03/05/how-to-use-markdown/" class="title has-link-black-ter is-size-6 has-text-weight-normal">마크다운(Markdown) 사용법</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/tool/">tool</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2020/03/24/maven-basic/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Maven(메이븐) 이란?">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-03-24T12:16:21.000Z">2020-03-24</time></div>
-                    <a href="/2020/03/24/maven-basic/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Maven(메이븐) 이란?</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/maven/">maven</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2020/01/03/smtp/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="인터넷 메일시스템 (SMTP)">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-01-03T10:44:29.000Z">2020-01-03</time></div>
-                    <a href="/2020/01/03/smtp/" class="title has-link-black-ter is-size-6 has-text-weight-normal">인터넷 메일시스템 (SMTP)</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/network/">network</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
-            <a href="/2019/02/07/nodejs-event-loop/" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/images/thumbnail.svg" alt="Node.js 이벤트루프 제대로 이해하기">
-                </p>
-            </a>
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-07T10:58:36.000Z">2019-02-07</time></div>
-                    <a href="/2019/02/07/nodejs-event-loop/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Node.js 이벤트루프 제대로 이해하기</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/nodejs/">nodejs</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-    </div>
-</div>
-    
-        <div class="card widget">
-    <div class="card-content">
-        <div class="menu">
-        <h3 class="menu-label">
-            아카이브
-        </h3>
-        <ul class="menu-list">
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2022/03/">
-                <span class="level-start">
-                    <span class="level-item">3월 2022</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">2</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2020/03/">
-                <span class="level-start">
-                    <span class="level-item">3월 2020</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2020/01/">
-                <span class="level-start">
-                    <span class="level-item">1월 2020</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2019/02/">
-                <span class="level-start">
-                    <span class="level-item">2월 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
-            <a class="level is-marginless" href="/archives/2018/08/">
-                <span class="level-start">
-                    <span class="level-item">8월 2018</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        </ul>
-        </div>
-    </div>
-</div>
-    
-        <div class="card widget">
-    <div class="card-content">
-        <div class="menu">
-            <h3 class="menu-label">
-                태그
-            </h3>
-            <div class="field is-grouped is-grouped-multiline">
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/coronavirus/">
-                        <span class="tag">coronavirus</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/covid19/">
-                        <span class="tag">covid19</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/event-loop/">
-                        <span class="tag">event-loop</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/markdown/">
-                        <span class="tag">markdown</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/maven/">
-                        <span class="tag">maven</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/nodejs/">
-                        <span class="tag">nodejs</span>
-                        <span class="tag is-grey">2</span>
-                    </a>
-                </div>
-                
-                <div class="control">
-                    <a class="tags has-addons" href="/tags/smtp/">
-                        <span class="tag">smtp</span>
-                        <span class="tag is-grey">1</span>
-                    </a>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
-    
-    
-</div>
-
-            </div>
-        </div>
-    </section>
-    <footer class="footer">
-    <div class="container">
-        <div class="level">
-            <div class="level-start has-text-centered-mobile">
-                <a class="footer-logo is-block has-mb-6" href="/">
-                
-                    <img src="/images/logo.svg" alt="인터넷 메일시스템 (SMTP)" height="28">
-                
-                </a>
-                <p class="is-size-7">
-                &copy; 2022 TK-one&nbsp;
-                Powered by <a href="https://hexo.io/" target="_blank" rel="external nofollow noopener noreferrer">Hexo</a> & <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="external nofollow noopener noreferrer">Icarus</a>
-                
-                <br>
-                <span id="busuanzi_container_site_uv">
-                Von <span id="busuanzi_value_site_uv">0</span> Nutzern besucht
-                </span>
-                
-                </p>
-            </div>
-            <div class="level-end">
-            
-            </div>
-        </div>
-    </div>
-</footer>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
-<script>moment.locale("ko");</script>
-
-
-<script>
-var IcarusThemeSettings = {
-    site: {
-        url: 'https://tk-one.github.io',
-        external_link: {"enable":true,"exclude":[]}
-    },
-    article: {
-        highlight: {
-            clipboard: true,
-            fold: 'unfolded'
-        }
-    }
-};
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
-
-
-
-
-
-<script src="/js/animation.js"></script>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
-<script src="/js/gallery.js" defer></script>
-
-
-
-<div id="outdated">
-    <h6>Your browser is out-of-date!</h6>
-    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/" rel="external nofollow noopener noreferrer" target="_blank">Update
-            my browser now </a></p>
-    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        outdatedBrowser({
-            bgColor: '#f25648',
-            color: '#ffffff',
-            lowerThan: 'flex'
-        });
-    });
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    MathJax.Hub.Config({
-        'HTML-CSS': {
-            matchFontHeight: false
-        },
-        SVG: {
-            matchFontHeight: false
-        },
-        CommonHTML: {
-            matchFontHeight: false
-        },
-        tex2jax: {
-            inlineMath: [
-                ['$','$'],
-                ['\\(','\\)']
-            ]
-        }
-    });
-});
-</script>
-
-
-<a id="back-to-top" title="Zurück nach oben" href="javascript:;">
-    <i class="fas fa-chevron-up"></i>
-</a>
-<script src="/js/back-to-top.js" defer></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script src="/js/main.js" defer></script>
-
-    
-    <div class="searchbox ins-search">
-    <div class="searchbox-container ins-search-container">
-        <div class="searchbox-input-wrapper">
-            <input type="text" class="searchbox-input ins-search-input" placeholder="입력 하세요...">
-            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
-        </div>
-        <div class="searchbox-result-wrapper ins-section-wrapper">
-            <div class="ins-section-container"></div>
-        </div>
-    </div>
-</div>
-<script>
-    (function (window) {
-        var INSIGHT_CONFIG = {
-            TRANSLATION: {
-                POSTS: '포스트',
-                PAGES: '페이지',
-                CATEGORIES: '카테고리',
-                TAGS: '태그',
-                UNTITLED: '(제목없음)',
-            },
-            CONTENT_URL: '/content.json',
+<p>이렇게 SMTP를 통해 한 메일서버에서 다른 메일서버로 메시지가 전달된다.<br>그렇다면 수신자는 자신의 PC에서 user agent를 통해 자신의 메일서버에 있는 메시지들을 어떻게 얻을 수 있을까?<br>수신자의 user agent는 메일을 가져오기위해 SMTP를 사용할 수는 없다. 왜냐하면 SMTP는 푸시(push)용 프로토콜인 반면, 메시지를 가져오는 것은 풀(pull) 동작이기 때문이다.<br>여기서는 메일서버로부터 자신의 user agent로 메시지를 가져오기 위해 특별한 메일 접속 프로토콜을 사용한다. 이들중엔 <strong>POP3(Post Office Protocol - Version 3), IMAP(Internet Mail Access Protocol), HTTP</strong> 등이 있다.
+<br><br><br>
+참고: <a href="https://www.amazon.com/Computer-Networking-Top-Down-Approach-7th/dp/0133594149" rel="external nofollow noopener noreferrer" target="_blank">Computer Networking - A Top-Down approach</a></p>
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/smtp/">smtp</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/03/24/maven-basic/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Maven(메이븐) 이란?</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2019/08/09/system-bus/"><span class="level-item">시스템 버스(System Bus)란?</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2020/01/03/smtp/';
+            this.page.identifier = '2020/01/03/smtp/';
         };
-        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
-    })(window);
-</script>
-<script src="/js/insight.js" defer></script>
-<link rel="stylesheet" href="/css/search.css">
-<link rel="stylesheet" href="/css/insight.css">
-    
-</body>
-</html>
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

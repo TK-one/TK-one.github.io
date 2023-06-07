@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>파일시스템 5편 - 파일시스템 디자인-2 - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 글은 지난번 파일시스템 디자인-1 에 이은 글입니다. 파일시스템 계층화파일시스템은 계층화가 잘되어있다. 일반적으로 파일시스템은 여러 개의 layer로 나뉘어져 구성된다.           위의 그림에서 각 layer를 간단하게 살펴보자.   Logical file system여기서는 파일시스템의 메타데이터를 관리한다.   File-organization"><meta property="og:type" content="blog"><meta property="og:title" content="파일시스템 5편 - 파일시스템 디자인-2"><meta property="og:url" content="https://tk-one.github.io/2020/09/08/file-system-design/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 글은 지난번 파일시스템 디자인-1 에 이은 글입니다. 파일시스템 계층화파일시스템은 계층화가 잘되어있다. 일반적으로 파일시스템은 여러 개의 layer로 나뉘어져 구성된다.           위의 그림에서 각 layer를 간단하게 살펴보자.   Logical file system여기서는 파일시스템의 메타데이터를 관리한다.   File-organization"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/file-system-layering.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/vfs.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/disk-structure.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/buffer-cache-read.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/buffer-cache-write.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/mmap.png"><meta property="article:published_time" content="2020-09-07T16:51:46.000Z"><meta property="article:modified_time" content="2023-06-07T16:21:10.654Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="OS"><meta property="article:tag" content="파일시스템"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/filesystem/file-system-layering.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2020/09/08/file-system-design/"},"headline":"파일시스템 5편 - 파일시스템 디자인-2","image":["https://tk-one.github.io/images/filesystem/file-system-layering.png","https://tk-one.github.io/images/filesystem/vfs.png","https://tk-one.github.io/images/filesystem/disk-structure.png","https://tk-one.github.io/images/filesystem/buffer-cache-read.png","https://tk-one.github.io/images/filesystem/buffer-cache-write.png","https://tk-one.github.io/images/filesystem/mmap.png"],"datePublished":"2020-09-07T16:51:46.000Z","dateModified":"2023-06-07T16:21:10.654Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 글은 지난번 파일시스템 디자인-1 에 이은 글입니다. 파일시스템 계층화파일시스템은 계층화가 잘되어있다. 일반적으로 파일시스템은 여러 개의 layer로 나뉘어져 구성된다.           위의 그림에서 각 layer를 간단하게 살펴보자.   Logical file system여기서는 파일시스템의 메타데이터를 관리한다.   File-organization"}</script><link rel="canonical" href="https://tk-one.github.io/2020/09/08/file-system-design/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-07T16:51:46.000Z" title="08/09/2020, 01:51:46">2020-09-08</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">20분안에 읽기 (약 2990 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">파일시스템 5편 - 파일시스템 디자인-2</h1><div class="content"><p>이 글은 지난번 파일시스템 디자인-1 에 이은 글입니다.</p>
+<h2 id="파일시스템-계층화"><a href="#파일시스템-계층화" class="headerlink" title="파일시스템 계층화"></a>파일시스템 계층화</h2><p>파일시스템은 계층화가 잘되어있다. 일반적으로 파일시스템은 여러 개의 layer로 나뉘어져 구성된다.  </p>
+<p align="center">
+    <img style="max-width:200px" alt="파일시스템 계층화" src="/images/filesystem/file-system-layering.png"/>
+</p>
+
+<p>위의 그림에서 각 layer를 간단하게 살펴보자.  </p>
+<h4 id="Logical-file-system"><a href="#Logical-file-system" class="headerlink" title="Logical file system"></a>Logical file system</h4><p>여기서는 파일시스템의 메타데이터를 관리한다.  </p>
+<h4 id="File-organization-module"><a href="#File-organization-module" class="headerlink" title="File-organization module"></a>File-organization module</h4><p>이 layer에서는 파일의 logical block 주소를 physical block 주소로 변환해준다. 예를들어 하드디스크를 매체로 사용하게되면 sector 주소로 접근해야 하는데 이를 위한 변환을 진행한다.  </p>
+<h4 id="Basic-file-system"><a href="#Basic-file-system" class="headerlink" title="Basic file system"></a>Basic file system</h4><p>여기서는 위에서 변환된 physical block 주소를 가지고 읽고 쓰도록 command를 날린다. 여기서 DMA를 사용한다.  </p>
+<h4 id="I-x2F-O-control"><a href="#I-x2F-O-control" class="headerlink" title="I&#x2F;O control"></a>I&#x2F;O control</h4><p>이는 device driver다. device driver가 하드웨어에 맞게 명령을 전달한다.  </p>
+<br/>
+
+<h2 id="Virtual-File-System"><a href="#Virtual-File-System" class="headerlink" title="Virtual File System"></a>Virtual File System</h2><p>파일시스템은 어쩔 수 없이 사용하는 매체에 의존성이 있다. 그래서 파일시스템은 종류가 여러가지가 있을 수 있다. 예를들어 요즘은 잘 안쓰지만 CD-ROM이 있을 수 있고 USB, SSD, Disk 그리고 파일이 현재 호스트가 아닌 다른 네트워크의 호스트에 있을 수도 있다.  Linux kernel 에서는 여러가지 파일시스템을 지원한다.<br>VFS는 다양한 logical file system 들을 추상화한다. 따라서 VFS를 통해 실제로 시스템에는 여러개의 다른 파일시스템이 사용되더라도 마치 1개의 파일시스템만 사용하는 것처럼 프로프래밍 할 수 있다. 이는 OOP의 개념과 같은데 특정 파일에 대해 read&#x2F;write syscall 이 호출되면 해당 파일이 속한 파일시스템 구현체의 read&#x2F;write 가 호출되는 방식이다.  </p>
+<p align="center">
+    <img style="max-width:500px" alt="VFS" src="/images/filesystem/vfs.png"/>
+</p>
+
+<br/>
+
+<h2 id="File-System-data-structure"><a href="#File-System-data-structure" class="headerlink" title="File System data structure"></a>File System data structure</h2><p>파일시스템에서 사용하는 자료구조를 알아보면서 파일시스템에 대한 이해를 높여보자.<br>On-disk 그리고 In-memory 에서 사용하는 자료구조들을 볼 것이다.  </p>
+<h4 id="On-disk-data-structure"><a href="#On-disk-data-structure" class="headerlink" title="On-disk data structure"></a>On-disk data structure</h4><p>On-disk 자료구조들은 이미 이전 포스트인 파일시스템 디자인-1 에서 vsfs(very simple file system)에서 살펴봤던 내용들이 많다.  </p>
+<ul>
+<li><strong>Boot block</strong><br>첫번째 block으로 운영체제가 booting 하기위해 필요한 정보를 담아놓는 block이다. 하지만 이를 안만드는 경우도 많다.  </li>
+<li><strong>Super block</strong><br>파일시스템 관련 정보들이 어디에 저장되어있는지에 대한 metadata를 저장한다. 예를들어 inode table은 어디서 시작인지, data block은 어디 block부터 시작하는지, root directory에 대한 inode 번호 등을 저장한다. Super block은 보통은 각 disk partition의 첫번째 block 에 할당하고 이 super block 이 손상되면 파일시스템의 복구가 힘들기때문에 보통 중복해서 super block을 저장한다. 그리고 이 super block은 in-memory data structure로 메모리에 올려 캐싱한다.  </li>
+<li><strong>File control block</strong><br>FCB(file control block)은 결국 inode와 같다. inode 자체도 disk에 저장이 필요하다.</li>
+</ul>
+<p>다음의 disk structure layout를 살펴보자.  </p>
+<p align="center">
+    <img style="max-width:300px" alt="On-disk data structure" src="/images/filesystem/disk-structure.png"/>
+</p>
+
+<p>여기서 각 inode table을 여러개로 나누어 저장한 이유는 data block과 inode가 가까우면 성능을 높일 수 있기때문에 조금씩 inode 들을 나누어 설계했다. 다만 이런 내용들은 전적으로 파일시스템 구현에 달라진다.<br>결국 여기서의 그림을 보면 파일 접근을 위해서 super block, inode, data block 에 대한 접근으로 파일 하나의 접근에 대해 3번의 disk access가 필요하다.  </p>
+<br/>
+
+<h4 id="In-memory-data-structure"><a href="#In-memory-data-structure" class="headerlink" title="In-memory data structure"></a>In-memory data structure</h4><p>보통 파일시스템에서의 in-memory data structure 들은 거의 caching을 통한 성능향상 그리고 파일시스템 관리가 목표이다.  </p>
+<ul>
+<li><strong>Dentry</strong><br>이는 directory cache 이다. directory 접근을 위해 on-disk 의 super block 그리고 root directory 의 inode 부터 접근해서 dentry 라는 directory cache를 만든다. dentry로 파일접근시 해당 파일의 inode를 알기위해 여러번 disk 에 접근할 필요가 없이 memory 에서 처리할 수 있다.  </li>
+<li><strong>open file table</strong><br>이는 예전에 살펴본 내용으로 system-wide open file table 그리고 per process open file table 이 있는데 각각 open 한 file을 관리한다. per-process open file table 에서 각 index 번호가 file descriptor 가 된다.  </li>
+<li><strong>Buffer cache</strong><br>최근에 사용한 data block 을 memory 에 캐싱한다.</li>
+</ul>
+<br/>
+
+<h2 id="Buffer-Cache"><a href="#Buffer-Cache" class="headerlink" title="Buffer Cache"></a>Buffer Cache</h2><p>Buffer cache는 조금 더 자세히 살펴보겠다.<br>Buffer cache는 파일의 메타데이터가 아닌 data block 자체를 메모리에 올려둔다. 보통 같은 data block을 다시 접근해야 하는 경우가 많기때문에 이를 캐싱해두면 다시 disk를 조회하지 않아도된다.<br>다만 buffer cache는 완전한 software로 구현된다. 이 말은 virtual memory의 주소변환을 위해 TLB 같은 하드웨어를 도입하는게 아닌 순수한 software 레벨에서 구현한 캐시라는 의미이다.<br>Buffer cache는 보통 물리메모리의 1 ~ 10% 정도로 할당하고 이는 kernel parameter로 수정이 가능하다. Buffer cache 도 공간이 한정되므로 교체알고리즘을 사용한다. 보통 disk access 에는 locality가 나타나기 때문에 LRU 방식을 사용한다.<br>다만 DBMS 나 multimedia application은 LRU 로 이득을 볼 수 없는 경우가 대부분이기 때문에 이들은 buffer cache를 거치지 않고 바로 disk 에 접근할 수 있는 flag를 사용해서 buffer cache를 거치지 않도록 프로그래밍 한다.  </p>
+<p>Read syscall 과 Write syscall 각각의 동작방식을 buffer cache 의 관점에서 살펴보자.  </p>
+<h4 id="Read-syscall"><a href="#Read-syscall" class="headerlink" title="Read syscall"></a>Read syscall</h4><p align="center">
+    <img style="max-width:600px" alt="Buffer cache read" src="/images/filesystem/buffer-cache-read.png"/>
+</p>
+
+<p>먼저 <code>read(fd, buf, size)</code> syscall 을 호출한다. <code>read</code> syscall 의 두번째 인자인 buf 는 사용자의 buffer를 의미한다.<br>그다음 VFS에서는 file descriptor를 보고 file이 있는 device를 알아낸 후 logical block number 를 physical block number 로 변환한다. buffer cache 쪽에 해당 block이 있는지 확인을 하고 block 이 없다면 파일시스템에서 가져와야한다. 만약 buffer cache에 이미 cache된 block이 있으면 VFS에 반환한다.<br>cache된 block이 없다면 파일시스템에 block을 요청하고 이 <code>read</code> 를 요청한 프로세스는 sleep 한다. 즉, context switching 이 일어난다. I&#x2F;O가 필요하기 때문이다. 나중에 disk에서 block을 읽어오면 interrupt 가 발생하고 그 block 을 다시 caching 해주고 block 을 반환한다.<br>VFS에 반환할때는 application의 buf에 block들을 copy해주고 읽어온 byte 수를 반환한다.  </p>
+<p>만약 <code>read</code> 를 하더라도 buffer cache 에 대상 block 이 존재하여 cache hit 이 된다면, 해당 프로세스는 sleep 하지 않는다.<br>그리고 buffer cache 쪽을 보게되면 hash table 구조로 구현되어 있고 value로는 linked list 로 각 cache 되어있는 data block 들이 있는 것을 확인할 수 있다. hash 의 key로는 보통은 block number 를 사용한다고 한다.</p>
+<br/>
+
+<h4 id="Write-syscall"><a href="#Write-syscall" class="headerlink" title="Write syscall"></a>Write syscall</h4><p align="center">
+    <img style="max-width:600px" alt="Buffer cache write" src="/images/filesystem/buffer-cache-write.png"/>
+</p>
+
+<p>먼저 <code>write(fd, buf, size)</code> syscall 을 호출한다.<br>VFS에서 device 및 block number로 변환하여 buffer cache에 해당 block이 이미 있는지 확인한다. 만약 write 하려는 block 이 buffer cache에 없다면 먼저 파일시스템에서 읽어오도록 요청한다. 이 과정에서도 <code>write</code>를 요청한 프로세스는 sleep 한다.<br>파일시스템에서 읽어왔으면 다시 write를 시도하면 해당 block이 buffer cache 에 존재하므로 이 경우에는 해당 buffer cache의 data block에 직접 write를 수행하고(in-memory) 해당 block이 disk에 있는 block과 일치하지 않는다는 표시를 하기위해 dirty bit를 체크한다.<br>만약 처음부터 buffer cache에 write 시도시 해당 block 이 buffer cache에 있었다면 바로 그 block에 write 하고 반환한다.  </p>
+<p>이런 방식이면 buffer cache와 disk 의 sync가 깨지게 되는데 이는 다른 worker 스레드가 주기적으로 dirty bit가 체크된 data block 들을 disk에 sync 시켜준다.  </p>
+<h4 id="kworker"><a href="#kworker" class="headerlink" title="kworker"></a>kworker</h4><p>이 kworker 라는 kernel thread가 buffer cache와 disk block 간의 동기화를 수행한다.<br>예를들어 data block은 30초, metadata는 5초마다 동기화를 시킬수도 있다. 다만 이런 구현은 실제 OS 구현마다 다르며 파일시스템 구현마다도 다르다.<br>다만 이런 방식이면 순간적으로 머신이 꺼지거나 할때 동기화가 되지 않은 부분은 유실될 수 있다. 즉 write를 하더라도 그 내용이 disk에 반영된다는 보장이 없다. 이를 위해 저널링 파일시스템 같은 대안을 사용한다.<br>Application 에서 <code>fsync</code> system call을 사용하면 강제적으로 buffer cache의 내용을 disk에 반영한다.<br>DBMS도 구현마다 다르지만 매번의 update 마다 fsync 를 수행하지는 않는다. DBMS에서는 이를 write ahead log 과 transaction을 이용해 해결한다.  </p>
+<br/>
+
+<h2 id="Memory-Mapped-File-mmap"><a href="#Memory-Mapped-File-mmap" class="headerlink" title="Memory-Mapped File(mmap)"></a>Memory-Mapped File(mmap)</h2><p>mmap은 파일을 프로세스의 address space 한 부분으로 mapping 한다. 파일을 프로세스의 memory space 에 그냥 가져다가 붙힌다고 생각하면 쉽다.<br>이렇게 되면 단순히 memory access instruction 을 통해 파일에 대한 read, write을 할 수 있다. kernel은 이런 memory access instruction 을 적절하게 read, write로 변환하여 수행해준다.<br>mmap 함수는 다음과 같다.  </p>
+<p><code>void* mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)</code></p>
+<p><code>start</code>는 단지 이 주소를 사용했으면 좋겠다는 의미로 0을 보통 넣는다. 그리고 <code>offset</code> 부터의  <code>length</code> 만큼의 바이트를 <code>start</code> 주소로 매핑하기를 원한다는 의미이다.<br><code>fd</code>는 파일에 대한 file descriptor 로 이미 존재하는 파일에 대한 file descriptor 를 넘겨 이를 읽거나 수정할 수도 있고, 새로운 파일을 <code>O_CREAT</code> flag 와 함께 open 하여 이 file descriptor 를 넘겨 새로운 파일을 쓸 수도 있다.  </p>
+<p>유저는 파일에 대한 I&#x2F;O 를 단지 <code>memset</code>, <code>memcpy</code> 같은 memory access 로 단순화 할 수 있다.<br>그리고 여러개의 프로세스에서 동일한 파일을 open 하여 사용할 경우 kernel 은 동일한 파일에 대한 내용을 memory에 1개만 들고있으면 된다.  </p>
+<p>mmap 파일의 동작을 그림으로 보자.  </p>
+<p align="center">
+    <img style="max-width:600px" alt="mmap 과정" src="/images/filesystem/mmap.png"/>
+</p>
+
+<p>먼저 mmap 을 사용하지 않는 경우를 생각해보면, disk 에서 DMA로 data block을 가져오면 이를 buffer cache에 올리고 그다음 사용자 buffer 로 copy를 해야한다.<br>buffer cache 로는 DMA 가 copy 해주지만, buffer cache 에서 user buffer 로는 CPU가 직접 copy 해야한다. 따라서 file IO 가 빨라지려면 CPU도 중요하다.  </p>
+<p>mmap은 조금 다르다. mmap은 buffer cache를 사용하지 않는다. mmap은 buffer cache에 data block을 쓰지 않고 바로 kernel space로 DMA가 쓴다. 그리고 이를 프로세스의 address space 에 page table을 통해 매핑한다.<br>따라서 user buffer 로의 copy가 존재하지 않는다.<br>위의 그림에서는 process A 와 process B 가 각각 mmap 되어있는 physical fragment 를 공유하고 있다. mmap 에서는 flag에 <code>MAP_SHARED</code> flag 를 통해 다른 프로세스와 mmap 된 파일을 공유할 수 있다. 하지만 다른 동기화 같은 장치는 제공하지 않는다.<br>process A 에서 먼저 특정 파일을 mmap 하였을때 그 다음 process B 에서 같은 파일에 대해 mmap을 하게되면 서로 반환받는 virtual address 주소는 다르지만, 결국 page table 에 매핑된 physical address 주소는 같아 같은 파일을 바라보게 된다.  </p>
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OS/">OS</a><a class="link-muted mr-2" rel="tag" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/">파일시스템</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2022/03/05/how-to-use-markdown/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">마크다운(Markdown) 사용법</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/09/08/file-system-design-1/"><span class="level-item">파일시스템 4편 - 파일시스템 디자인-1</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2020/09/08/file-system-design/';
+            this.page.identifier = '2020/09/08/file-system-design/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

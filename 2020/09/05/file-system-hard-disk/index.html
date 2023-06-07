@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>파일시스템 1편 - 하드디스크 - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.   처음으로 파일시스템 자체를 보기전에 물리적인 device의 작동원리에 대해 이해를 하고 파일시스템을 보게되면 더 이해가 쉽습니다. 이번 편에서는 하드디스크에 대해 다룰 것입니다.   이번 편은 이전의 운영체제 3편 - 컴퓨터 구조와 I&amp;amp;#x2"><meta property="og:type" content="blog"><meta property="og:title" content="파일시스템 1편 - 하드디스크"><meta property="og:url" content="https://tk-one.github.io/2020/09/05/file-system-hard-disk/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.   처음으로 파일시스템 자체를 보기전에 물리적인 device의 작동원리에 대해 이해를 하고 파일시스템을 보게되면 더 이해가 쉽습니다. 이번 편에서는 하드디스크에 대해 다룰 것입니다.   이번 편은 이전의 운영체제 3편 - 컴퓨터 구조와 I&amp;amp;#x2"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/disk-structure-1.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/single-track.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/track-with-head.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/three-tracks.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/track-skew.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/sptf.png"><meta property="article:published_time" content="2020-09-04T15:51:46.000Z"><meta property="article:modified_time" content="2023-06-07T16:20:17.889Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="OS"><meta property="article:tag" content="파일시스템"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/filesystem/disk-structure-1.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2020/09/05/file-system-hard-disk/"},"headline":"파일시스템 1편 - 하드디스크","image":["https://tk-one.github.io/images/filesystem/disk-structure-1.png","https://tk-one.github.io/images/filesystem/single-track.png","https://tk-one.github.io/images/filesystem/track-with-head.png","https://tk-one.github.io/images/filesystem/three-tracks.png","https://tk-one.github.io/images/filesystem/track-skew.png","https://tk-one.github.io/images/filesystem/sptf.png"],"datePublished":"2020-09-04T15:51:46.000Z","dateModified":"2023-06-07T16:20:17.889Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.   처음으로 파일시스템 자체를 보기전에 물리적인 device의 작동원리에 대해 이해를 하고 파일시스템을 보게되면 더 이해가 쉽습니다. 이번 편에서는 하드디스크에 대해 다룰 것입니다.   이번 편은 이전의 운영체제 3편 - 컴퓨터 구조와 I&amp;#x2"}</script><link rel="canonical" href="https://tk-one.github.io/2020/09/05/file-system-hard-disk/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-04T15:51:46.000Z" title="05/09/2020, 00:51:46">2020-09-05</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">25분안에 읽기 (약 3718 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">파일시스템 1편 - 하드디스크</h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.  </p>
+<p>처음으로 파일시스템 자체를 보기전에 물리적인 device의 작동원리에 대해 이해를 하고 파일시스템을 보게되면 더 이해가 쉽습니다. 이번 편에서는 하드디스크에 대해 다룰 것입니다.  </p>
+<p>이번 편은 이전의 <a href="/2019/07/09/os-computer-architecture/">운영체제 3편 - 컴퓨터 구조와 I&#x2F;O</a> 글의 I&#x2F;O 부분을 이해하고보면 도움이 됩니다.  </p>
+<span id="more"></span>
+
+<br/>
+
+<h2 id="Disk-Interface"><a href="#Disk-Interface" class="headerlink" title="Disk Interface"></a>Disk Interface</h2><p>가볍에 Disk의 Interface를 알아보자.<br>Disk는 많은 <strong>sector</strong>라는 것으로 이루어져 있고 각 sector는 읽거나 sector에 값을 쓸 수 있다. sector에는 번호가 있는데 <code>0</code> 부터 <code>n - 1</code> 까지 있다고 하면 총 n개의 sector가 disk에 있다고 할 수 있다.<br>우리는 disk를 sector의 리스트로 생각할 수 있고 이 sector 들의 리스트가 disk의 address space를 결정한다.  </p>
+<p>sector는 특별한 이유가 있지 않은이상 512byte의 크기를 가진다.<br>다만 파일시스템에서는 <strong>block</strong> 이라는 단위로 디스크에 접근하는데 이는 4KB이다. 즉 파일시스템은 block 단위로 디스크에 읽고 쓴다.<br>하지만 disk에서는 sector 단위(512byte)에서의 write만 atomic을 제공한다. 즉 block write를 하면 연속된 8개의 sector에 데이터를 쓴다. 그러나 각 sector 단위에서의 atomic만 보장하므로 write 하는 순간 disk에 문제가 생기면 block의 일부분만 쓰여지는 문제가 발생할 수 있다. 이를 <strong>torn write</strong>이라고 부른다.  </p>
+<p>밑에서 보게되겠지만 서로 인접해있는 sector들을 읽는 것이 random한 위치의 sector들을 읽어들이는 것보다 훨씬 빠르다.  </p>
+<br/>
+
+<h2 id="Disk-Structure"><a href="#Disk-Structure" class="headerlink" title="Disk Structure"></a>Disk Structure</h2><p>우선 대략적인 그림을 보며 Disk 구조를 알아보자.  </p>
+<p align="center">
+    <img style="max-width: 550px" alt="Disk Structure" src="/images/filesystem/disk-structure-1.png"/>
+</p>
+  
+<h4 id="platter"><a href="#platter" class="headerlink" title="platter"></a>platter</h4><p>디스크는 최소 하나이상의 platter들로 이루어져 있다.<br>위 그림에서 CD처럼 생긴 것을 <strong>platter</strong>라고 부른다. platter는 원형의 강한 재질로 이루어진 표면들로 구성되어 있고 이곳에 전자기적으로 데이터를 영구히 저장한다.<br>platter는 윗부분, 밑부분 각각 데이터를 저장할 수 있다.<br>보통 platter는 알루미늄으로 만들고 겉부분을 아주 얇은 자기성 성질을 가진 층으로 코팅한다. 이 부분에 자기성 성질을 가지므로 데이터를 영구히 저장할 수 있다.  </p>
+<p>그리고 이 platter는 가운데 <strong>spindle</strong>이라는 것에 붙어있으며, 이 spindle은 모터에 연결되어있어 platter들을 회전하도록 한다.<br>이런 회전율을 <strong>RPM</strong>(Rotations Per Minute)으로 보통 측정하며 요즘에는 보통 7200rpm 부터 15000rpm 까지 가진다.<br>10000rpm은 single rotation이 대략적으로 6ms정도 걸린다.<br>일반적으로 platter는 계속해서 회전을 하고있다.  </p>
+<h4 id="track"><a href="#track" class="headerlink" title="track"></a>track</h4><p>위에서 본 sector들이 원형으로 배치된다. 이런 원형 하나를 <strong>track</strong>이라고 부른다. 하나의 platter 표현에는 수천개의 track이 존재하며 거의 사람머리카락 수준의 두께를 가지고있다.<br>하나의 track에 대한 대략적인 그림은 다음과 같다.  </p>
+<p align="center">
+    <img alt="Single track" src="/images/filesystem/single-track.png"/>
+</p>
+  
+<p>이 track은 12개의 sector들로 이루어져 있고 각 sector들은 512byte이다. 각 sector들에는 주소가 있는데 여기에서는 0 부터 11까지 존재한다.  </p>
+<h4 id="cylinder"><a href="#cylinder" class="headerlink" title="cylinder"></a>cylinder</h4><p>Cylinder는 각 platter들에 같은 반지름을 가진 track들을 의미한다. 위 그림을 보고 이해할 수 있다.  </p>
+<h4 id="Read-amp-Write"><a href="#Read-amp-Write" class="headerlink" title="Read &amp; Write"></a>Read &amp; Write</h4><p>platter의 표면으로부터 데이터를 읽고 쓰기 위해서는 disk의 전자기적 패턴을 읽어들이거나 이를 쓸 수 있어야 한다.<br>이러한 것들이 <strong>disk head</strong>를 통해 가능하다.<br>head는 platter 표면마다 한개씩 존재하며 이 head 들은 <strong>disk arm</strong>이라는 것에 붙어있다. 표면을 따라 움직이며 이들을 움직임으로서 적절한 track에 접근할 수 있다.  </p>
+<p>위에서 platter는 시계반대방향으로 회전하며, track이 회전하면서 head가 적절한 sector위에 놓여지면서 올바른 데이터를 읽고 쓸수 있다.  </p>
+<br/> 
+
+<h2 id="Disk-Access"><a href="#Disk-Access" class="headerlink" title="Disk Access"></a>Disk Access</h2><p>위에서 본 track 그림을 다시보자.  </p>
+<p align="center">
+    <img alt="Single track with head" src="/images/filesystem/track-with-head.png"/>
+</p>
+  
+  
+<h4 id="Rotational-Delay"><a href="#Rotational-Delay" class="headerlink" title="Rotational Delay"></a>Rotational Delay</h4><p>head가 6번 sector위에 놓여있는 상황에서 sector 0을 읽어야 하는 요청을 디스크가 받았다고 하자. 이를 어떻게 읽을 수 있을까?  </p>
+<p>여기서는 그냥 sector 0이 head위에 오도록 rotate 시키면된다.<br>이를 회전시키는데 시간이 걸리는데 이를 <strong>rotational delay</strong>라고 부른다.<br>위 예제에서 rotational delay가 <code>R</code>이라면 sector 0까지 회전하는데에는 <code>R/2</code>의 시간이 걸린다.<br>만약 sector 5를 읽어야 한다면 전체 한바퀴를 돌려야하므로 <code>R</code>의 시간이 걸린다.  </p>
+<h4 id="Seek-time"><a href="#Seek-time" class="headerlink" title="Seek time"></a>Seek time</h4><p align="center">
+    <img alt="Three track with head" src="/images/filesystem/three-tracks.png"/>
+</p>
+  
+<p>위의 왼쪽 그림에서 현재 head는 가장 안쪽 track에 sector 30번 위에 놓여있다.<br>여기서 sector 11번을 읽으라는 요청이 들어오면 어떻게 해야할까?<br>Disk는 먼저 head를 sector 11번이 있는 track으로 이동을 해야한다.<br>이러한 과정을 <strong>seek</strong>라고 한다. 그리고 이에 걸리는 시간을 <strong>seek time</strong>이라고 한다.  </p>
+<p>위의 오른쪽 그림에서 sector 11번을 읽기위해 head가 세번째 track으로 이동했다. 그 와중에 platter 또한 회전했다는 것을 알 수 있다. 현재 sector 9에 head가 위치하므로 rotational delay만 기다리면 원하는 sector를 읽을 수 있겠다.  </p>
+<h4 id="Transfer-Delay"><a href="#Transfer-Delay" class="headerlink" title="Transfer Delay"></a>Transfer Delay</h4><p>위의 예제에서 sector 11번이 head를 지날때 데이터를 읽거나 데이터를 write한다.<br>이를 <strong>transfer</strong>라고 한다. 그리고 이에 걸리는 시간을 <strong>transfer delay</strong>라고 한다.<br>보통 transfer delay는 I&#x2F;O Bus를 통해 memory에 저장이 될때까지의 시간을 포함한다. 여기서 disk head가 읽어들이는 시간과 이를 DMA engine이 읽어들이는 시간보다 가장 영향을 많이 받는 것은 I&#x2F;O Bus의 latency 이다. DMA engine은 충분히 빠르다.  </p>
+<p>그래서 결국 데이터를 읽거나 쓰려면 원하는 track을 seek하고 적절한 sector에 접근하기 위해 rotational delay를 기다리고 그리고 transfer 하게된다.  </p>
+<h4 id="Track-skew"><a href="#Track-skew" class="headerlink" title="Track skew"></a>Track skew</h4><p>보통 track의 경계를 넘어 head가 왔다갔다 할때에도 rotational delay를 줄여 연속적인 읽기가 가능하도록 sector 번호를 배치한다.  아래 그림을 보자.  </p>
+<p align="center">
+    <img alt="track skew" style="max-width: 350px;" src="/images/filesystem/track-skew.png"/>
+</p>
+  
+<p>위 그림에서 읽고 싶은 sector 번호가 22, 23, 24, 25라고 하자.<br>head가 가장 가까운 다음 track으로 이동한다고 하더라도 head를 정확하게 reposition하는 시간이 필요하다.<br>이런 시간들을 고려하여 sector을 위와같이 배치한다면 sector 22, 23까지 읽고 head를 옮겨 seek time이 지나면 head가 sector 24번에 위치함으로서 서로 다른 track에 위치한 연속적인 sector를 읽어들일때 rotational delay를 줄일 수 있다는 것이다.   </p>
+<p>위에서는 각 track에서 sector의 시작점이 2개씩 차이난다.   </p>
+<h4 id="Multi-zoned"><a href="#Multi-zoned" class="headerlink" title="Multi-zoned"></a>Multi-zoned</h4><p>track이 바깥쪽에 있을수록 원형구조상 sector들을 더 많이 가질 수 밖에 없다.<br>그래서 연속적인 track을 묶어 이들을 각각 zone이라고 부르고, 같은 zone에 있는 track들은 같은 sector 개수를 가진다. 원형의 가장 바깥쪽에 위치한 zone들의 track은 가장 많은 sector 개수를 가진다.  </p>
+<h4 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h4><p>요즘 대부분의 disk 안에는 캐시가 존재한다. 이를 <strong>track buffer</strong>라고 부르며 보통 작은 크기의 메모리로 구성된다.<br>예를들어 특정 sector을 읽어야하는 요청이 들어오면, 그 track의 모든 sector를 읽고 buffer에 저장해놓는다.  </p>
+<p>Write 연산은 크게 두가지 방식으로 캐시를 활용할 수 있다.<br>첫번째로는 write 요청을 memory에만 써놓고 이를 비동기적으로 disk에 동기화시킨다. 이는 write 요청에 대한 응답이 매우 빠르지만 disk에 반드시 쓰여졌음을 보장할 수 없다. 이런 방식을 <strong>write back</strong>이라고 부른다.  </p>
+<p>두번째로는 실제로 write 요청시 disk에 쓰고 buffer을 날려버릴 수 있다. 이런 방식을 <strong>write through</strong>라고 부른다.  </p>
+<br/>
+
+<h2 id="I-x2F-O-시간-계산"><a href="#I-x2F-O-시간-계산" class="headerlink" title="I&#x2F;O 시간 계산"></a>I&#x2F;O 시간 계산</h2><p>결국 Disk I&#x2F;O 시간은 다음과 같이 계산된다.  </p>
+<h4 id="TI-O-Tseek-Trotation-Ttransfer"><a href="#TI-O-Tseek-Trotation-Ttransfer" class="headerlink" title="TI/O = Tseek + Trotation + Ttransfer"></a><code>T<sub>I/O</sub> = T<sub>seek</sub> + T<sub>rotation</sub> + T<sub>transfer</sub></code></h4><p>Disk에서는 Rate of I&#x2F;O라는 단위로 성능을 측정해서 비교하곤 한다. Rate of I&#x2F;O는 간단하게 <strong>1초동안 얼마나 I&#x2F;O를 처리할 수 있는가</strong>로 이해할 수 있다. Rate of I&#x2F;O는 일정시간동안 I&#x2F;O를 처리하고 transfer 할 수 있는 크기를 I&#x2F;O를 처리하는데 걸린 시간으로 나누면 된다.  </p>
+<h4 id="RI-O-Sizetransfer-TI-O"><a href="#RI-O-Sizetransfer-TI-O" class="headerlink" title="RI/O = Sizetransfer / TI/O"></a><code>R<sub>I/O</sub> = Size<sub>transfer</sub> / T<sub>I/O</sub></code></h4><p>예제로 disk의 random access와 sequential access의 Rate of I&#x2F;O를 측정해보자.<br>예제의 기준으로 사용한 disk는 Seagate의 높은 성능을 가진 SCSI drive인 Cheetah 15K.5와 SATA drive인 Barracuda이다. 이에 대한 스펙은 다음과 같다.  </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Cheetah 15K.5</th>
+<th>Barracuda</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Capacity</td>
+<td>300 GB</td>
+<td>1 TB</td>
+</tr>
+<tr>
+<td>RPM</td>
+<td>15,000</td>
+<td>7,200</td>
+</tr>
+<tr>
+<td>Average Seek</td>
+<td>4ms</td>
+<td>9ms</td>
+</tr>
+<tr>
+<td>Max Transfer</td>
+<td>125 MB&#x2F;s</td>
+<td>105 MB&#x2F;s</td>
+</tr>
+<tr>
+<td>Platters</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td>16 MB</td>
+<td>16&#x2F;32 MB</td>
+</tr>
+<tr>
+<td>Connects via</td>
+<td>SCSI</td>
+<td>SATA</td>
+</tr>
+</tbody></table>
+<p>먼저 random location의 4KB 크기의 read가 발생할때 시간이 얼마나 걸릴지 계산해보자.<br>먼저 Chheta 15K.5 의 경우이다.  </p>
+<h6 id="Tseek-4ms-Trotation-2ms-Ttransfer-30-micro-sec"><a href="#Tseek-4ms-Trotation-2ms-Ttransfer-30-micro-sec" class="headerlink" title="Tseek = 4ms, Trotation = 2ms, Ttransfer = 30 micro sec"></a><code>T<sub>seek</sub> = 4ms, T<sub>rotation</sub> = 2ms, T<sub>transfer</sub> = 30 micro sec</code></h6><p>average seek time은 표에서 찾을 수 있다.<br>rotation은 15000rpm을 가지므로 한번 rotate시 4ms 걸린다. 보통 평균으로 절반을 회전하므로 2ms로 계산한다.<br>transfer time은 125 Mega Byte per sec을 역산하면 30 micro sec이 걸린다. 대략적으로 4KB의 I&#x2F;O 시간은 6ms 가 되겠다.<br>그러므로 이를 기반으로 Rate of I&#x2F;O를 계산하면 Cheetah 15K.5의 random access read의 R<sub>I&#x2F;O</sub>는 대략적으로 0.66MB&#x2F;s 이다.  </p>
+<p>만약 sequential read 이고 100MB 대상으로 파일을 읽는다고 해보자. 이 경우에는 sequential read이므로 1 seek, 1 rotation 그리고 대량의 transfer time이 걸릴 것이다.(물론 sector들이 여러개의 track에 있을 수 있지만 그냥 가정이다.)<br>4KB에 30 micro sec의 시간이 걸렸으므로 100MB에는 768ms가 걸린다. 대략적으로 800ms 걸린다고 가정한다면 100MB의 read에는 800ms가 걸린다.<br>이를 기준으로 sequential read의 R<sub>I&#x2F;O</sub>는 125MB&#x2F;s 이다.  </p>
+<p>Barracuda도 이와 동일하게 계산하면 결과는 다음과 같다.  </p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Cheetah 15K.5</th>
+<th>Barracuda</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>R<sub>I&#x2F;O<sub> Random</td>
+<td>0.66 MB&#x2F;s</td>
+<td>0.31 MB&#x2F;s</td>
+</tr>
+<tr>
+<td>R<sub>I&#x2F;O<sub> Sequential</td>
+<td>125 MB&#x2F;s</td>
+<td>105 MB&#x2F;s</td>
+</tr>
+</tbody></table>
+<p>위의 결과를 보면 Random access와 Sequential access의 성능차이는 어마어마 하다. 거의 200배, 300배 차이가 나는 것을 볼 수있다.  </p>
+<p>또한 제품마다 특성이 다르며 각 용도에 따라 올바르게 disk를 선택하는 것이 좋다.<br>예를들어 RPM 수치가 높다고 반드시 좋은 것은 아니다. RPM이 높아질수록 안정성이 떨어지기 때문이다. 데이터를 오랫동안 안정적으로 보관하려면 낮은 RPM 제품을 선택하는게 도움이 될 수 있다.  </p>
+<br/>
+
+<h2 id="Disk-Scheduling"><a href="#Disk-Scheduling" class="headerlink" title="Disk Scheduling"></a>Disk Scheduling</h2><p>위에서 성능을 보았듯이 disk I&#x2F;O는 millisecond 단위로 동작하기 때문에 비용이 꽤 높은 작업이다. 따라서 전통적으로 OS는 이를 개선하기 위해 I&#x2F;O 작업들의 순서를 결정하는 역할도 같이 했다.  </p>
+<p>Kernel 내부 disk controller에 Disk I&#x2F;O 요청을 담아두는 queue를 두고 이 queue를 보고 알고리즘에 따라 순서를 변경한다.  </p>
+<p>Scheduling에는 여러가지 방식이 있는데 이를 하나하나 상세히 알아보지는 않을 것이다. 이해하는데 난이도도 어렵지 않으며 우리가 Disk scheduling을 걱정할 필요가 없기때문이다. 이는 이미 기술이 다 완성되었다고 판단할 수 있으며 우리가 scheduling 알고리즘을 바꾸거나 할 경우는 없다.  </p>
+<p>Disk Scheduling 알고리즘에는 seek time을 최소화하는 <strong>SSTF</strong>, 엘레베이터 알고리즘과 비슷한 <strong>SCAN</strong> 방식 등이 존재한다.<br>하지만 이들은 head의 움직임에 대한 cost만 고려하지 rotate는 고려하지 않는다. 이들을 해결하기 위한 알고리즘이 <strong>SPTF</strong> 알고리즘이다.  </p>
+<br/>
+
+<h4 id="SPTF-Shortest-Position-Time-First"><a href="#SPTF-Shortest-Position-Time-First" class="headerlink" title="SPTF(Shortest Position Time First)"></a>SPTF(Shortest Position Time First)</h4><p>SPTF는 어떤 정해진 알고리즘이라는 느낌보다는 그 때의 경우에 따라 적절하게 처리하는 알고리즘이라고 이해하면 쉽다.<br>아래의 예시를 보자.  </p>
+<p align="center">
+    <img style="max-width: 450px;" src="/images/filesystem/sptf.png"/>
+</p>
+  
+<p>현재 head가 sector 30번에 있고 그 다음에 방문해야 하는 sector가 16과 8이 있다. 어느 sector를 먼저 방문해야할까?<br>이는 경우에 따라 다르다.<br>만약 seek time이 rotational delay보다 훨씬 오래걸린다면 sector 16번부터 방문하는 것이 합리적일 것이다. 만약 그 반대인 rotational delay가 훨씬 길면 어떨까? 이 경우에는 sector 8번을 먼저 방문하는 것이 합리적이다.  </p>
+<p>요즘의 disk들은 seek time와 rotational delay가 대략적으로 비슷하다. 그러므로 각각 spec과 상황에 따라 적절하게 결정하는 것이 SPTF의 핵심이다.<br>SPTF는 OS에서 구현하기는 힘들고 device 내부에서 각자의 상황에 맞게 구현되고는 한다.  </p>
+<br/>
+
+<h4 id="Scheduling은-어디서"><a href="#Scheduling은-어디서" class="headerlink" title="Scheduling은 어디서?"></a>Scheduling은 어디서?</h4><p>Disk Scheduling은 결국 어디서 일어날까?<br>위에서도 살짝 언급했듯이 예전에는 Disk scheduling을 모두 OS에서만 처리했다. OS에서 기다리고 있는 request 들을 queueing 하고 있다가 다음 request를 요청할때 이 queue에서 적절한 request를 선택하여 disk에 요청했다.  </p>
+<p>요즘은 disk 자체가 내부적으로 각자 device에 맞는 뛰어난 scheduling 기법을 내재하고있다. 그리고 OS도 적절하게 OS가 판단한 sector 번호를 disk에 요청하면 disk도 이를 queueing 하고 적절하게 구현한 알고리즘에 따라 처리한다.  </p>
+<p>또 한가지 볼만한 점은 OS 레벨에서 연속된 sector에 대한 요청이 있을시 이들을 merge한다.<br>예를들어 read 요청이 33, 8, 34 순서로 도착했다면 OS는 이를 보고 33, 34을 2개의 sector를 대상으로 하는 1 개의 request로 merge한다. 이는 disk 오버헤드를 크게 줄여준다. </p>
+<br/>
+
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.amazon.com/Operating-Systems-Three-Easy-Pieces-ebook/dp/B00TPZ17O4">https://www.amazon.com/Operating-Systems-Three-Easy-Pieces-ebook/dp/B00TPZ17O4</a></li>
+</ul>
+<br/>
+<br/>
+<br/>
+
+
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OS/">OS</a><a class="link-muted mr-2" rel="tag" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/">파일시스템</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/09/06/file-system-flash/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">파일시스템 2편 - Flash 그리고 SSD</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/09/05/raid/"><span class="level-item">파일시스템 2편 - RAID</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2020/09/05/file-system-hard-disk/';
+            this.page.identifier = '2020/09/05/file-system-hard-disk/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>

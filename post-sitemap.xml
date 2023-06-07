@@ -1,9 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
     <url>
-        <loc>https://tk-one.github.io</loc>
+        <loc>https://tk-one.github.io/</loc>
         <changefreq>daily</changefreq>
         <priority>1</priority>
+    </url>
+
+
+    <url>
+        <loc>https://tk-one.github.io/2020/09/08/file-system-design-1/</loc>
+        <lastmod>2023-06-07T16:21:36.345Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2020/09/08/file-system-design/</loc>
+        <lastmod>2023-06-07T16:21:10.654Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2020/09/07/file-system-concept/</loc>
+        <lastmod>2023-06-07T16:20:54.843Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2020/09/06/file-system-flash/</loc>
+        <lastmod>2023-06-07T16:20:43.708Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2020/09/05/raid/</loc>
+        <lastmod>2023-06-07T16:20:28.379Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2020/09/05/file-system-hard-disk/</loc>
+        <lastmod>2023-06-07T16:20:17.889Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/08/09/system-bus/</loc>
+        <lastmod>2023-06-07T16:19:39.160Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/08/08/os-memory/</loc>
+        <lastmod>2023-06-07T16:19:22.350Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/25/classic-problem-of-synchronization/</loc>
+        <lastmod>2023-06-07T16:19:12.182Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/24/os-synchronization/</loc>
+        <lastmod>2023-06-07T16:18:59.572Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/23/os-scheduling/</loc>
+        <lastmod>2023-06-07T16:18:40.928Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/16/false-sharing/</loc>
+        <lastmod>2023-06-07T16:18:29.785Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/15/fork-join-pool/</loc>
+        <lastmod>2023-06-07T16:18:20.931Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/09/os-process/</loc>
+        <lastmod>2023-06-07T16:17:49.752Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/09/os-computer-architecture/</loc>
+        <lastmod>2023-06-07T16:17:38.465Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/09/os-virtualization/</loc>
+        <lastmod>2023-06-07T16:17:20.619Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2019/07/08/os-abstraction/</loc>
+        <lastmod>2023-06-07T16:17:04.557Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
     </url>
 
     <url>

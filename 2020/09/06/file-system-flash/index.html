@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>파일시스템 2편 - Flash 그리고 SSD - 기술블로그</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="기술블로그"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="기술블로그"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.이전 포스트의 하드디스크에 이어 이번 포스트에서는 Flash 그리고 SSD에 대해 알아볼 것입니다.   이번 편은 이전의 운영체제 3편 - 컴퓨터 구조와 I&amp;#x2F;O 글의 I&amp;#x2F;O 부분을 이해하고보면 도움이 됩니다.     Flash M"><meta property="og:type" content="blog"><meta property="og:title" content="파일시스템 2편 - Flash 그리고 SSD"><meta property="og:url" content="https://tk-one.github.io/2020/09/06/file-system-flash/"><meta property="og:site_name" content="기술블로그"><meta property="og:description" content="이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.이전 포스트의 하드디스크에 이어 이번 포스트에서는 Flash 그리고 SSD에 대해 알아볼 것입니다.   이번 편은 이전의 운영체제 3편 - 컴퓨터 구조와 I&amp;#x2F;O 글의 I&amp;#x2F;O 부분을 이해하고보면 도움이 됩니다.     Flash M"><meta property="og:locale" content="ko_KR"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/simple-flash.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/flash-based-ssd.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/ftl-example-1.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/ftl-example-2.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/ftl-example-3.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/ftl-example-4.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/gc-example-1.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/gc-example-2.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/bbm-example-1.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/bbm-example-2.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/hm-example-1.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/hm-example-2.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/hm-example-3.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/hm-example-4.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/ssd-architecture.png"><meta property="og:image" content="https://tk-one.github.io/images/filesystem/ssd-vs-hdd.png"><meta property="article:published_time" content="2020-09-05T16:51:46.000Z"><meta property="article:modified_time" content="2023-06-07T16:20:43.708Z"><meta property="article:author" content="TK-one"><meta property="article:tag" content="OS"><meta property="article:tag" content="파일시스템"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://tk-one.github.io/images/filesystem/simple-flash.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://tk-one.github.io/2020/09/06/file-system-flash/"},"headline":"파일시스템 2편 - Flash 그리고 SSD","image":["https://tk-one.github.io/images/filesystem/simple-flash.png","https://tk-one.github.io/images/filesystem/flash-based-ssd.png","https://tk-one.github.io/images/filesystem/ftl-example-1.png","https://tk-one.github.io/images/filesystem/ftl-example-2.png","https://tk-one.github.io/images/filesystem/ftl-example-3.png","https://tk-one.github.io/images/filesystem/ftl-example-4.png","https://tk-one.github.io/images/filesystem/gc-example-1.png","https://tk-one.github.io/images/filesystem/gc-example-2.png","https://tk-one.github.io/images/filesystem/bbm-example-1.png","https://tk-one.github.io/images/filesystem/bbm-example-2.png","https://tk-one.github.io/images/filesystem/hm-example-1.png","https://tk-one.github.io/images/filesystem/hm-example-2.png","https://tk-one.github.io/images/filesystem/hm-example-3.png","https://tk-one.github.io/images/filesystem/hm-example-4.png","https://tk-one.github.io/images/filesystem/ssd-architecture.png","https://tk-one.github.io/images/filesystem/ssd-vs-hdd.png"],"datePublished":"2020-09-05T16:51:46.000Z","dateModified":"2023-06-07T16:20:43.708Z","author":{"@type":"Person","name":"TK-one"},"publisher":{"@type":"Organization","name":"기술블로그","logo":{"@type":"ImageObject","url":"https://tk-one.github.io/img/logo.svg"}},"description":"이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.이전 포스트의 하드디스크에 이어 이번 포스트에서는 Flash 그리고 SSD에 대해 알아볼 것입니다.   이번 편은 이전의 운영체제 3편 - 컴퓨터 구조와 I&#x2F;O 글의 I&#x2F;O 부분을 이해하고보면 도움이 됩니다.     Flash M"}</script><link rel="canonical" href="https://tk-one.github.io/2020/09/06/file-system-flash/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/androidstudio.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><script src="https://www.googletagmanager.com/gtag/js?id=UA-124797892-1" async></script><script>window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+    
+        gtag('config', 'UA-124797892-1');</script><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(location.hash);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"><link rel="alternate" href="/rss2.xml" title="기술블로그" type="application/rss+xml">
+</head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item search" title="검색" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2020-09-05T16:51:46.000Z" title="06/09/2020, 01:51:46">2020-09-06</time>&nbsp;게시 됨</span><span class="level-item"><a class="link-muted" href="/categories/OS/">OS</a></span><span class="level-item">44분안에 읽기 (약 6653 단어)</span><span class="level-item" id="busuanzi_container_page_pv"><span id="busuanzi_value_page_pv">0</span>회 방문</span></div></div><h1 class="title is-3 is-size-4-mobile">파일시스템 2편 - Flash 그리고 SSD</h1><div class="content"><p>이 글은 학부 System Programming 수업을 듣고 다른 자료들과 함께 공부한 내용을 정리한 글입니다.<br>이전 포스트의 하드디스크에 이어 이번 포스트에서는 Flash 그리고 SSD에 대해 알아볼 것입니다.  </p>
+<p>이번 편은 이전의 <a href="/2019/07/09/os-computer-architecture/">운영체제 3편 - 컴퓨터 구조와 I&#x2F;O</a> 글의 I&#x2F;O 부분을 이해하고보면 도움이 됩니다.  </p>
+<br/>
+
+<h2 id="Flash-Memory"><a href="#Flash-Memory" class="headerlink" title="Flash Memory"></a>Flash Memory</h2><p>하드디스크와 다르게 Flash는 메모리나 CPU처럼 트랜지스터 들로 구성이 되어있다. 즉 disk의 arm이 움직이거나 platter가 회전하는 물리적인 움직임이 없다.<br>Reliability 측면에서도 disk에 비해 훌륭한 편이다. Disk는 물리적인 head crash가 날수도 있고, dead block(더이상 사용할 수 없는 block) 자체가 생길 수 있다. 물리적으로 읽고 쓰기 때문이다. 그리고 disk는 생각보다 자주깨진다.<br>이와는 다르게 Flash는 순수한 silicon으로 구성되어 있으며 전자적으로 동작하기에 더 신뢰성이 높다. Flash는 또한 매우 빠른 access time을 제공하고 power가 적게드는 반도체 특성으로 disk에 비해 매우매우 저전력이다. Flash Memory는 여러타입이 있는데 보통은 NAND-Flash를 의미한다. 
+다만 Flash가 가진 특이한 특성들 때문에 이를 해결하기 위해 몇가지 기법들을 적용해야한다. 이들은 밑에서 자세히 알아볼 것이다.   </p>
+<p>Flash chip은 하나의 transistor의 1개 이상의 bit를 저장할 수 있다. <strong>SLC(Single-Level Cell)</strong> flash는 오직 1개의 bit만 transistor에 저장할 수 있고, <strong>MLC(Multi-Level Cell)</strong> flash는 2개의 bit를 저장할 수 있다. 그러므로 00, 01, 10, 11을 저장할 수 있다. <strong>TLC(Triple-Level Cell)</strong> flash는 3개의 bit를 저장가능하다. 전반적으로 SLC가 더 성능이 좋고 가격이 비싸다.  </p>
+<span id="more"></span>
+
+<br/>
+
+<h4 id="Block-and-Page"><a href="#Block-and-Page" class="headerlink" title="Block and Page"></a>Block and Page</h4><p>이를 설명하기 전에 명확히 해야할게 여기서도 block과 page 용어가 등장한다. 하지만 Flash에서 말하는 block과 page는 디스크에서의 block 그리고 virtual 메모리에서의 page와 다르다.  </p>
+<p>Flash는 크기에 대해 두가지 단위를 사용하는데 그것이 <strong>block</strong>과 <strong>page</strong>이다.<br>전형적으로 block은 128KB 혹은 256KB 의 크기를 가진다. page는 이보다 작은 2KB 혹은 4KB의 크기를 가진다.<br>Flash는 여러개의 block들로 이루어져 있고 1개의 block은 여러개의 page를 가진다. </p>
+<p align="center">
+    <img style="max-width: 450px;" src="/images/filesystem/simple-flash.png"/>
+</p>
+
+<p>위 그림은 아주 간단하게 표현한 Flash chip의 구성이며 총 3개의 block, 그리고 각 block은 4개의 page로 구성되어 있다.  </p>
+<br/>
+
+<h4 id="Basic-Flash-Operations"><a href="#Basic-Flash-Operations" class="headerlink" title="Basic Flash Operations"></a>Basic Flash Operations</h4><p>Flash chip 에서 제공하는 기본적인 3개의 low-level operation 들이 있다. <strong>read</strong>, <strong>erase</strong>, <strong>program</strong> 이 3가지이다.  </p>
+<h6 id="Read"><a href="#Read" class="headerlink" title="Read"></a>Read</h6><p>Read는 읽으려는 page number를 받아 page 1개를 읽어들인다. 보통 page를 읽어들이는데 10 micro sec 정도 걸리며 읽으려는 location에 무관하다. 즉 disk처럼 이전에 실행한 operation에 따라 head 위치와 rotation에 의존하는 방식이 아니며 어떤 location이라도 균일한 높은 읽기성능을 제공한다.  </p>
+<h6 id="Erase"><a href="#Erase" class="headerlink" title="Erase"></a>Erase</h6><p>Flash는 page에 쓰기전에 page가 속한 block 전체의 지움이 선행되어야 한다. 즉 page가 속한 block을 먼저 <strong>erase</strong>해야한다. 그러므로 erase 전에 block을 memory나 다른 flash block에 copy 해놓아야 한다. Block이 지워지면 모든 bit이 1로 설정된다. erase operation은 비싼 작업이며 millisecond 단위이다.<br>erase가 되면 해당 block은 program 가능한 상태가 된다.  </p>
+<h6 id="Program"><a href="#Program" class="headerlink" title="Program"></a>Program</h6><p>Block에 erase가 먼저 진행된 page에 program을 할 수 있다. erase가 진행되었으니 해당 block은 모든 bit이 1로 설정되어있을 것이다. 이 1로 설정되어 있는 bit를 적절하게 0으로 바꾸면서 데이터를 write 하는데 이를 <strong>program</strong>이라고 한다. program은 erase에 비해 빠른편이며 100 micro sec 정도 걸린다.  </p>
+<br/>
+
+<p>Flash chip의 각 page는 metadata 정보를 담을 수 있는 조그만 공간이 존재한다. 이곳에 state 정보를 담고있다.<br>Page는 <strong>INVALID</strong> 상태에서 시작한다. Block이 erase 되었으면 그 안에있는 page 들은 <strong>ERASED</strong> 상태가 된다. 이들은 programmable 한 상태이다. page에 program을 하면 <strong>VALID</strong> 상태가 되며 이는 내용이 써져있는 상태이고 읽을 수 있는 상태임을 뜻한다.<br>Page는 한번 program 된 이후에 이 내용을 바꾸기 위해서는 해당 page의 block을 먼저 erase해야한다.<br>다음 예제를 보며 이해하면 쉽다. block마다 4개의 page가 있는 구조에서 page에 program 하는 과정을 표현했다.  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">              IIII  // 초기는 4개의 page 모두 INVALID state<br>Erase()    -&gt; EEEE  // block erase로 모두 ERASED state<br>Program(0) -&gt; VEEE  // page 0을 program<br>Program(0) -&gt; ERROR // page 0에 다시 program 할 수 없음<br>Program(1) -&gt; VVEE  // page 1을 program<br>Erase()    -&gt; EEEE  // block erase로 모두 ERASED state<br></code></pre></td></tr></table></figure>
+
+<br/>
+
+<h4 id="Flash-chip-Reliability"><a href="#Flash-chip-Reliability" class="headerlink" title="Flash chip Reliability"></a>Flash chip Reliability</h4><p>Flash에서 read는 굉장히 쉽고 그냥 읽으면된다. disk보다 훨씬 빠른 access time을 제공하고 random read 성능이 뛰어나다. SLC의 경우 10 micro sec만 걸릴뿐이다. Disk는 읽기도 millisecond 단위였던걸 기억하자.<br>하지만 Flash의 물리적인 특성상 page에 쓰기위해서는 해당 block이 먼저 지워져야 한다. 이를 Program &#x2F; Erase 라고 하여 PE cycle이라고 부른다. 하지만 block에 PE cycle이 반복될시 flash chip에 reliability 문제가 생긴다.<br>Flash에서는 block 당 가능한 P&#x2F;E cycle 횟수가 <strong>한정적</strong>이다. MLC(Multiple-Level Cell) 에서는 1만번의 P&#x2F;E cycle 수명을 가진다. SLC는 이보다 높은 10만번의 P&#x2F;E cycle 수명을 가진다.<br>이를 넘어가면 그 block이 unstable 해진다. 조금 더 정확히는 bit를 0과 1을 구분하기가 점점 어려운 상태가 되므로 그 block은 더이상 사용되지 못하게 된다. 이를 <strong>wear out</strong> 이라고 부른다.<br>따라서 Flash에서는 wear out을 해결하기 위한 또다른 숙제가 존재한다.  </p>
+<p>또 다른 reliability 문제로는 <strong>disturbance</strong>라는 문제가 존재한다. Flash의 page를 읽을때 같은 block에 있는 주변의 page들의 bit를 flip할 수 있는 가능성이 있다. 이를 <strong>read disturb</strong>라고 부르며 block erase 이후의 page read count의 threshold를 넘어가면 해당 문제가 일어날 가능성이 높다고 한다. 이를 해결하기 위한 숙제도 존재한다.  </p>
+<br/>
+
+<h2 id="Flash-to-SSD"><a href="#Flash-to-SSD" class="headerlink" title="Flash to SSD"></a>Flash to SSD</h2><p>이제 flash chip의 특성에 대해 어느정도 알아보았다. 이 flash chip 하나로는 storage로 활용하기 힘들고 flash chip 여러개를 모아 flash 기반의 SSD를 만든다.  </p>
+<p align="center">
+    <img alt="Flash 기반의 SSD" style="max-width: 450px;" src="/images/filesystem/flash-based-ssd.png"/>
+</p>
+
+<p>표준 storage 인터페이스는 block 기반으로 512 byte인 sector 크기 단위로 읽고 쓰여질 수 있다.<br>flash 기반의 SSD의 역할중 하나가 내부적으로는 flash를 사용하지만 그 위에서 이 standard storage block 인터페이스를 외부에 제공하는 것이다.  </p>
+<p>내부적으로 SSD는 여러개의 flash chip 들로 구성되어 있으며 위 구조에서도 볼수있듯이 내부에 SRAM 같은 메모리도 존재한다. 이 메모리로 캐싱이나 buffering에 활용한다. 그리고 device operation을 위한 control logic을 포함한다.<br>이 control logic 에서 해야하는 주된 내용은 client로부터의 read, write를 내부적으로 적절하게 flash operation으로 변환하는 것이다. <strong>FTL</strong>(<strong>Flash Translation Layer</strong>)가 이 역할을 하게된다.<br>FTL은 logical block 기반의 read, write 요청을 받고 이를 flash의 read, erase, program operation 으로 적절하게 변환한다. 그리고 FTL은 이런 작업들을 높은 성능과 높은 reliability를 제공하면서 진행해야 하는 책임도 가지고 있다.<br>높은 성능을 위해 여러개의 flash chip들을 병렬로 활용하기도 한다.<br>그리고 flash 특성상 INVALID 혹은 VALID 상태에 있는 page에 program을 하기 위해서는 반드시 그 block은 먼저 erase가 선행이 되어야 하는데 page 1개만 변환하려 해도 전체 block을 다시 써야하는 문제가 있다. 이를 쓰기 증폭, 즉 <strong>write amplification</strong> 이라고 부르는데 이를 줄이기 위한 노력도 같이한다.  </p>
+<p>그리고 높은 reliability를 제공하기 위해 <strong>wear out</strong> 문제도 고려해야한다. 한개의 block에만 PE cycle을 하는 것이 아닌 최대한 모든 block에 균등하게 처리되도록 해야 wear out을 막을 수 있다. 이를 <strong>wear leveling</strong> 이라고 한다.<br>또 위에서 본 disturbance를 최소화하기위해 erased 된 block에 page를 낮은 page부터 높은 page 순서로 program 하는 방법을 택한다.  </p>
+<h4 id="FTL-구현"><a href="#FTL-구현" class="headerlink" title="FTL 구현"></a>FTL 구현</h4><p>어떻게 하면 FTL을 구현할 수 있을까?<br>간단하게 logical page number 그대로 physical page number 로 매핑을 해주는 FTL이 있다고 생각해보자.<br>이 방식이라면 그대로 매핑해주는 방식이기에 logical page N 에 대해 read 요청이 오면 그대로 physical page N 을 읽어 반환한다. read에는 큰 문제가 없다.<br>write를 생각해볼때, write 요청이 오면 flash 특성상 해당 page의 block을 erase 한 후 그 block의 page로 다시 program 해야한다. 그래야 다음 read에 대해 동일한 physical page N을 읽을 수 있도록 보장할 수 있다.<br>이 방식으로 FTL을 구현하면 첫번째로 성능측면에서 문제가 있고 reliability 문제도 존재한다.<br>flash의 특성으로 page에 write을 할때마다 해당 block의 모든 page를 먼저 읽어들이고, 해당 block을 erase, 그리고 이 block의 page에 다시 program을 해주어야한다. 이를 매 write 마다 해주어야 하므로 디스크의 write보다 느리다.  </p>
+<p>그리고 파일시스템의 metadata 혹은 data block이 업데이트 될때마다 같은 block이 PE cycle을 반복하게 되므로 그 block은 빠르게 wear out이 될 것이다. 이처럼 write 요청을 다른 여러 물리 block에 균일하게 배정하지 않으면 block이 빠르게 wear out 된다. 그러므로 direct로 logical page를 그대로 physical page로 매핑하는 방식은 좋은방법이 아니다.  </p>
+<br/>
+
+<h2 id="Log-Structured-FTL"><a href="#Log-Structured-FTL" class="headerlink" title="Log-Structured FTL"></a>Log-Structured FTL</h2><p>여기서는 log structured 방식을 설명하는데 이는 storage device 뿐만아니라 file system 에서도 유용한 아이디어이다. 대부분의 FTL은 log structured 방식을 사용한다. 이를 살펴보자.  </p>
+<p>Log-Structured 방식에서는 logical page에 write 요청이 왔을시, 현재까지 쓰여진 block에 바로 다음 free spot에 데이터를 쓴다. 이런 방식을 <strong>logging</strong> 이라고 부른다.<br>하지만 이런 방식으로 쓰면 read를 할때 logical page가 어떤 physical page에 쓰여졌는지 기록을 해놓아야 하므로 <strong>mapping table</strong>이 필요하다.  </p>
+<p>예시를 보며 이해해보자.  </p>
+<p>클라이언트는 그저 device를 sector 단위인 512 byte(혹은 sector의 group)로 읽고 쓸수있는 전형적인 disk 라고 생각한다는걸 잊지말자. 여기서의 클라이언트는 파일시스템이라고 하자.<br>예시를 간단하게 하기위해 몇가지 가정을 하자.  </p>
+<ul>
+<li>파일시스템은 4KB 단위의 chunk로 데이터를 read, write 한다.</li>
+<li>SSD는 16KB의 block들로 이루어져있고 각 block은 4KB의 page들로 이루어져 있다.</li>
+</ul>
+<p>클라이언트는 다음 순서로 operation을 요청한다.  </p>
+<ol>
+<li>데이터 “a1”을 logical block <code>100</code>에 write한다.</li>
+<li>데이터 “a2”을 logical block <code>101</code>에 write한다.</li>
+<li>데이터 “b1”을 logical block <code>2000</code>에 write한다.</li>
+<li>데이터 “b2”을 logical block <code>2001</code>에 write한다.</li>
+</ol>
+<p>여기서의 logical block number는 flash의 block과는 다름을 주의하자.  </p>
+<p>위 요청을 받았을때 초기의 SSD는 모든 block의 page들이 INVALID 상태이므로 어느 block에 이를 program하든지 erase가 먼저 선행되어야 한다. FTL이 이를 block 0에 program 한다고 가정했을때 먼저 block 0을 erase 한다.  </p>
+<p align="center">
+    <img style="max-width: 450px;" src="/images/filesystem/ftl-example-1.png"/>
+</p>
+
+<p>block 0 은 이제 program을 할 수 있는 상태이다. 대부분의 SSD는 앞에서 본 disturbance(read 시 주변 셀들을 변경할 수 있음) 문제를 줄이기 위해 page를 앞에서부터 차례로 쓴다.<br>그러면 처음 logical block <code>100</code>에 대한 요청을 physical page 0에 write한다.</p>
+<p align="center">
+    <img style="max-width: 450px;" src="/images/filesystem/ftl-example-2.png"/>
+</p>
+
+<p>위처럼 physical page 0에 data가 쓰여졌다. 만약 파일시스템이 logical block <code>100</code>을 다시 읽으려면 어떤 처리를 해주어야할까? FTL은 read 요청을 받았을때 logical block을 physical page로 적절하게 mapping 해줄 수 있어야한다. 이를 위해 <strong>in-memory mapping table</strong>을 만들어 기록하자.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/ftl-example-3.png"/>
+</p>
+
+<p>SSD에 write을 할때에는 현재까지 작성한 block의 다음 비어있는 page에 program한다. 그리고 이에 대한 정보를 mapping table에 기록한다. 다음 해당 page들에 대한 read요청이 왔을때 client로 부터 온 logical block 을 physical page로 mapping table을 이용해 변환하여 실제로 어떤 physical page를 봐야하는지 결정한다. 나머지 3개의 logical block도 다 쓰게되면 다음과 같다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/ftl-example-4.png"/>
+</p>
+
+<p>최종상태는 위와같은 그림이 될 것이다.<br>이런 logging 기반의 구조는 성능적으로 뛰어난데 매번 write 할때마다 block을 erase할 필요가 없다. 그리고 reliability 측면에서도 FTL이 write 시 여러 block을 골고루 사용하도록 설계할 수 있으며 이 덕에 device의 수명을 늘릴 수 있다. 이런 해결을 <strong>wear leveling</strong>한다 라고 표현한다.  </p>
+<p>하지만 이런 logging 기반 구조는 단점이 존재하는데 logical block을 수정해야 할때에는 garbage가 생긴다. 새로운 page에 다시 program 하므로 이전에 있던 page는 garbage가 된다. 그래서 SSD는 주기적으로 이런 garbage들을 정리하고 free space를 확보하는 <strong>garbage collection</strong>을 진행해야한다. 과도한 GC는 write amplification을 발생시키고 성능을 낮춘다.<br>그리고 mapping table을 관리해야 하는 문제도 있다. mapping table이 클수록 그만큼 더 큰 memory를 요구하게 된다.  </p>
+<p>mapping table을 in-memory로 관리하는데 power가 꺼지면 어떻게 될까? memory는 휘발성으로 당연히 날아간다. 하지만 mapping table이 없으면 read operation을 처리해주지 못하므로 SSD는 mapping table을 복구할 수 있는 장치를 마련해야한다.<br>간단하게는 각 page에 <strong>out-of-band</strong>(<strong>OOB</strong>)라는 영역에 mapping 정보를 기입해놓을 수 있다. 이를 기반으로 SSD를 켤때 모든 page들을 읽어 mapping table을 재구성할 수 있다. 하지만 모든 page를 scan해야 하므로 성능이 좋지않다.<br>최근에는 복잡한 logging과 checkpoint 방식의 기법으로 빠른 recovery를 지원한다.  </p>
+<br/>
+
+<h2 id="Garbage-Collection"><a href="#Garbage-Collection" class="headerlink" title="Garbage Collection"></a>Garbage Collection</h2><p>위의 예제를 다시 이어서 보면 마지막에는 page 0과 1에 각각 logical block 100 그리고 101 이 매핑되어 있었다. 만약 logical block 100과 101을 다시 write 하면 어떻게될까?<br>다음 block의 free page에 쓰여질 것이다. 그리고 page 0과 1은 VALID 상태이지만 최신버전이 아니므로 garbage이다.<br>log-structure 기반의 device는 garbage를 계속 만들어내므로 free space를 더 확보하기 위해 <strong>garbage collection</strong>을 진행해야한다. 이는 최신 SSD에서도 고려해야하는 중요한 요소이다.  </p>
+<p>GC의 기본적인 과정은 이와같다.  </p>
+<ol>
+<li>최소 1개이상의 garbage page를 가지고 있는 block을 찾는다.</li>
+<li>그 block의 아직 live 한 page들을 읽는다.</li>
+<li>읽은 live한 page들을 log(block)에 쓴다. 그리고 기존 block을 erase 하여 새로운 write에 사용할 수 있도록 한다.</li>
+</ol>
+<p>GC가 이 과정을 수행하기 위해 어떤 page가 live 한지 혹은 garbage 인지 판단할 수 있어야하는데, 간단하게는 mapping table 을 이용할 수 있다. mapping table에는 실제 physical page들이 명시되어있으므로 이들이 live한 page이다.<br>이런 방식으로 위의 예제에서 logical block 100과 101에 각각 데이터 “c1”과 “c2”를 다시 쓰게되면 다음과 같이된다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/gc-example-1.png"/>
+</p>
+
+<p>현재 mapping table을 보게되면 page 0과 1이 garbage인 것을 알 수 있다. 그러므로 block 0 에 있는 live한 page인 page 2와 3을 읽어 이들을 log에 쓴다. 즉 다음 free space에 쓰고 block 0을 erase 하여 다음 program operation에서 활용할 수 있도록 한다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/gc-example-2.png"/>
+</p>
+
+<p>따라서 mapping table도 새로 update 되고 block 0 도 erase된 상태가 되었다.<br>이처럼 GC는 live data를 판단하기 위한 read 그리고 이들을 copy 하여 rewrite, 만약 block이 전부 dead page들로 이루어져 있으면 erase 까지 진행하므로 비싼 작업이다. 그래서 현대 SSD에서는 추가적으로 flash 용량을 더 두어서 device가 바쁘지 않을때 background 에서 GC를 수행하도록 한다. flash 용량을 더 두게되면 data cleaning에 사용할 수 있고 storage bandwidth도 높일 수 있다.  </p>
+<br/>
+
+<h2 id="Mapping-Table"><a href="#Mapping-Table" class="headerlink" title="Mapping Table"></a>Mapping Table</h2><p>위에서 확인했듯이 Log-Structured 방식은 mapping table이 필요하다. 다만 이 mapping table 크기가 문제이다. 예를들어 4KB page로 구성되어있는 1TB의 SSD가 있다고 할때 mapping table entry가 4byte라면 mapping table의 크기는 1GB가 된다. 즉 mapping table 만을 위해서 1GB의 memory가 필요한 것이다.<br>이를 극복하기 위한 <strong>Block-Based Mapping</strong> 방식과 최근 많은 SSD에서 채택하는 <strong>Hybrid Mapping</strong> 방식을 알아볼 것이다.  </p>
+<br/>
+
+<h4 id="Block-Based-Mapping"><a href="#Block-Based-Mapping" class="headerlink" title="Block-Based Mapping"></a>Block-Based Mapping</h4><p>Block 기반 mapping은 page 별로 mapping을 하는게 아니라 block 단위로 mapping을 한다.<br>이렇게 block 단위로 매핑을 하면 mapping table의 크기는 <code>size of block / size of page</code> 로 나눈 값으로 줄일 수 있다. 예를들어 block 1개에 4개의 page가 들어간다면 page-based mapping 방식에 비해 mapping table의 크기를 4분의 1로 줄일 수 있다.  </p>
+<p>간단하게 예시를 보며 이해해보자.<br>위에서 본 예시와 조금 다르게 지금 우리가 logical block 2000, 2001, 2002, 2003 까지 각각 데이터 a, b, c, d를 write한 상태라고 하자.<br>block 단위로 mapping을 하므로 block 번호의 맨 뒤 2bit만 offset으로 활용하고 그 앞부분은 block number로 활용할 수 있다. 마치 page table 에서 page number와 offset으로 물리메모리를 찾는 방식과 비슷하다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/bbm-example-1.png"/>
+</p>
+
+<p>따라서 2000, 2001, 2002, 2003 은 각각 offset 0, 1, 2, 3을 가지고 block number는 같다. 예시에서는 block 1개에 page가 4개 있고 위의 write을 physical page 4에 할당하였으므로 mapping table에 <code>500 -&gt; 4</code>로 기록한다.<br>read 요청이 왔을때에는 logical block 번호를 4로 나눈 값으로 physical page number를 찾고 offset으로 page 순서를 계산할 수 있다.  </p>
+<p>하지만 Block-Based Mapping은 성능적으로 많이 좋지않다. 문제는 작은 단위의 write이 일어날때 발생한다. 작은 단위의 write이 발생해도 old block 전체를 읽어 새로운 block에 다시 써줘야한다. 이런 data 복사는 write amplification 으로 이어진다.  </p>
+<p>만약 위의 예제에서 logical block 2002를 다른값으로 수정하면 어떻게될까?<br>FTL은 logical block 2000, 2001, 2003을 읽고 이들을 다른 block에 새로 써주어야 한다. 그리고 block 1은 erase될 수 있다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/bbm-example-2.png"/>
+</p>
+
+<p>이처럼 mapping table 크기관점에서는 훨씬 작은 크기를 가져갈 수 있기때문에 좋은 해결책일 수 있으나 성능이 매우 좋지않아 이 방식을 그대로는 활용하기 힘들다.</p>
+<br/>
+
+<h4 id="Hybrid-Mapping"><a href="#Hybrid-Mapping" class="headerlink" title="Hybrid Mapping"></a>Hybrid Mapping</h4><p>많은 현대 SSD 제품들은 <strong>Hybrid Mapping</strong> 방식을 사용한다. 이를 알아보자.<br>Hybrid Mapping은 이름에서 유추할 수 있듯이 block-based mapping과 page-based mapping을 함께 사용한다.<br>먼저 FTL은 몇개의 block들을 erased 상태로 남겨두고 모든 write를 이 block들에 쓴다. 이 block 들을 <strong>log blocks</strong> 라고 부른다. Hybrid Mapping 에서는 page에 대한 write을 log block의 아무 위치에 쓸수있도록 고안되었기 때문에 이 log block에 속한 block들에 한하여 page-based mapping table을 가진다.   </p>
+<p>따라서 FTL은 두종류의 mapping table을 사용한다. 먼저 log block 들을 대상으로 작은 크기의 page-based mapping table을 가지고 나머지 부분인 data table에 대해 block-based mapping table을 가진다. logical block에 대한 read 요청이 오면 먼저 log table을 확인하고 없다면 그때 data table을 확인한다. (mapping table을 확인한다는 것이다.)  </p>
+<p>Hybrid Mapping에서 중요한 것은 log block을 작게 유지하는 것이다. 그러려면 주기적으로 log block을 검사해 이들을 data block으로 만들어 block-based mapping을 사용하도록 해야한다. 예제를 보며 이해해보자.  </p>
+<p>FTL이 이미 logical page 1000, 1001, 1002, 1003을 write을 한 상태이고, 값을 각각 a, b, c, d 라고 하자. 이들은 physical block 2에 쓰였다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/hm-example-1.png"/>
+</p>
+  
+<p>그런데 파일시스템이 logical page 1000, 1001, 1002, 1003 순서대로 하나씩 수정했다고 해보자. 이때 program 할 수 있는 log block은 block 0 이라고 해보자. 그러면 다음과 같은 상태가 된다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/hm-example-2.png"/>
+</p>
+
+<p>log block에 대해서는 page-based mapping을 사용하는 것을 주목하라.<br>운이 좋게도 이전에 block 2 에 쓰였던 순서와 동일하게 block 0 에 쓰여졌으므로 FTL은 <strong>switch merge</strong>라는 것을 진행할 수 있다. 여기서는 block 0 이 data block이 되고 block-based mapping 방식으로 변경될 수 있다. 그리고 block 2는 erase될 수 있다. 이는 FTL이 가질 수 있는 최상의 시나리오다. 결과는 다음과 같다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/hm-example-3.png"/>
+</p>
+
+<p>page-based mapping이 모두 block-based mapping으로 대체되었고 block 2는 erase 되어 log block으로 사용할 수 있게 되었다.<br>만약 이와 같은 최상의 시나리오가 아니라 파일시스템이 logical page 1000, 1001 만 수정했다고 하면 어떻게 될까? 다음과 같은 상태가 될 것이다.  </p>
+<p align="center">
+    <img style="max-width: 550px;" src="/images/filesystem/hm-example-4.png"/>
+</p>
+
+<p>여기서 page 들을 합쳐 재구성하기위해서 FTL은 <strong>partial merge</strong>라는 것을 진행할 수 있다. physical block 2에서 logical block 1002, 1003 을 읽어 이 내용을 다시 log block에 append 한다. 그러면 결국 결과는 위의 switch merge와 같아진다. 다만 여기서는 추가적인 read, write가 필요하므로 write amplification이 증가할 수 있다.  </p>
+<p>만약에 최악의 상황에서 logical block 0, 4, 8, 12 가 physical block A 에 써있다고 하자. 그러면 이 log block 들을 data block로 변경하기 위해서는 logical block 1, 2, 3 이 써져있는 physical page를 찾아 이들을 읽고 새로운 block에 logical block 0, 1, 2, 3을 차례로 써주어야한다. 그다음 logical block 5, 6, 7 이 써져있는 page를 찾아 다시 새로운 block에 써준다. 그리고 이들을 data block으로 만든다. 이를 <strong>full merge</strong> 방식이라고 부르며, 이 full merge는 성능상 좋지않으므로 자주 실행되면 안된다.  </p>
+<br/>
+
+<h2 id="Wear-Leveling"><a href="#Wear-Leveling" class="headerlink" title="Wear Leveling"></a>Wear Leveling</h2><p>FTL은 반드시 <strong>wear leveling</strong>을 구현해야 한다. FTL은 이를 위해 최대한 모든 block에 균등하게 write하려고 노력한다.<br>앞서본 log-structured 방식은 구현자체가 write를 여러 block에 나누어할 수 있고 GC 또한 wear leveling에 도움이 된다. 하지만 몇몇 data block들은 오랜 수명을 가지고있어 수정되지 않고 계속 변하지 않고 그대로 저장되어 있을 수 있다. 이들은 정상적인 data로 GC 대상도 아니다.<br>전체 block을 대상으로 write을 균일하게 써야하는 FTL 입장에서는 이런 long-lived data 가 문제일 수 있다. 이를 극복하기 위해 FTL은 주기적으로 모든 live data를 읽고 다른 block에 다시 write하는 작업을 진행한다.<br>이는 write amplification을 증가시키고 성능저하를 일으킬 수 있지만 모든 block이 동일한 수명을 가지게 할 수 있다. 이 방법 말고도 많은 알고리즘이 이미 고안되어 있다.  </p>
+<br/>
+
+<h2 id="SSD-Architecture"><a href="#SSD-Architecture" class="headerlink" title="SSD Architecture"></a>SSD Architecture</h2><p>SSD 전체구조를 그림으로 한번 보고가자.  </p>
+<p align="center">
+    <img alt="SSD 구조" src="/images/filesystem/ssd-architecture.png"/>
+</p>
+
+<p>FTL layer를 보고 어떤 일들을 하고있고 이들을 왜 해야하는지 이제 이해를 할 수 있을것이다.  </p>
+<br/>
+
+<h2 id="Performance"><a href="#Performance" class="headerlink" title="Performance"></a>Performance</h2><p>SSD는 하드디스크처럼 모터로 돌아가는 기게적인 부분이 없이 전자적으로 작동한다. 성능측면에서 SSD와 하드디스크를 비교를 해보자.  </p>
+<p align="center">
+    <img alt="SSD vs Hard Disk" style="max-width: 550px;" src="/images/filesystem/ssd-vs-hdd.png"/>
+</p>
+  
+<p>Random I&#x2F;O의 경우 하드디스크는 거의 1초에 몇백개의 byte만 처리할 수 있는반면 SSD는 훨씬많이 할 수 있다. SSD는 random I&#x2F;O를 거의 몇십 몇백 MB&#x2F;s 로 처리할 수 있으므로 아주 높은 성능을 가진다.   </p>
+<p>Sequential I&#x2F;O를 보면 SSD가 더 빠르긴 하지만 하드디스크도 괜찮은 선택일 수 있다. 하드디스크도 충분히 좋은 성능을 내고 있음을 볼 수 있다.<br>조금 특이한건 SSD의 random write이 매우 좋은 성능을 가지고 있는데 이는 대부분의 SSD가 채택하고 있는 log-structured 구조 덕분이다. 이는 random write을 sequential write처럼 동작하도록 FTL이 처리하기 때문이다.<br>또 SSD에서 random read 보다는 sequential read가 더 빠른걸 볼 수 있는데, 이는 sequential read는 read에 대한 operation을 큰 data 를 대상으로 한번에 받을 수 있기 때문이다. random read는 매번 각기 다른 주소에 대한 read 요청을 받아야 한다. 그러므로 처리량이 sequential read가 더 높을 수 밖에 없다. 경우에 따라 내부적으로 가진 cache의 영향도 있을 수 있다.  </p>
+<p>SSD가 하드디스크에 비해 가격이 높으므로 사용하려는 시스템에 따라 높은 성능과 random read performace가 중요한 시스템은 SSD를, 엄청난 양의 데이터를 저장해야하는 data center를 구축해야 하는 경우는 하드디스크가 가성비 측면에서 좋은 선택이 될 수 있겠다.  </p>
+<br/>
+
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.amazon.com/Operating-Systems-Three-Easy-Pieces-ebook/dp/B00TPZ17O4">https://www.amazon.com/Operating-Systems-Three-Easy-Pieces-ebook/dp/B00TPZ17O4</a></li>
+</ul>
+<br/>
+<br/>
+<br/>
+
+</div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/OS/">OS</a><a class="link-muted mr-2" rel="tag" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/">파일시스템</a></div><div class="addthis_inline_share_toolbox"></div><script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-63138b1a1a412ebf" defer></script></article></div><!--!--><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/09/07/file-system-concept/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">파일시스템 3편 - 파일시스템이란?</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/09/05/file-system-hard-disk/"><span class="level-item">파일시스템 1편 - 하드디스크</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">댓글</h3><div id="disqus_thread"><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div><script>var disqus_config = function () {
+            this.page.url = 'https://tk-one.github.io/2020/09/06/file-system-flash/';
+            this.page.identifier = '2020/09/06/file-system-flash/';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');  
+            s.src = '//' + 'devtkone' + '.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/images/tk-one-profile.jpeg" alt="TK-one"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">TK-one</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Seoul, South Korea</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">포스트</p><a href="/archives"><p class="title">23</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">카테고리</p><a href="/categories"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">태그</p><a href="/tags"><p class="title">12</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/TK-one/" target="_blank" rel="noopener">팔로우</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/TK-one/"><i class="fab fa-github"></i></a></div></div></div><!--!--><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">카테고리</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/OS/"><span class="level-start"><span class="level-item">OS</span></span><span class="level-end"><span class="level-item tag">14</span></span></a></li><li><a class="level is-mobile" href="/categories/java/"><span class="level-start"><span class="level-item">java</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/maven/"><span class="level-start"><span class="level-item">maven</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/network/"><span class="level-start"><span class="level-item">network</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/nodejs/"><span class="level-start"><span class="level-item">nodejs</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/categories/personal/"><span class="level-start"><span class="level-item">personal</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/tool/"><span class="level-start"><span class="level-item">tool</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/categories/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="level-start"><span class="level-item">컴퓨터구조</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">최근 글</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-07T13:21:13.000Z">2022-03-07</time></p><p class="title"><a href="/2022/03/07/coronavirus-confirmed/">코로나 확진후기</a></p><p class="categories"><a href="/categories/personal/">personal</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-03-05T12:59:06.000Z">2022-03-05</time></p><p class="title"><a href="/2022/03/05/how-to-use-markdown/">마크다운(Markdown) 사용법</a></p><p class="categories"><a href="/categories/tool/">tool</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T16:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design/">파일시스템 5편 - 파일시스템 디자인-2</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T15:51:46.000Z">2020-09-08</time></p><p class="title"><a href="/2020/09/08/file-system-design-1/">파일시스템 4편 - 파일시스템 디자인-1</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2020-09-07T07:14:20.000Z">2020-09-07</time></p><p class="title"><a href="/2020/09/07/file-system-concept/">파일시스템 3편 - 파일시스템이란?</a></p><p class="categories"><a href="/categories/OS/">OS</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">아카이브</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/03/"><span class="level-start"><span class="level-item">3월 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/09/"><span class="level-start"><span class="level-item">9월 2020</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/03/"><span class="level-start"><span class="level-item">3월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2020/01/"><span class="level-start"><span class="level-item">1월 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/08/"><span class="level-start"><span class="level-item">8월 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/07/"><span class="level-start"><span class="level-item">7월 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile" href="/archives/2019/02/"><span class="level-start"><span class="level-item">2월 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile" href="/archives/2018/08/"><span class="level-start"><span class="level-item">8월 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">태그</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/OS/"><span class="tag">OS</span><span class="tag">14</span></a></div><div class="control"><a class="tags has-addons" href="/tags/coronavirus/"><span class="tag">coronavirus</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/covid19/"><span class="tag">covid19</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/event-loop/"><span class="tag">event-loop</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/java/"><span class="tag">java</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/markdown/"><span class="tag">markdown</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/maven/"><span class="tag">maven</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/nodejs/"><span class="tag">nodejs</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/smtp/"><span class="tag">smtp</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/thread/"><span class="tag">thread</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%EC%BB%B4%ED%93%A8%ED%84%B0%EA%B5%AC%EC%A1%B0/"><span class="tag">컴퓨터구조</span><span class="tag">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%ED%8C%8C%EC%9D%BC%EC%8B%9C%EC%8A%A4%ED%85%9C/"><span class="tag">파일시스템</span><span class="tag">6</span></a></div></div></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">업데이트 소식 받기</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="구독"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="기술블로그" height="28"></a><p class="is-size-7"><span>&copy; 2023 TK-one</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a><br><span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv">0</span>명의 사용자가 방문 함</span></p></div><div class="level-end"></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("ko");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="맨 위로" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "이 웹 사이트는 귀하의 경험을 향상시키기 위해 Cookie를 사용합니다.",
+          dismiss: "무시",
+          allow: "허용",
+          deny: "거부",
+          link: "더 알아보기",
+          policy: "Cookie 정책",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="입력 하세요..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"입력 하세요...","untitled":"(제목 없음)","posts":"포스트","pages":"페이지","categories":"카테고리","tags":"태그"});
+        });</script></body></html>
