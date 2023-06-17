@@ -9,6 +9,13 @@
 
 
     <url>
+        <loc>https://tk-one.github.io/categories/Hadoop/</loc>
+        <lastmod>2023-06-17T07:48:02.625Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://tk-one.github.io/categories/OS/</loc>
         <lastmod>2023-06-07T16:21:36.345Z</lastmod>
         <changefreq>weekly</changefreq>

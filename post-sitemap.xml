@@ -9,6 +9,30 @@
 
 
     <url>
+        <loc>https://tk-one.github.io/2022/06/19/hadoop-file-based-data-structure/</loc>
+        <lastmod>2023-06-17T07:48:02.625Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2022/03/23/hadoop-hdfs/</loc>
+        <lastmod>2023-06-17T07:47:43.437Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://tk-one.github.io/2022/06/18/hbase/</loc>
+        <lastmod>2023-06-17T07:46:38.288Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://tk-one.github.io/2020/09/08/file-system-design-1/</loc>
         <lastmod>2023-06-07T16:21:36.345Z</lastmod>
         <changefreq>weekly</changefreq>
